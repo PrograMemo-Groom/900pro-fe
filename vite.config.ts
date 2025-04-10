@@ -15,9 +15,7 @@ export default defineConfig({
     server: {
       host: true,
       port: 5173,
-      allowedHosts: [
-        "ec2-13-125-225-181.ap-northeast-2.compute.amazonaws.com"
-      ]
+      allowedHosts: "all",
     },
     // Proxy 설정
     proxy: {
