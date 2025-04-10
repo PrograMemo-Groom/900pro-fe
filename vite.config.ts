@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import path from 'path'
 import react from '@vitejs/plugin-react'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,6 +12,13 @@ export default defineConfig({
     },
   },
   server: {
+    server: {
+      host: true,
+      port: 5173,
+      allowedHosts: [
+        "ec2-13-125-225-181.ap-northeast-2.compute.amazonaws.com"
+      ]
+    },
     // Proxy 설정
     proxy: {
         // 경로가 "/api" 로 시작하는 요청을 대상으로 proxy 설정
