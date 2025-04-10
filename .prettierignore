@@ -1,0 +1,12 @@
+node_modules/
+build/
+
+public/index.html
+.env
+
+dist
+coverage
+*.md
+
+*.css
+*.scss
