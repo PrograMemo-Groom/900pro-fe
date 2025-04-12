@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styles from "@/css/login/Login.module.scss";
 import { LoginFormValues, LoginProps } from '@/pages/login/Login.interface.ts';
-import axios from "axios";
-import type { AxiosResponse } from 'axios';
+// import axios from "axios";
+// import type { AxiosResponse } from 'axios';
 
 const Login: React.FC<LoginProps> = ({initialValues}) => {
     const [form, setForm] = useState<LoginFormValues>({
