@@ -12,7 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p {
   margin: 0;
 }
 
@@ -20,8 +20,21 @@ a {
   text-decoration: none;
   outline: none;
 }
+input {
+  border: none;
+  outline: none;
+  background: none;
+}
 body {
   font-family: "inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100vw;
+  height: 95vh;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #3674B5 0%, #112030 54%);
 }
 
 @font-face {
