@@ -1,0 +1,12 @@
+@use "@/index";
+@use "./_variables" as *;
+
+@mixin landingTitle {
+  font-family: "Saira Condensed", "inter", sans-serif;
+  font-size: $font-h2;
+}
+@mixin projectTitle($fontSize: $font-h1) {
+  font-family: "League Spartan", "inter", sans-serif;
+  font-size: $fontSize;
+  margin-top: -50px;
+}

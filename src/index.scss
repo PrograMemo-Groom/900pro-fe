@@ -12,13 +12,16 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
 
 a {
   text-decoration: none;
   outline: none;
 }
 body {
-  font-family: sans-serif;
+  font-family: "inter", sans-serif;
 }
 
 @font-face {
@@ -31,6 +34,12 @@ body {
 @font-face {
   font-family: 'League Spartan';
   src: url('@/assets/fonts/LeagueSpartan-Bold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'inter';
+  src: url('@/assets/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
