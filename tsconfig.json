@@ -1,4 +1,11 @@
 {
+  "compilerOptions": {
+    "composite": true, // references 사용 시 필요
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
