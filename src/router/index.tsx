@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from '@/App';
-import Login from '@/pages/Login';
+import Login from '@/pages/login/Login.tsx';
 // import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
 
 // 라우터 설정
