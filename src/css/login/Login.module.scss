@@ -1,0 +1,16 @@
+@use "@/css/common/_global" as *;
+
+.container {
+
+  .description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    & > h1 {
+      @include projectTitle;
+    }
+    & > h2 {
+      @include landingTitle;
+    }
+  }
+}
