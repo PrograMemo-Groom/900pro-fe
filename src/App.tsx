@@ -1,16 +1,13 @@
 import './App.css'
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import ApiTest from './pages/ApiTest'
+import { Outlet } from 'react-router-dom'
 
 function App() {
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path='/' element={<ApiTest />} />
-        </Routes>
-    </Router>
-    </>
+    <div className="app-container">
+      <main>
+        <Outlet />
+      </main>
+    </div>
   )
 }
 
