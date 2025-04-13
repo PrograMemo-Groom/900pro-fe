@@ -2,7 +2,6 @@
   "compilerOptions": {
     "composite": true, // references 사용 시 필요
     "baseUrl": ".",
-    "headers": {"Content-Type": "application/json"},
     "paths": {
       "@/*": ["src/*"]
     }
