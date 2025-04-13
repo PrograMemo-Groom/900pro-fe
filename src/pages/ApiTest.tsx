@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import axios from "axios";
 import type { AxiosResponse } from 'axios';
+import axios from "axios";
+import { useEffect, useState } from 'react';
 
 const Login = () => {
 
