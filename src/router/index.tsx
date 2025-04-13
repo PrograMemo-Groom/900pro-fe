@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import App from '../App';
-import ApiTest from '../pages/ApiTest';
-import CodingTestPage from '../pages/CodingTest/CodingTestPage';
+import App from '@/App';
+import Login from '@/pages/login/Login.tsx';
+// import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -11,12 +11,12 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <ApiTest />,
+        element: <Login />,
       },
-      {
-        path: '/coding-test',
-        element: <CodingTestPage />,
-      },
+      // {
+      //   path: '/coding-test',
+      //   element: <CodingTestPage />,
+      // },
     ],
   },
 ]);
