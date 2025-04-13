@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // https://vitejs.dev/config/
-const config: defineConfig = {
+const config = {
   plugins: [react()],
   resolve: {
     alias: {
@@ -13,7 +13,7 @@ const config: defineConfig = {
   server: {
     host: true,
     port: 5173,
-    allowedHosts: 'all',
+    allowedHosts: ['all'],
     proxy: {
       '/api': {
         target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8080',
