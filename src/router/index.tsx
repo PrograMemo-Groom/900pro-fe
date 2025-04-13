@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
-// import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
+import CodingTestPage from '@/pages/coding-test/CodingTest';
 import Chat from '@/pages/history/Chat.tsx';
 
 // 라우터 설정
@@ -14,10 +14,10 @@ const router = createBrowserRouter([
         path: '/',
         element: <Login />,
       },
-      // {
-      //   path: '/coding-test',
-      //   element: <CodingTestPage />,
-      // },
+      {
+        path: '/coding-test',
+        element: <CodingTestPage />,
+      },
       {
         path: 'history',
         element: <Chat />

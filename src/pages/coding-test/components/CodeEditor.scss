@@ -1,0 +1,22 @@
+.code-editor-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+
+  .code-editor-container {
+    flex-grow: 1;
+    height: 100%;
+    text-align: left;
+    overflow: hidden;
+
+    .cm-editor {
+      height: 100%;
+
+      .cm-scroller {
+        font-family: 'Fira Code', monospace, 'Courier New';
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+  }
+}
