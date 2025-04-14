@@ -1,6 +1,7 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
+import MyTestPage from '@/pages/my-test/MyTest';
 import CodingTestPage from '@/pages/coding-test/CodingTest';
 import Chat from '@/pages/history/Chat.tsx';
 
@@ -15,12 +16,16 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: '/coding-test',
+        path: 'coding-test',
         element: <CodingTestPage />,
       },
       {
         path: 'history',
         element: <Chat />
+      },
+      {
+        path: 'my-test',
+        element: <MyTestPage />,
       }
     ],
   },
