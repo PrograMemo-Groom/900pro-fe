@@ -250,6 +250,8 @@ solution();`,
                     onChange={() => {}} // 읽기 전용이므로 onChange는 빈 함수
                     language={currentMember.language}
                     readOnly={true}
+                    documentId={`team-code-${currentMember.name}`}
+                    userName="관찰자"
                   />
                 </div>
               </div>
