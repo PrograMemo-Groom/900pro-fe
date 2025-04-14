@@ -1,9 +1,12 @@
-import React from 'react'
+// import React from 'react'
+import styles from '@/css/history/Chat.module.scss'
 
 function Chat() {
   return (
     <div>
-      hello
+      <main className={styles.container}>
+        hello
+      </main>
     </div>
   )
 }
