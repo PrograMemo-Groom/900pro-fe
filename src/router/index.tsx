@@ -19,7 +19,7 @@ const router = createBrowserRouter([
       //   element: <CodingTestPage />,
       // },
       {
-        path: '/history',
+        path: 'history',
         element: <Chat />
       }
     ],
