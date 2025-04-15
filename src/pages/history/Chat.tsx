@@ -6,6 +6,8 @@ function Chat() {
     <div>
       <main className={styles.container}>
         hello
+        
+        <div className={styles.line}></div>
       </main>
     </div>
   )
