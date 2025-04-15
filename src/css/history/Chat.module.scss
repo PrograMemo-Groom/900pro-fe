@@ -1,7 +1,7 @@
 // 채팅 css
 
 .container{
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.04);
     border-radius: 50px;
     color: #fff;
     padding: 20px;
@@ -19,8 +19,35 @@
     }
 
     .date {
-        margin-top: 2vh;
+        margin: 2vh 0 1vh 0;
         font-size: 0.9rem;
         color: #94B4D5;
+    }       
+
+}
+
+.bubble {
+    position: relative;
+    padding: 8px 25px;
+    border-radius: 50px 0 50px 50px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.9rem;
+    display: inline-block;
+    z-index: 0;
+  
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50px 0 50px 50px;
+      padding: 1px; //테두리 두께
+      background: linear-gradient(90deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      z-index: -1;
     }
 }
