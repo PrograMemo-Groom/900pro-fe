@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
@@ -11,6 +11,7 @@ import '@/pages/my-test/components/CodeEditor.scss';
 import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
+import MiniMenu from './MiniMenu';
 
 export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'text';
 export type EditorTheme = 'light' | 'dark';
@@ -21,7 +22,7 @@ interface CodeEditorProps {
   language?: CodeLanguage;
   theme?: EditorTheme;
   readOnly?: boolean;
-  documentId?: string; // 공유 문서의 고유 ID
+  documentId?: string; // 파일의 고유 ID
   userName?: string; // 사용자 이름 (커서 표시용)
 }
 
@@ -42,6 +43,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
   const ydocRef = useRef<Y.Doc | null>(null);
   const persistenceRef = useRef<IndexeddbPersistence | null>(null);
+  const editorRef = useRef<EditorView | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const [selectedRange, setSelectedRange] = useState<{ from: number; to: number } | null>(null);
+  const isDragging = useRef(false);
 
   useEffect(() => {
     // 로컬 세션에서만 작동하는 Yjs 설정
@@ -67,6 +72,69 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       };
     }
   }, [documentId, readOnly]);
+
+  // 문서 클릭 시 메뉴 닫기 이벤트 핸들러
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setMenuPosition(null);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleMouseDown = (_event: MouseEvent, _view: EditorView) => {
+    isDragging.current = true;
+    setMenuPosition(null);
+  };
+
+  const handleMouseUp = (event: MouseEvent, view: EditorView) => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+
+    const selection = view.state.selection.main;
+    // 텍스트가 선택되었는지 확인
+    if (!selection.empty) {
+      // 이벤트가 발생한 곳에 메뉴 위치 설정
+      const editorRect = view.dom.getBoundingClientRect();
+      const menuPos = {
+        x: event.clientX - editorRect.left,
+        y: event.clientY - editorRect.top
+      };
+      event.stopPropagation();
+
+      setMenuPosition(menuPos);
+      setSelectedRange({ from: selection.from, to: selection.to });
+    }
+  };
+
+  // 하이라이트 버튼 클릭 핸들러
+  const handleHighlight = () => {
+    if (selectedRange && editorRef.current) {
+      console.log('하이라이트 선택된 범위:', selectedRange);
+      // TODO: 선택한 텍스트 하이라이트 기능 구현
+      // 기능 구현 전 임시로 콘솔 출력만
+      const { from, to } = selectedRange;
+      const text = editorRef.current.state.sliceDoc(from, to);
+      console.log('선택된 텍스트:', text);
+    }
+    setMenuPosition(null); // 메뉴 닫기
+  };
+
+  // 메모 버튼 클릭 핸들러
+  const handleAddMemo = () => {
+    if (selectedRange && editorRef.current) {
+      console.log('메모 추가 범위:', selectedRange);
+      // TODO: 선택한 텍스트에 메모 추가 기능 구현
+      // 기능 구현 전 임시로 콘솔 출력만
+      const { from, to } = selectedRange;
+      const text = editorRef.current.state.sliceDoc(from, to);
+      console.log('메모 추가할 텍스트:', text);
+    }
+    setMenuPosition(null);
+  };
 
   const getLanguageExtension = (lang: CodeLanguage) => {
     switch (lang) {
@@ -102,6 +170,19 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     extensions.push(whiteTextExtension);
   }
 
+  // 마우스 이벤트 핸들러 추가
+  extensions.push(
+    EditorView.domEventHandlers({
+      mousedown: handleMouseDown,
+      mouseup: handleMouseUp,
+    }),
+    EditorView.updateListener.of(update => {
+      if (update.view) {
+        editorRef.current = update.view;
+      }
+    })
+  );
+
   // Yjs 협업 기능 추가
   if (!readOnly && ydocRef.current) {
     const ytext = ydocRef.current.getText('codemirror');
@@ -116,14 +197,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       yCollab(ytext, {
         clientID: Math.floor(Math.random() * 100000),
         username: userName,
-        // 커서 색상 랜덤 지정
         userColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
       })
     );
   }
 
   return (
-    <div className="code-editor-wrapper">
+    <div className="code-editor-wrapper" style={{ position: 'relative' }}>
+      <MiniMenu
+        position={menuPosition}
+        onHighlight={handleHighlight}
+        onAddMemo={handleAddMemo}
+      />
       <div className="code-editor-container">
         <CodeMirror
           value={!readOnly && ydocRef.current ? '' : value}

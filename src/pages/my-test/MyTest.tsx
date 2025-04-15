@@ -267,4 +267,4 @@ solution();`,
   );
 };
 
-export default MyTest; 
+export default MyTest;
