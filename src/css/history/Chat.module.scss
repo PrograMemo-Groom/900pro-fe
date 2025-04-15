@@ -13,6 +13,9 @@
     overflow: hidden;
     overflow-y: auto;
 
+    display: flex;
+    flex-direction: column;
+
     .line {
         background: linear-gradient(90deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
         height: 2px;
@@ -28,6 +31,9 @@
     }
 }
 
+.bubble_container_right{
+    text-align: right;
+}
 .bubble_right {
     position: relative;
     padding: 8px 25px;
@@ -38,6 +44,7 @@
     display: inline-block;
     z-index: 0;
     margin-bottom: 1.5vh;
+    text-align: start;
 
     &::before {
         content: "";

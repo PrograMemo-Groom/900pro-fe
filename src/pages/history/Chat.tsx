@@ -6,11 +6,15 @@ function Chat() {
     <div>
       <main className={styles.container}>
 
-        <div className={styles.bubble_right}>
-          와! 오늘도 많이 배워가는 것 같아요 ~
+        <div className={styles.bubble_container_right}>
+          <div className={styles.bubble_right}>
+            와! 오늘도 많이 배워가는 것 같아요 ~
+          </div>
         </div>
-        <div className={styles.bubble_right}>
-          더 레벨 높은 팀으로 이동하려면 더 열심히 해봅시다! 오늘 논의 수고하셨어요
+        <div className={styles.bubble_container_right}>
+          <div className={styles.bubble_right}>
+            더 레벨 높은 팀으로 이동하려면 더 열심히 해봅시다! 오늘 논의 수고하셨어요
+          </div>
         </div>
 
         <div className={styles.line}></div>
