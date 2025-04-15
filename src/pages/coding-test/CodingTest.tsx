@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CodeEditor, { CodeLanguage, EditorTheme } from '@/pages/coding-test/components/CodeEditor';
 import '@/pages/coding-test/CodingTest.scss';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
 const availableLanguages: CodeLanguage[] = ['python', 'javascript', 'java', 'cpp', 'c'];
 
@@ -34,7 +35,6 @@ const CodingTestPage: React.FC = () => {
     c: defaultCode.c
   });
 
-  // LocalStorage에서 저장된 코드 불러오기
   useEffect(() => {
     const savedCode = localStorage.getItem('codingTestCode');
     if (savedCode) {
@@ -47,7 +47,6 @@ const CodingTestPage: React.FC = () => {
     }
   }, []);
 
-  // 코드 변경 시 LocalStorage에 저장
   const handleCodeChange = (value: string) => {
     const updatedCode = {
       ...codeContent,
@@ -60,7 +59,6 @@ const CodingTestPage: React.FC = () => {
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLanguage = e.target.value as CodeLanguage;
     if (selectedLanguage !== newLanguage) {
-      // LocalStorage에 현재 코드 저장
       localStorage.setItem('codingTestCode', JSON.stringify(codeContent));
       setSelectedLanguage(newLanguage);
     }
@@ -72,7 +70,10 @@ const CodingTestPage: React.FC = () => {
     // 실제 구현에서는 백엔드로 코드를 보내 실행하고 결과를 받아오겠지만,
     // 여기서는 시뮬레이션만 합니다.
     setTimeout(() => {
-      setOutput(`--- ${selectedLanguage} 실행 결과 ---\n${codeContent[selectedLanguage].split('\n')[1] || '실행 완료.'}\n--------------------------`);
+      const resultHeader = `--- ${selectedLanguage} 실행 결과 ---`;
+      const resultContent = codeContent[selectedLanguage].split('\n')[1] || '실행 완료.';
+      const resultFooter = '--------------------------';
+      setOutput(`${resultHeader}\n${resultContent}\n${resultFooter}`);
       setIsRunning(false);
     }, 1500);
   };
@@ -101,25 +102,33 @@ const CodingTestPage: React.FC = () => {
       </div>
 
       <div className="main-content">
-        <div className="problem-panel">
-          <div className="problem-header">
-            <div className="problem-tabs">
-              <button className="problem-tab active">#1012</button>
-              <button className="problem-tab">#1253</button>
-              <button className="problem-tab">#108</button>
-            </div>
-            <h2 className="problem-title">#1012 유기농 배추</h2>
-          </div>
+        <PanelGroup
+          direction="horizontal"
+          autoSaveId="coding-test-layout"
+          onLayout={(sizes) => {
+            localStorage.setItem('panel-sizes', JSON.stringify(sizes));
+          }}
+        >
+          <Panel defaultSize={40} minSize={20}>
+            <div className="problem-panel">
+              <div className="problem-header">
+                <div className="problem-tabs">
+                  <button className="problem-tab active">#1012</button>
+                  <button className="problem-tab">#1253</button>
+                  <button className="problem-tab">#108</button>
+                </div>
+                <h2 className="problem-title">#1012 유기농 배추</h2>
+              </div>
 
-          <div className="problem-details">
-            <h3>입력</h3>
-            <p>입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다.</p>
+              <div className="problem-details">
+                <h3>입력</h3>
+                <p>입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다.</p>
 
-            <h3>출력</h3>
-            <p>각 테스트 케이스에 대해 필요한 최소의 배추흰지렁이 마리 수를 출력한다.</p>
+                <h3>출력</h3>
+                <p>각 테스트 케이스에 대해 필요한 최소의 배추흰지렁이 마리 수를 출력한다.</p>
 
-            <h3>예제입력</h3>
-            <pre>
+                <h3>예제입력</h3>
+                <pre>
 {`1
 5 3 6
 0 2
@@ -129,46 +138,61 @@ const CodingTestPage: React.FC = () => {
 4 2
 4 0
 `}
-            </pre>
+                </pre>
 
-            <h3>예시 출력</h3>
-            <pre>2</pre>
-          </div>
-        </div>
+                <h3>예시 출력</h3>
+                <pre>2</pre>
+              </div>
+            </div>
+          </Panel>
 
-        <div className="editor-panel">
-          <div className="main-editor-area">
-            <div className="editor-header">
-              <div className="editor-tabs">
-                <div className="editor-tab active">
-                  {`${languageDisplayNames[selectedLanguage]}`}
+          <PanelResizeHandle className="resize-handle" id="resize-handle" />
+
+          <Panel defaultSize={60} minSize={30}>
+            <div className="editor-panel">
+              <div className="main-editor-area">
+                <div className="editor-header">
+                  <div className="editor-tabs">
+                    <div className="editor-tab active">
+                      {`${languageDisplayNames[selectedLanguage]}`}
+                    </div>
+                  </div>
+                  <div className="language-selector-container">
+                    <select className="language-selector" value={selectedLanguage} onChange={handleLanguageChange}>
+                      {availableLanguages.map(lang => (
+                        <option key={lang} value={lang}>
+                          {languageDisplayNames[lang]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div className="language-selector-container">
-                <select className="language-selector" value={selectedLanguage} onChange={handleLanguageChange}>
-                  {availableLanguages.map(lang => (
-                    <option key={lang} value={lang}>
-                      {languageDisplayNames[lang]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
 
-            <div className="editor-container">
-              <CodeEditor
-                value={currentCode}
-                onChange={handleCodeChange}
-                language={selectedLanguage}
-                theme={theme}
-                readOnly={isRunning}
-              />
+                <PanelGroup direction="vertical" autoSaveId="editor-output-layout">
+                  <Panel defaultSize={70} minSize={30}>
+                    <div className="editor-container">
+                      <CodeEditor
+                        value={currentCode}
+                        onChange={handleCodeChange}
+                        language={selectedLanguage}
+                        theme={theme}
+                        readOnly={isRunning}
+                      />
+                    </div>
+                  </Panel>
+
+                  <PanelResizeHandle className="resize-handle-vertical" />
+
+                  <Panel defaultSize={30} minSize={10}>
+                    <div className="output-panel">
+                      <pre>{output || "// 실행 결과가 여기에 표시됩니다."}</pre>
+                    </div>
+                  </Panel>
+                </PanelGroup>
+              </div>
             </div>
-            <div className="output-panel">
-              <pre>{output || "// 실행 결과가 여기에 표시됩니다."}</pre>
-            </div>
-          </div>
-        </div>
+          </Panel>
+        </PanelGroup>
       </div>
     </div>
   );
