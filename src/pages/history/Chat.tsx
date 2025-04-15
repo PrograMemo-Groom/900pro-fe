@@ -34,6 +34,14 @@ function Chat() {
             오늘 문제 저번에 공부한거 나온거 맞죠 ??? 👏🏻
           </div>
         </div>
+
+        <div className={styles.bubble_container_left}>
+          <p className={styles.bubble_user_name}>거녕거녕</p>
+          <div className={styles.bubble_left}>
+          어제 풀었던 #1253 번 맞나요 !!
+          비슷한 느낌이 나긴 했어요 ~ 근데 저는 이렇게 풀었는데 제 코드 보러 오실래요?
+          </div>
+        </div>
       </main>
     </div>
   )

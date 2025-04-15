@@ -3,14 +3,15 @@
 .container {
     background-color: rgba(255, 255, 255, 0.04);
     border-radius: 50px;
-    color: #fff;
-    padding: 30px 50px 0px 50px;
+    color: #E1E1E1;
+    padding: 30px 50px 10px 50px;
 
     // (774 / 1080) = (약 72)
     height: 71.67vh;
     width: 60.63vw;
     text-align: center;
     overflow: hidden;
+    overflow-y: auto;
 
     .line {
         background: linear-gradient(90deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
@@ -74,13 +75,13 @@
     font-size: 0.9rem;
     display: inline-block;
     z-index: 0;
-    margin-bottom: 1.5vh;
+    margin-bottom: 2.5vh;
 
     &::before {
         content: "";
         position: absolute;
         inset: 0;
-        border-radius: 0 50px 50px 80px;
+        border-radius: 0 50px 50px 50px;
         padding: 1px; //테두리 두께
         background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
         -webkit-mask:
@@ -101,8 +102,7 @@
     font-size: 0.9rem;
     display: inline-block;
     z-index: 0;
-    margin-bottom: 1.5vh;
-    text-align: left;
+    margin-bottom: 2.5vh;
 
     &::before {
         content: "";
