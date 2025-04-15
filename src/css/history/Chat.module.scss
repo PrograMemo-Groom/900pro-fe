@@ -33,6 +33,17 @@
 
 .bubble_container_right{
     text-align: right;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: flex-end;
+    margin-bottom: 1.5vh;
+    gap: 0.5vw;
+
+    .time{
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
 }
 .bubble_right {
     position: relative;
@@ -43,7 +54,6 @@
     font-size: 0.9rem;
     display: inline-block;
     z-index: 0;
-    margin-bottom: 1.5vh;
     text-align: start;
 
     &::before {
