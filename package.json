@@ -23,6 +23,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.2.0",
+    "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^6.11.2",
     "sockjs-client": "^1.6.1",
     "y-codemirror.next": "^0.3.5",
