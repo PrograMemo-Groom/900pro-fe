@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CodeEditor, { CodeLanguage, EditorTheme } from '@/pages/coding-test/components/CodeEditor';
 import '@/pages/coding-test/CodingTest.scss';
 
@@ -34,29 +34,34 @@ const CodingTestPage: React.FC = () => {
     c: defaultCode.c
   });
 
+  // LocalStorage에서 저장된 코드 불러오기
+  useEffect(() => {
+    const savedCode = localStorage.getItem('codingTestCode');
+    if (savedCode) {
+      try {
+        const parsedCode = JSON.parse(savedCode) as Record<CodeLanguage, string>;
+        setCodeContent(parsedCode);
+      } catch (error) {
+        console.error('저장된 코드를 불러오는 중 오류가 발생했습니다:', error);
+      }
+    }
+  }, []);
+
+  // 코드 변경 시 LocalStorage에 저장
   const handleCodeChange = (value: string) => {
-    setCodeContent({
+    const updatedCode = {
       ...codeContent,
       [selectedLanguage]: value
-    });
+    };
+    setCodeContent(updatedCode);
+    localStorage.setItem('codingTestCode', JSON.stringify(updatedCode));
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLanguage = e.target.value as CodeLanguage;
     if (selectedLanguage !== newLanguage) {
-      if (codeContent[newLanguage] === defaultCode[newLanguage]) {
-        const confirmMessage = `언어를 ${languageDisplayNames[selectedLanguage]}에서 ${languageDisplayNames[newLanguage]}로 변경하시겠습니까?
-새 언어의 기본 코드로 초기화하려면 '확인'을,
-현재 작성한 코드를 유지하려면 '취소'를 클릭하세요.`;
-        const isConfirmed = window.confirm(confirmMessage);
-        if (isConfirmed) {
-          // 사용자가 확인한 경우 기본 코드로 초기화합니다
-          setCodeContent({
-            ...codeContent,
-            [newLanguage]: defaultCode[newLanguage]
-          });
-        }
-      }
+      // LocalStorage에 현재 코드 저장
+      localStorage.setItem('codingTestCode', JSON.stringify(codeContent));
       setSelectedLanguage(newLanguage);
     }
   };
