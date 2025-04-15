@@ -74,6 +74,17 @@
 
 .bubble_container_left{
     text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: flex-start;
+    margin-bottom: 2.5vh;
+    gap: 0.5vw;
+
+    .time{
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
 }
 
 .bubble_user_name {
@@ -92,7 +103,6 @@
     font-size: 0.9rem;
     display: inline-block;
     z-index: 0;
-    margin-bottom: 2.5vh;
 
     &::before {
         content: "";
@@ -119,7 +129,6 @@
     font-size: 0.85rem;
     display: inline-block;
     z-index: 0;
-    margin-bottom: 2.5vh;
 
     &::before {
         content: "";
