@@ -2,22 +2,6 @@ import React, { useState } from 'react';
 import CodeEditor, { CodeLanguage, EditorTheme } from '@/pages/coding-test/components/CodeEditor';
 import '@/pages/coding-test/CodingTest.scss';
 
-interface TabData {
-  id: string;
-  title: string;
-  content: string;
-  language: CodeLanguage;
-}
-
-const defaultCode: Record<CodeLanguage, string> = {
-  python: '# 파이썬 코드를 작성하세요\nprint("Hello World!")\n',
-  javascript: '// 자바스크립트 코드를 작성하세요\nconsole.log("Hello World!");\n',
-  java: '// 자바 코드를 작성하세요\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello World!");\n  }\n}\n',
-  cpp: '// C++ 코드를 작성하세요\n#include <iostream>\n\nint main() {\n  std::cout << "Hello World!" << std::endl;\n  return 0;\n}\n',
-  c: '// C 코드를 작성하세요\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!\\n");\n  return 0;\n}\n',
-  text: ''
-};
-
 const availableLanguages: CodeLanguage[] = ['python', 'javascript', 'java', 'cpp', 'c'];
 
 const languageDisplayNames: Record<CodeLanguage, string> = {
@@ -25,17 +9,15 @@ const languageDisplayNames: Record<CodeLanguage, string> = {
   javascript: 'JavaScript',
   java: 'Java',
   cpp: 'C++',
-  c: 'C',
-  text: 'Text'
+  c: 'C'
 };
 
-const languageExtensions: Record<CodeLanguage, string> = {
-  python: 'py',
-  javascript: 'js',
-  java: 'java',
-  cpp: 'cpp',
-  c: 'c',
-  text: 'txt'
+const defaultCode: Record<CodeLanguage, string> = {
+  python: '# 파이썬 코드를 작성하세요\nprint("Hello World!")\n',
+  javascript: '// 자바스크립트 코드를 작성하세요\nconsole.log("Hello World!");\n',
+  java: '// 자바 코드를 작성하세요\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello World!");\n  }\n}\n',
+  cpp: '// C++ 코드를 작성하세요\n#include <iostream>\n\nint main() {\n  std::cout << "Hello World!" << std::endl;\n  return 0;\n}\n',
+  c: '// C 코드를 작성하세요\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!\\n");\n  return 0;\n}\n'
 };
 
 const CodingTestPage: React.FC = () => {
@@ -43,45 +25,39 @@ const CodingTestPage: React.FC = () => {
   const [output, setOutput] = useState<string>('');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [remainingTime, setRemainingTime] = useState<string>('1:48:54');
-  const [tabs, setTabs] = useState<TabData[]>([
-    { id: '1012', title: '1012.py', content: defaultCode.python, language: 'python' },
-    { id: 'input', title: 'input2.txt', content: '1 2 3\n4 5 6\n', language: 'text' },
-  ]);
-  const [activeTabId, setActiveTabId] = useState<string>('1012');
+  const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>('python');
+  const [codeContent, setCodeContent] = useState<Record<CodeLanguage, string>>({
+    python: defaultCode.python,
+    javascript: defaultCode.javascript,
+    java: defaultCode.java,
+    cpp: defaultCode.cpp,
+    c: defaultCode.c
+  });
 
   const handleCodeChange = (value: string) => {
-    const updatedTabs = tabs.map(tab =>
-      tab.id === activeTabId ? { ...tab, content: value } : tab
-    );
-    setTabs(updatedTabs);
+    setCodeContent({
+      ...codeContent,
+      [selectedLanguage]: value
+    });
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLanguage = e.target.value as CodeLanguage;
-    const activeTab = tabs.find(tab => tab.id === activeTabId);
-
-    if (activeTab && activeTab.language !== newLanguage) {
-      const oldLang = languageDisplayNames[activeTab.language];
-      const newLang = languageDisplayNames[newLanguage];
-      const confirmMessage = `언어를 ${oldLang}에서 ${newLang}로 변경하시겠습니까?
+    if (selectedLanguage !== newLanguage) {
+      if (codeContent[newLanguage] === defaultCode[newLanguage]) {
+        const confirmMessage = `언어를 ${languageDisplayNames[selectedLanguage]}에서 ${languageDisplayNames[newLanguage]}로 변경하시겠습니까?
 새 언어의 기본 코드로 초기화하려면 '확인'을,
 현재 작성한 코드를 유지하려면 '취소'를 클릭하세요.`;
-      const isConfirmed = window.confirm(confirmMessage);
-      const updatedTabs = tabs.map(tab => {
-        if (tab.id === activeTabId) {
-          const newExtension = languageExtensions[newLanguage];
-          const newTitle = tab.title.replace(/\.[^.]+$/, `.${newExtension}`);
-
-          return {
-            ...tab,
-            language: newLanguage,
-            content: isConfirmed ? defaultCode[newLanguage] : tab.content,
-            title: newTitle
-          };
+        const isConfirmed = window.confirm(confirmMessage);
+        if (isConfirmed) {
+          // 사용자가 확인한 경우 기본 코드로 초기화합니다
+          setCodeContent({
+            ...codeContent,
+            [newLanguage]: defaultCode[newLanguage]
+          });
         }
-        return tab;
-      });
-      setTabs(updatedTabs);
+      }
+      setSelectedLanguage(newLanguage);
     }
   };
 
@@ -91,50 +67,16 @@ const CodingTestPage: React.FC = () => {
     // 실제 구현에서는 백엔드로 코드를 보내 실행하고 결과를 받아오겠지만,
     // 여기서는 시뮬레이션만 합니다.
     setTimeout(() => {
-      const activeTab = tabs.find(tab => tab.id === activeTabId);
-      if (activeTab) {
-        setOutput(`--- ${activeTab.title} 실행 결과 ---\n${activeTab.content.split('\n')[1] || '실행 완료.'}\n--------------------------`);
-      } else {
-        setOutput('활성 탭을 찾을 수 없습니다.');
-      }
+      setOutput(`--- ${selectedLanguage} 실행 결과 ---\n${codeContent[selectedLanguage].split('\n')[1] || '실행 완료.'}\n--------------------------`);
       setIsRunning(false);
     }, 1500);
-  };
-
-  const handleTabClick = (tabId: string) => {
-    setActiveTabId(tabId);
-  };
-
-  const handleTabClose = (e: React.MouseEvent, tabId: string) => {
-    e.stopPropagation();
-    if (tabs.length > 1) {
-      const newTabs = tabs.filter(tab => tab.id !== tabId);
-      setTabs(newTabs);
-      if (activeTabId === tabId) {
-        setActiveTabId(newTabs[0].id);
-      }
-    }
-  };
-
-  const handleAddTab = () => {
-    const tabId = `new-${Date.now()}`;
-    const newTab: TabData = {
-      id: tabId,
-      title: `Untitled.${languageExtensions[currentLanguage]}`,
-      content: defaultCode[currentLanguage],
-      language: currentLanguage
-    };
-    setTabs([...tabs, newTab]);
-    setActiveTabId(tabId);
   };
 
   const handleSubmit = () => {
     alert('코드가 제출되었습니다!');
   };
 
-  const activeTab = tabs.find(tab => tab.id === activeTabId);
-  const currentCode = activeTab ? activeTab.content : '';
-  const currentLanguage = activeTab ? activeTab.language : 'python';
+  const currentCode = codeContent[selectedLanguage];
 
   return (
     <div className="coding-test-container dark-mode">
@@ -190,39 +132,15 @@ const CodingTestPage: React.FC = () => {
         </div>
 
         <div className="editor-panel">
-          <div className="sidebar">
-            <div className="sidebar-header">
-              <button className="add-tab-button" onClick={handleAddTab}>+</button>
-            </div>
-            <div className="sidebar-tabs">
-              {tabs.map(tab => (
-                <div
-                  key={tab.id}
-                  className={`sidebar-tab ${activeTabId === tab.id ? 'active' : ''}`}
-                  onClick={() => handleTabClick(tab.id)}
-                >
-                  <div className="tab-title">{tab.title}</div>
-                  <span className="tab-close" onClick={(e) => handleTabClose(e, tab.id)}>×</span>
-                </div>
-              ))}
-            </div>
-          </div>
           <div className="main-editor-area">
             <div className="editor-header">
               <div className="editor-tabs">
-                {tabs.map(tab => (
-                  <div
-                    key={tab.id}
-                    className={`editor-tab ${activeTabId === tab.id ? 'active' : ''}`}
-                    onClick={() => handleTabClick(tab.id)}
-                  >
-                    {tab.title}
-                    <span className="tab-close">×</span>
-                  </div>
-                ))}
+                <div className="editor-tab active">
+                  {`${languageDisplayNames[selectedLanguage]}`}
+                </div>
               </div>
               <div className="language-selector-container">
-                <select className="language-selector" value={currentLanguage} onChange={handleLanguageChange}>
+                <select className="language-selector" value={selectedLanguage} onChange={handleLanguageChange}>
                   {availableLanguages.map(lang => (
                     <option key={lang} value={lang}>
                       {languageDisplayNames[lang]}
@@ -236,9 +154,9 @@ const CodingTestPage: React.FC = () => {
               <CodeEditor
                 value={currentCode}
                 onChange={handleCodeChange}
-                language={currentLanguage}
+                language={selectedLanguage}
                 theme={theme}
-                readOnly={isRunning || (activeTab && activeTab.title.endsWith('.txt'))}
+                readOnly={isRunning}
               />
             </div>
             <div className="output-panel">

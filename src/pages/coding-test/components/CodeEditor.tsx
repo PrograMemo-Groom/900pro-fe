@@ -5,11 +5,11 @@ import { python } from '@codemirror/lang-python';
 import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-import { EditorView } from '@codemirror/view';
+// import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import '@/pages/coding-test/components/CodeEditor.scss';
 
-export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'text';
+export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c';
 export type EditorTheme = 'light' | 'dark';
 
 interface CodeEditorProps {
@@ -20,11 +20,11 @@ interface CodeEditorProps {
   readOnly?: boolean;
 }
 
-const whiteTextExtension = EditorView.theme({
-  '.cm-content': {
-    color: '#ffffff'
-  }
-});
+// const whiteTextExtension = EditorView.theme({
+//   '.cm-content': {
+//     color: '#ffffff'
+//   }
+// });
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
@@ -45,8 +45,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         return cpp();
       case 'c':
         return cpp();
-      case 'text':
-        return null;
       default:
         return python();
     }
@@ -61,10 +59,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const extensions: Extension[] = [];
   if (langExtension) {
     extensions.push(langExtension);
-  }
-
-  if (language === 'text') {
-    extensions.push(whiteTextExtension);
   }
 
   return (
