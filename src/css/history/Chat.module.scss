@@ -37,7 +37,7 @@
 .bubble_right {
     position: relative;
     padding: 8px 25px;
-    border-radius: 50px 0 50px 50px;
+    border-radius: 40px 0 40px 40px;
     background-color: transparent;
     color: white;
     font-size: 0.9rem;
@@ -50,7 +50,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        border-radius: 50px 0 80px 50px;
+        border-radius: 40px 0 70px 40px;
         padding: 1px; //테두리 두께
         background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
         -webkit-mask:
@@ -102,11 +102,11 @@
 
 .bubble_chatbot {
     position: relative;
-    padding: 8px 25px;
+    padding: 15px 25px;
     border-radius: 0 50px 50px 50px;
     background-color: transparent;
     color: white;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     display: inline-block;
     z-index: 0;
     margin-bottom: 2.5vh;
@@ -124,5 +124,21 @@
         -webkit-mask-composite: xor;
         mask-composite: exclude;
         z-index: -1;
+    }
+
+    button{
+        background-color: rgba(148, 193, 240, 0.7);
+        border-radius: 50px;
+        border: none;
+        color: #fff;
+        padding: 10px;
+        width: 100%;
+        font-weight: 700;
+        margin-top: 1.3vh;
+    }
+
+    button:hover{
+        cursor: pointer;
+        background-color: rgba(102, 149, 200, 0.7);
     }
 }
