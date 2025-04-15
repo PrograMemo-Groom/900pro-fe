@@ -7,9 +7,14 @@
     color: #fff;
     padding: 20px;
 
+    // (774 / 1080) × 100 = (약 72)
+    height: 71.67vh;
+    width: 60.63vw;
+    text-align: center;
+
     .line {
         background: linear-gradient(90deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
-        height: 4px;
+        height: 3px;
         width: 100%;
         border-radius: 2px;
     }
