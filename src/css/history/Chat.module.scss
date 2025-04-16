@@ -168,12 +168,13 @@
 // 입력창
 .input_container {
     position: relative;
-    padding: 8px 25px;
-    border-radius: 40px 40px 40px 40px;
+    padding: 8px 10px;
+    border-radius: 50px 50px 50px 50px;
     background-color: transparent;
     color: white;
     font-size: 0.9rem;
-    display: inline-block;
+    display: flex;
+    justify-content: space-between;
     z-index: 0;
     margin-top: 1.5vh;
     margin-bottom: 0.8vh;
@@ -195,6 +196,8 @@
 
     input{
         color: #fff;
+        width: 100%;
+        padding-left: 10px;
     }
 
     button{
@@ -204,5 +207,6 @@
         padding: 4px 8px;
         color: #fff;
         cursor: pointer;
+        margin-left: 1vh;
     }
 }
