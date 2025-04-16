@@ -6,7 +6,7 @@ function Chat() {
     <div>
       <main className={styles.container}>
         {/* 채팅로그 */}
-        <div className={styles.chat_container}>
+        <section className={styles.chat_container}>
           <div className={styles.bubble_container_right}>
             <p className={styles.time}>오후 3:44</p>
             <div className={styles.bubble_right}>
@@ -52,9 +52,13 @@ function Chat() {
             </div>
             <p className={styles.time}>오후 3:44</p>
           </div>
-        </div>
+        </section>
         {/* input */}
-
+        <footer className={styles.input_container}>
+          <input type='text' placeholder='입력창'></input>
+          <button>↑
+          </button>
+        </footer>
       </main>
     </div>
   )
