@@ -1,5 +1,6 @@
 // import React from 'react'
 import styles from '@/css/history/Chat.module.scss'
+import { ChatDummy } from '@/pages/history/data/chatDummy';
 
 function ChatLog() {
   return (

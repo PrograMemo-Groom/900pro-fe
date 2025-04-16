@@ -1,4 +1,12 @@
-export const chatDummy = [
+export type Chat = {
+    id: number;
+    chatRoomId: number;
+    userId: number;
+    content: string;
+    send_at: string;
+};
+
+export const ChatDummy: Chat[] = [
     {
         id: 1,
         chatRoomId: 1,
