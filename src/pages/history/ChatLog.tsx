@@ -9,7 +9,7 @@ function ChatLog() {
   return (
     <section className={styles.chat_container}>
       {ChatDummy.map((chat) => {
-        // 2000-00-00 00:00:00 기준으로 짠 코드
+
         const dateStr = new Date(chat.send_at).toISOString().split('T')[0];
         const showLine = prevDate !== dateStr; // 이전 날짜와 현재 날짜 비교 - 다르면 선 보이게
         prevDate = dateStr;
