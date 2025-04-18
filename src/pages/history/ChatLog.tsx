@@ -5,10 +5,20 @@ import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/histor
 const myId = 2;
 let prevDate = '';
 
-function ChatLog() {
+type Chat = {
+  id: number;
+  chatRoomId: number;
+  userId: number;
+  userName: string; //유저네임 추가
+  content: string;
+  send_at: string;
+};
+
+
+function ChatLog({ messages }: { messages: Chat[] }) {
   return (
     <section className={styles.chat_container}>
-      {ChatDummy.map((chat) => {
+      {messages.map((chat) => {
 
         const dateStr = new Date(chat.send_at).toISOString().split('T')[0];
         const showLine = prevDate !== dateStr; // 이전 날짜와 현재 날짜 비교 - 다르면 선 보이게
