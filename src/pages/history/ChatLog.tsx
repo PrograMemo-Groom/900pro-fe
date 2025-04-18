@@ -2,6 +2,7 @@
 import styles from '@/css/history/Chat.module.scss'
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import DateDivider from '@/pages/history/chatbubble/DateDivider';
+import BubbleChatbot from '@/pages/history/chatbubble/BubbleChatbot';
 
 const myId = 2;
 let prevDate = '';
@@ -13,26 +14,13 @@ function ChatLog() {
       {ChatDummy.map((chat, index) => {
         // 2000-00-00 00:00:00 기준으로 짠 코드
         const dateStr = chat.send_at.split(' ')[0];
-        // 이전 날짜 / 현재 날짜 비교 - 다르면 선 보이게
-        const showLine = prevDate !== dateStr;
+        const showLine = prevDate !== dateStr; // 이전 날짜와 현재 날짜 비교 - 다르면 선 보이게
         prevDate = dateStr;
 
         return(
             <div key={chat.id}>
                 {showLine && ( <DateDivider date={dateStr} />)}
-
-                {chat.userId === 1 ? (<div>
-                    <p className={styles.bubble_user_name}>🩵 알림봇</p>
-                    <div className={styles.bubble_container_left}>
-                        <div className={styles.bubble_chatbot}>
-                            {chat.content.split('\n').map((line, i) => (
-                                <p key={i}>{line}</p>
-                            ))}
-                            <button>문제 보러 가기</button>
-                        </div>
-                        <p className={styles.time}>{formatTime(chat.send_at)}</p>
-                    </div>
-                </div>)
+                {chat.userId === 1 ? (<BubbleChatbot content={chat.content} send_at={chat.send_at} />)
                 // 나
                 :chat.userId === myId ? (
                 <div className={styles.bubble_container_right}>
@@ -66,15 +54,6 @@ function formatTime(timeStr: string) {
     const ampm = h >= 12 ? '오후' : '오전';
     const hour = h % 12 || 12;
     return `${ampm} ${hour}:${m}`;
-}
-
-function changeDateText(dateStr: string): string {
-    const date = new Date(dateStr); // dataStr로 Date 생성
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-    return `${year}년 ${month}월 ${day}일 ${weekday}요일`;
 }
 
 export default ChatLog;
