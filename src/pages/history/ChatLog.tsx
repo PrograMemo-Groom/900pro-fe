@@ -3,6 +3,7 @@ import styles from '@/css/history/Chat.module.scss'
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import DateDivider from '@/pages/history/chatbubble/DateDivider';
 import BubbleChatbot from '@/pages/history/chatbubble/BubbleChatbot';
+import BubbleMe from '@/pages/history/chatbubble/BubbleMe';
 
 const myId = 2;
 let prevDate = '';
@@ -11,7 +12,7 @@ let prevDate = '';
 function ChatLog() {
   return (
     <section className={styles.chat_container}>
-      {ChatDummy.map((chat, index) => {
+      {ChatDummy.map((chat) => {
         // 2000-00-00 00:00:00 기준으로 짠 코드
         const dateStr = chat.send_at.split(' ')[0];
         const showLine = prevDate !== dateStr; // 이전 날짜와 현재 날짜 비교 - 다르면 선 보이게
@@ -22,12 +23,7 @@ function ChatLog() {
                 {showLine && ( <DateDivider date={dateStr} />)}
                 {chat.userId === 1 ? (<BubbleChatbot content={chat.content} send_at={chat.send_at} />)
                 // 나
-                :chat.userId === myId ? (
-                <div className={styles.bubble_container_right}>
-                    <p className={styles.time}>{formatTime(chat.send_at)}</p>
-                    <div className={styles.bubble_right}>{chat.content}</div>
-                </div>
-                )
+                :chat.userId === myId ? (<BubbleMe content={chat.content} send_at={chat.send_at} />)
                 // 다른 사람
                 :(<div>
                     <p className={styles.bubble_user_name}>{chat.userName}</p>
