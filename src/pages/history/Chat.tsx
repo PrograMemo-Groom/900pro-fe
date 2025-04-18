@@ -4,6 +4,7 @@ import styles from '@/css/history/Chat.module.scss'
 import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
+import TeamViewer from '@/pages/history/TeamViewer.tsx';
 
 type Chat = {
   id: number;
@@ -39,6 +40,7 @@ function Chat() {
         <ChatLog messages={messages} />
         <ChatInput onSubmit={handleSubmit} />
       </main>
+      <TeamViewer />
     </div>
   )
 }
