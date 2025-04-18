@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/history/chatbubble';
@@ -16,6 +17,12 @@ type Chat = {
 
 
 function ChatLog({ messages }: { messages: Chat[] }) {
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <section className={styles.chat_container}>
       {messages.map((chat) => {
@@ -35,6 +42,7 @@ function ChatLog({ messages }: { messages: Chat[] }) {
             </div>
         );
       })}
+      <div ref={bottomRef} />
     </section>
   )
 }
