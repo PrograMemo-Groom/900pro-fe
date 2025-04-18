@@ -1,31 +1,25 @@
 // import React from 'react'
 import styles from '@/css/history/Chat.module.scss'
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
+import DateDivider from '@/pages/history/chatbubble/DateDivider';
 
 const myId = 2;
 let prevDate = '';
 
+// 필요한 props 만 넘기기!!
 function ChatLog() {
   return (
     <section className={styles.chat_container}>
       {ChatDummy.map((chat, index) => {
         // 2000-00-00 00:00:00 기준으로 짠 코드
         const dateStr = chat.send_at.split(' ')[0];
-        // 년 월 일 요일로 변경 -> 밑에 함수 있음.
-        const dateText = changeDateText(dateStr);
-
         // 이전 날짜 / 현재 날짜 비교 - 다르면 선 보이게
         const showLine = prevDate !== dateStr;
         prevDate = dateStr;
 
         return(
             <div key={chat.id}>
-                {showLine && (
-                    <>
-                        <div className={styles.line}></div>
-                        <p className={styles.date}>{dateText}</p>
-                    </>
-                )}
+                {showLine && ( <DateDivider date={dateStr} />)}
 
                 {chat.userId === 1 ? (<div>
                     <p className={styles.bubble_user_name}>🩵 알림봇</p>
