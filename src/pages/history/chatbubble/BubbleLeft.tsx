@@ -1,16 +1,22 @@
-// import React from 'react'
 import styles from '@/css/history/Chat.module.scss'
+import { formatTime } from '@/pages/history/chatbubble/formatTime'
 
-export default function BubbleLeft() {
+type Props = {
+  userName: string;
+  content: string;
+  send_at: string;
+};
+
+export default function BubbleLeft({ userName, content, send_at }: Props) {
   return (
     <>
-        <p className={styles.bubble_user_name}>유리미에오</p>
+        <p className={styles.bubble_user_name}>{userName}</p>
         <div className={styles.bubble_container_left}>
-            <div className={styles.bubble_left}>
-                오늘 문제 저번에 공부한거 나온거 맞죠 ??? 👏🏻
-            </div>
-        <p className={styles.time}>오후 3:44</p>
-        </div>
+          <div className={styles.bubble_left}>
+            {content.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+          </div>
+          <p className={styles.time}>{formatTime(send_at)}</p>
+      </div>
     </>
   )
 }
