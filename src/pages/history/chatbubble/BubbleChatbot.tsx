@@ -1,3 +1,4 @@
+// 챗봇 말풍선
 // import React from 'react'
 import styles from '@/css/history/Chat.module.scss'
 

@@ -10,12 +10,20 @@ export type Chat = {
 // 챗봇 id는 1 나는 2
 export const ChatDummy: Chat[] = [
     {
+        id: 0,
+        chatRoomId: 1,
+        userId: 3,
+        userName: '유리미에오',
+        content: '그렇군요~',
+        send_at: '2025-04-09 12:44:00',
+    },
+    {
         id: 1,
         chatRoomId: 1,
         userId: 2,
         userName: '나',
         content: '와! 오늘도 많이 배워가는 것 같아요 ~',
-        send_at: '2025-04-10 15:44:00',
+        send_at: '2025-04-09 12:44:00',
     },
     {
         id: 2,
@@ -23,7 +31,7 @@ export const ChatDummy: Chat[] = [
         userId: 2,
         userName: '나',
         content: '더 레벨 높은 팀으로 이동하려면 더 열심히 해봅시다! 오늘 논의 수고하셨어요',
-        send_at: '2025-04-10 15:44:00',
+        send_at: '2025-04-09 12:46:00',
     },
     {
         id: 3,

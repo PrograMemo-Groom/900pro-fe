@@ -14,8 +14,19 @@ function ChatLog() {
         // 년 월 일 요일로 변경 -> 밑에 함수 있음.
         const dateText = changeDateText(dateStr);
 
+        // 이전 날짜 / 현재 날짜 비교 - 다르면 선 보이게
+        const showLine = prevDate !== dateStr;
+        prevDate = dateStr;
+
         return(
             <div key={chat.id}>
+                {showLine && (
+                    <>
+                        <div className={styles.line}></div>
+                        <p className={styles.date}>{dateText}</p>
+                    </>
+                )}
+
                 {chat.userId === 1 ? (<div>
                     <p className={styles.bubble_user_name}>🩵 알림봇</p>
                     <div className={styles.bubble_container_left}>
