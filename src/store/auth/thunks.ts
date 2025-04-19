@@ -17,7 +17,7 @@ export const sampleTest = createAsyncThunk<SampleResponse, void, { rejectValue: 
     try {
       const response = await sample();
       console.log("authThunk : ", response.data);
-      return response.data; // ✅ 응답 구조 맞게 수정
+      return response.data.data;
 
     } catch (e: any) {
       console.error('error', e);
@@ -25,3 +25,13 @@ export const sampleTest = createAsyncThunk<SampleResponse, void, { rejectValue: 
     }
   }
 );
+
+// ApiResponse 형식
+// {
+//   "success": true,
+//   "data": {
+//     "message": "샘플 데이터 조회 성공",
+//     "data": { "key": "value" }
+//   },
+//   "message": null
+// }
