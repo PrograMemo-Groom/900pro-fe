@@ -13,8 +13,10 @@ import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import MiniMenu from '@/pages/my-test/components/MiniMenu';
-import { Decoration, DecorationSet, ViewPlugin, ViewUpdate } from '@codemirror/view';
+import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
 import { StateField, RangeSet, StateEffect } from '@codemirror/state';
+import { FaNoteSticky } from "react-icons/fa6";
+import ReactDOM from 'react-dom/client';
 
 export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'text';
 export type EditorTheme = 'light' | 'dark';
@@ -28,6 +30,7 @@ interface Highlight {
   color: string;
   documentId: string;
   isPending?: boolean;  // 백엔드 저장 대기 상태
+  isMemo?: boolean;    // 메모 하이라이트 여부 추가
 }
 
 // 렌더링 카운트 디버깅용 변수
@@ -85,6 +88,54 @@ const getHighlightColors = (hex: string): { background: string; border?: string 
     // border: hexToRgba(hex, 0.2)      // 테두리 opacity 0.2
   };
 };
+
+// 메모 아이콘 렌더링을 위한 위젯 정의
+class MemoIconWidget extends WidgetType {
+  constructor(readonly clientId: string) { // 클릭 시 식별자를 알기 위해 clientId 받음
+    super();
+  }
+
+  toDOM() {
+    const span = document.createElement("span");
+    // 이 span은 아이콘의 *논리적* 위치를 잡습니다 (텍스트 흐름 내).
+    // 시각적 위치 조정은 내부 컨테이너에서 수행합니다.
+    span.style.position = "relative";
+    span.style.display = "inline-block"; // 필요에 따라 조정
+    span.style.width = "1px"; // 공간을 거의 차지하지 않도록
+    span.style.height = "1em"; // 라인 높이에 맞춤
+    span.style.verticalAlign = "text-bottom"; // 아이콘이 라인 아래로 너무 벗어나지 않게
+
+    // 아이콘을 담고 시각적 위치를 조정할 내부 컨테이너
+    const iconContainer = document.createElement("span");
+    iconContainer.style.position = "absolute";
+    iconContainer.style.left = "0px"; // 논리적 위치에서 오른쪽으로 0px
+    iconContainer.style.top = "6px"; // 논리적 위치에서 위로 6px (텍스트 위에 살짝 겹치도록)
+    iconContainer.style.cursor = "pointer";
+    iconContainer.title = "메모 보기/편집"; // 툴팁
+    iconContainer.dataset.clientId = this.clientId; // 데이터 속성으로 clientId 저장
+    span.appendChild(iconContainer);
+
+    // React 아이콘 렌더링
+    const root = ReactDOM.createRoot(iconContainer);
+    // 아이콘 크기 및 색상 지정
+    root.render(React.createElement(FaNoteSticky, { color: '#FFFFFF', size: '0.7em' }));
+
+    // 아이콘 클릭 이벤트 리스너 추가 (메모 내용 표시/수정 로직 연결 지점)
+    iconContainer.addEventListener('click', (event) => {
+      event.stopPropagation(); // 이벤트 버블링 방지
+      console.log('메모 아이콘 클릭됨 - clientId:', this.clientId);
+      // TODO: 여기서 clientId를 사용하여 해당 메모 데이터를 찾아 표시/수정 UI를 띄웁니다.
+      // 예: showMemoPopup(this.clientId);
+    });
+
+    return span;
+  }
+
+  // 아이콘 자체에 대한 마우스 이벤트는 무시하여 텍스트 선택 방해 안 함
+  ignoreEvent() {
+    return true;
+  }
+}
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
@@ -173,22 +224,42 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         // 새 하이라이트 효과 처리
         for (const e of tr.effects) {
           if (e.is(addHighlightEffect)) {
-            console.log('[디버깅] 하이라이트 효과 적용:', e.value.clientId, `(${e.value.from}-${e.value.to})`);
-            const { from, to, color, clientId } = e.value;
+            const { from, to, color, clientId, isMemo } = e.value;
+            console.log(`[디버깅] 하이라이트 효과 적용: ${clientId} (${from}-${to}), isMemo: ${!!isMemo}`);
 
-            // 개별 하이라이트 색상을 인라인 스타일로 적용
-            // clientId를 데코레이션의 속성으로 추가하여 나중에 식별 가능하게 함
-            const decoration = Decoration.mark({
+            // 데코레이션을 저장할 배열
+            const decorationsToAdd = [];
+
+            // 1. 배경 하이라이트 데코레이션 (항상 추가)
+            const highlightDecoration = Decoration.mark({
               class: 'cm-highlight',
               attributes: {
-                'data-client-id': clientId, // 클라이언트 ID를 데이터 속성으로 추가
-                title: '하이라이트된 텍스트',
-                style: `background-color: ${color} !important; /* border: 1px solid ${color.replace(/, [0-9.]+\)/, ', 0.2)')} !important; */`
+                'data-client-id': clientId,
+                title: isMemo ? '메모 및 하이라이트' : '하이라이트된 텍스트',
+                // 메모 여부에 따라 다른 배경색 적용 가능 (여기서는 color 통일)
+                style: `background-color: ${color} !important;`
               }
             }).range(from, to);
+            decorationsToAdd.push(highlightDecoration);
 
-            highlights = highlights.update({ add: [decoration] });
+            // 2. 메모인 경우 아이콘 위젯 추가
+            if (isMemo) {
+              const iconDecoration = Decoration.widget({
+                widget: new MemoIconWidget(clientId), // clientId 전달
+                side: 1 // 끝점(to) 오른쪽에 배치 (텍스트 방향 고려 시 중요)
+              }).range(to); // 끝 위치(`to`)에 위젯 연결
+              decorationsToAdd.push(iconDecoration);
+              console.log('[디버깅] 메모 아이콘 위젯 데코레이션 추가:', clientId);
+            }
+
+            // 생성된 데코레이션들을 업데이트 (기존 범위 삭제 후 추가 방지)
+            // 주의: 동일 위치에 데코레이션 중복 추가될 수 있으므로, 필요시 기존 데코레이션 필터링 로직 추가 고려
+            highlights = highlights.update({
+              add: decorationsToAdd,
+              // filter: (f, t, value) => value.spec.attributes?.['data-client-id'] !== clientId // 기존 동일 clientId 데코 삭제 (옵션)
+            });
           }
+          // TODO: 하이라이트/메모 삭제 로직 추가 필요 (StateEffect.define으로 삭제 효과 정의)
         }
 
         return highlights;
@@ -223,9 +294,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             // 중복 적용 방지 - 전역 적용 상태 확인
             const highlightKey = `${highlight.documentId}-${highlight.clientId}`;
             if (!appliedHighlightIdsRef.current.has(highlightKey)) {
-              console.log('[디버깅] 하이라이트 적용:', highlight.clientId, `(${highlight.from}-${highlight.to})`);
+              console.log('[디버깅] 하이라이트 적용:', highlight.clientId, `(${highlight.from}-${highlight.to}), isMemo: ${!!highlight.isMemo}`);
               view.dispatch({
-                effects: addHighlightEffect.of(highlight)
+                effects: addHighlightEffect.of({
+                  ...highlight,
+                  // 로드 시 isMemo가 없으면 false로 기본값 설정
+                  isMemo: !!highlight.isMemo
+                })
               });
               appliedHighlightIdsRef.current.add(highlightKey);
             } else {
@@ -236,12 +311,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
         console.log('[디버깅] 총 적용된 하이라이트 개수:', appliedHighlightIdsRef.current.size);
         isInitialLoadApplied = true;
-      }, 100);
+      }, 100); // 약간의 지연 후 적용
 
       return {
         update(update: ViewUpdate) {
+          // 스크롤이나 다른 뷰 업데이트 시 필요한 로직 추가 가능
           if (update.docChanged) {
             console.log('[디버깅] 문서가 변경되었습니다');
+            // TODO: 문서 변경 시 하이라이트/메모 위치 재조정 필요 (DecorationSet의 map으로 처리됨)
+          }
+          if (update.viewportChanged) {
+            // console.log('[디버깅] 뷰포트 변경됨 (스크롤 등)');
           }
         }
       };
@@ -503,13 +583,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // 하이라이트 버튼 클릭 핸들러 수정
   const handleHighlight = (color: string) => {
     console.log('하이라이트 버튼 클릭됨');
-    console.log('현재 selectedRange:', selectedRange);
-    console.log('editorRef 존재 여부:', !!editorRef.current);
-    console.log('선택된 색상:', color);
-
     if (selectedRange && editorRef.current) {
       const { from, to } = selectedRange;
-      const text = editorRef.current.state.sliceDoc(from, to);
 
       // 중복 하이라이트 확인
       const isDuplicate = highlights.some(h =>
@@ -527,46 +602,32 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       // 적용될 색상에 투명도 적용
       const colors = getHighlightColors(color);
       console.log('적용될 색상 (배경):', colors.background);
-      // console.log('적용될 색상 (테두리):', colors.border);
 
-      // 새 하이라이트 생성 (고유 clientId 부여)
+      // 새 하이라이트 생성 (isMemo: false 명시)
       const newHighlight: Highlight = {
         clientId: generateClientId(from, to),
         from,
         to,
         color: colors.background, // 투명도가 적용된 배경색 사용
         documentId,
-        isPending: true // 백엔드 저장 대기 상태 (미래 확장성)
+        isPending: true, // 백엔드 저장 대기 상태 (미래 확장성)
+        isMemo: false // 일반 하이라이트는 isMemo: false
       };
 
       console.log('새 하이라이트 추가:', newHighlight);
-      console.log('선택된 텍스트:', text);
-
-      // 하이라이트 목록에 추가
       const updatedHighlights = [...highlights, newHighlight];
-      console.log('업데이트된 하이라이트 목록:', updatedHighlights);
-
-      // 상태 업데이트 및 localStorage 저장
       setHighlights(updatedHighlights);
       saveHighlights(updatedHighlights);
 
-      // 에디터에 직접 하이라이트 효과 적용
+      // 에디터에 직접 하이라이트 효과 적용 (StateField가 처리)
       try {
         console.log('에디터에 하이라이트 효과 적용 시도');
-
-        // 중복 적용 방지 확인
         const highlightKey = `${newHighlight.documentId}-${newHighlight.clientId}`;
         if (!appliedHighlightIdsRef.current.has(highlightKey)) {
-          // 확실하게 하이라이트 강제 적용
-          const decorationEffect = addHighlightEffect.of(newHighlight);
-
-          editorRef.current.dispatch({
-            effects: decorationEffect
+          editorRef.current?.dispatch({
+            effects: addHighlightEffect.of(newHighlight)
           });
-
-          // 적용된 하이라이트 추적
           appliedHighlightIdsRef.current.add(highlightKey);
-
           console.log('하이라이트 효과 적용 성공');
         } else {
           console.log('이미 적용된 하이라이트 건너뜀:', newHighlight.clientId);
@@ -580,17 +641,65 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     setMenuPosition(null); // 메뉴 닫기
   };
 
-  // 메모 버튼 클릭 핸들러
+  // 메모 버튼 클릭 핸들러 수정
   const handleAddMemo = () => {
+    console.log('메모 추가 버튼 클릭됨');
     if (selectedRange && editorRef.current) {
-      console.log('메모 추가 범위:', selectedRange);
-      // TODO: 선택한 텍스트에 메모 추가 기능 구현
-      // 기능 구현 전 임시로 콘솔 출력만
       const { from, to } = selectedRange;
-      const text = editorRef.current.state.sliceDoc(from, to);
-      console.log('메모 추가할 텍스트:', text);
+
+      // 중복 메모/하이라이트 확인 (동일 범위)
+      const isDuplicate = highlights.some(h =>
+        h.documentId === documentId &&
+        h.from === from &&
+        h.to === to
+      );
+
+      if (isDuplicate) {
+        console.log('이미 메모 또는 하이라이트된 범위입니다');
+        setMenuPosition(null);
+        return;
+      }
+
+      // 메모용 하이라이트 배경색 (약간 더 진한 노랑 또는 주황 계열 추천)
+      const memoColorHex = '#FFDA63'; // 약간 진한 노랑/주황 HEX
+      const memoHighlightColor = hexToRgba(memoColorHex, 0.35); // 투명도 0.35
+
+      // 새 메모 하이라이트 생성 (isMemo: true)
+      const newMemoHighlight: Highlight = {
+        clientId: generateClientId(from, to),
+        from,
+        to,
+        color: memoHighlightColor, // 메모용 배경색 적용
+        documentId,
+        isPending: true, // 백엔드 저장 대기 상태
+        isMemo: true      // 메모 플래그 설정
+      };
+
+      console.log('새 메모 하이라이트 추가:', newMemoHighlight);
+      const updatedHighlights = [...highlights, newMemoHighlight];
+      setHighlights(updatedHighlights);
+      saveHighlights(updatedHighlights); // 로컬 스토리지에도 isMemo 저장됨
+
+      // 에디터에 하이라이트 및 아이콘 효과 적용 (StateField가 처리)
+      try {
+        console.log('에디터에 메모 하이라이트 및 아이콘 효과 적용 시도');
+        const highlightKey = `${newMemoHighlight.documentId}-${newMemoHighlight.clientId}`;
+        if (!appliedHighlightIdsRef.current.has(highlightKey)) {
+          editorRef.current?.dispatch({
+            effects: addHighlightEffect.of(newMemoHighlight)
+          });
+          appliedHighlightIdsRef.current.add(highlightKey);
+          console.log('메모 하이라이트 및 아이콘 효과 적용 성공');
+        } else {
+          console.log('이미 적용된 메모/하이라이트 건너뜀:', newMemoHighlight.clientId);
+        }
+      } catch (error) {
+        console.error('메모 하이라이트/아이콘 효과 적용 중 오류:', error);
+      }
+    } else {
+      console.log('메모 추가 실패: 선택된 범위 또는 에디터 참조가 없음');
     }
-    setMenuPosition(null);
+    setMenuPosition(null); // 메뉴 닫기
   };
 
   const getLanguageExtension = (lang: CodeLanguage) => {
