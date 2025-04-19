@@ -3,6 +3,7 @@ import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
 // import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
 import Chat from '@/pages/history/Chat.tsx';
+import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Login />,
+      },
+      {
+        path: '/find',
+        element: <ResetPassword />,
       },
       // {
       //   path: '/coding-test',
