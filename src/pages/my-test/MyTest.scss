@@ -59,7 +59,7 @@
 
       .team-code-content {
         width: 100%;
-        
+
         .member-navigation {
           display: flex;
           align-items: center;
@@ -117,7 +117,7 @@
           .code-preview {
             height: 400px;
             overflow: auto;
-            
+
             // CodeEditor 컴포넌트 스타일 조정
             .code-editor-wrapper, .code-editor-container {
               height: 100%;
@@ -141,4 +141,4 @@
     display: flex;
     flex-direction: column;
   }
-} 
+}
