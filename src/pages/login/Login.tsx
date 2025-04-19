@@ -57,7 +57,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             </div>
             <button type="submit">Sign in</button>
             <div className={styles.checkAuth}>
-                <p><strong>Don’t have an account?</strong> <span>Sign up</span></p>
+                <p><strong>Don’t have an account?</strong> <a href="/signup"><span>Sign up</span></a></p>
                 <a href="/find"><p>Forgot Password</p></a>
             </div>
         </form>
