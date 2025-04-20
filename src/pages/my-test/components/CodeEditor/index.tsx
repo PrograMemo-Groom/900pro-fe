@@ -16,6 +16,7 @@ import MiniMenu from '@/pages/my-test/components/MiniMenu';
 import { useHighlights } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
 import { useTextSelection } from '@/pages/my-test/components/CodeEditor/hooks/useTextSelection';
 import MemoPopup from './components/MemoPopup';
+import ReactDOM from 'react-dom/client';
 
 /**
  * 코드 에디터에서 지원하는 프로그래밍 언어 타입 정의
@@ -85,6 +86,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
   // 메모 내용 저장 상태
   const [memoContents, setMemoContents] = useState<Record<string, string>>({});
+  // 메모 팝업 루트 참조
+  const memoPopupRootRef = useRef<ReactDOM.Root | null>(null);
+  // 메모 팝업 컨테이너 참조
+  const memoPopupContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // 메모 팝업 컨테이너 스타일 상수
+  const MEMO_CONTAINER_STYLE = {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    pointerEvents: 'none',
+    zIndex: '9999',
+    overflow: 'visible'
+  };
 
   /**
    * 에디터 초기화 및 정리를 담당하는 생명주기
@@ -236,8 +251,119 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     );
   }
 
+  // 메모 저장 핸들러
+  const handleSaveMemo = (clientId: string, content: string) => {
+    setMemoContents(prev => ({
+      ...prev,
+      [clientId]: content
+    }));
+
+    // TODO: 메모 내용을 백엔드에 저장하는 로직 추가
+    console.log('메모 저장:', clientId, content);
+  };
+
+  // 메모 팝업 관리를 위한 useEffect
+  useEffect(() => {
+    console.log('[디버깅] 메모 팝업 useEffect 실행됨, activeMemo:', activeMemo ? activeMemo.clientId : 'null');
+
+    // 활성화된 메모가 있고 에디터 참조가 있는 경우
+    if (activeMemo && editorRef.current) {
+      console.log('[디버깅] 메모 팝업 렌더링 시작:', activeMemo.position);
+
+      // 이전 메모 팝업 정리 - setTimeout으로 비동기 처리
+      if (memoPopupRootRef.current) {
+        const prevRoot = memoPopupRootRef.current;
+        const prevContainer = memoPopupContainerRef.current;
+
+        // 참조 초기화 (새 참조를 할당하기 전)
+        memoPopupRootRef.current = null;
+        memoPopupContainerRef.current = null;
+
+        // 비동기적으로 이전 팝업 정리 (현재 렌더링 사이클 이후)
+        setTimeout(() => {
+          try {
+            prevRoot.unmount();
+            if (prevContainer && prevContainer.parentNode) {
+              prevContainer.parentNode.removeChild(prevContainer);
+            }
+          } catch (e) {
+            console.error('메모 팝업 정리 중 오류:', e);
+          }
+        }, 0);
+      }
+
+      // cm-scroller 요소 찾기 (실제 스크롤이 발생하는 요소)
+      const cmScroller = editorRef.current.dom.querySelector('.cm-scroller');
+      if (!cmScroller) {
+        console.error('.cm-scroller 요소를 찾을 수 없습니다.');
+        return;
+      }
+
+      // 메모 팝업 컨테이너 생성
+      const container = document.createElement('div');
+      container.className = 'memo-popup-container';
+
+      // 컨테이너 스타일 설정
+      Object.assign(container.style, MEMO_CONTAINER_STYLE);
+
+      // DOM에 추가
+      cmScroller.appendChild(container);
+
+      console.log('[디버깅] 메모 팝업 컨테이너 생성 - 스타일:', {
+        position: container.style.position,
+        zIndex: container.style.zIndex,
+        overflow: container.style.overflow,
+        parentStyle: window.getComputedStyle(cmScroller)
+      });
+
+      // 참조 저장
+      memoPopupContainerRef.current = container;
+
+      // React로 메모 팝업 렌더링
+      const root = ReactDOM.createRoot(container);
+      root.render(
+        <MemoPopup
+          position={{
+            top: activeMemo.position.top,
+            left: activeMemo.position.left
+          }}
+          clientId={activeMemo.clientId}
+          content={memoContents[activeMemo.clientId] || ''}
+          onClose={closeMemoPopup}
+          onSave={handleSaveMemo}
+        />
+      );
+
+      // 참조 저장
+      memoPopupRootRef.current = root;
+
+      // 정리 함수
+      return () => {
+        // 정리 함수도 비동기적으로 처리
+        if (memoPopupRootRef.current) {
+          const root = memoPopupRootRef.current;
+          const container = memoPopupContainerRef.current;
+
+          memoPopupRootRef.current = null;
+          memoPopupContainerRef.current = null;
+
+          setTimeout(() => {
+            try {
+              root.unmount();
+              if (container && container.parentNode) {
+                container.parentNode.removeChild(container);
+              }
+            } catch (e) {
+              console.error('메모 팝업 정리 중 오류:', e);
+            }
+          }, 0);
+        }
+      };
+    }
+  }, [activeMemo, closeMemoPopup, handleSaveMemo, memoContents]);
+
   return (
-    <div className="code-editor-wrapper" style={{ position: 'relative' }}>
+    <div className="code-editor-wrapper">
       <MiniMenu
         position={menuPosition}
         onHighlight={handleHighlight}
@@ -253,25 +379,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           readOnly={readOnly}
         />
       </div>
-
-      {/* 메모 팝업 렌더링 */}
-      {activeMemo && (
-        <MemoPopup
-          position={activeMemo.position}
-          clientId={activeMemo.clientId}
-          content={memoContents[activeMemo.clientId] || ''}
-          onClose={closeMemoPopup}
-          onSave={(clientId, content) => {
-            setMemoContents(prev => ({
-              ...prev,
-              [clientId]: content
-            }));
-
-            // TODO: 메모 내용을 백엔드에 저장하는 로직 추가
-            console.log('메모 저장:', clientId, content);
-          }}
-        />
-      )}
     </div>
   );
 };

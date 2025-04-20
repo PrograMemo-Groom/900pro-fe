@@ -26,6 +26,11 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
   // 팝업 DOM 요소 참조
   const popupRef = useRef<HTMLDivElement>(null);
 
+  // 컴포넌트 마운트 시 로그
+  useEffect(() => {
+    console.log('[디버깅] MemoPopup 컴포넌트 마운트됨:', { clientId, position });
+  }, []);
+
   // 외부 클릭 감지 이벤트 핸들러
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -50,18 +55,24 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       const popup = popupRef.current;
       const rect = popup.getBoundingClientRect();
 
-      // 화면 경계 계산
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+      // 에디터 DOM 요소 찾기
+      const editorContainer = popup.closest('.code-editor-container') || popup.parentElement;
+      if (!editorContainer) return;
 
-      // 화면 오른쪽 경계를 넘어가는지 확인
-      if (position.left + rect.width > viewportWidth - 20) {
-        popup.style.left = `${viewportWidth - rect.width - 20}px`;
+      const editorRect = editorContainer.getBoundingClientRect();
+
+      // 에디터 내부 경계 계산
+      const editorWidth = editorRect.width;
+      const editorHeight = editorRect.height;
+
+      // 에디터 오른쪽 경계를 넘어가는지 확인
+      if (position.left + rect.width > editorWidth - 20) {
+        popup.style.left = `${editorWidth - rect.width - 20}px`;
       }
 
-      // 화면 아래쪽 경계를 넘어가는지 확인
-      if (position.top + rect.height > viewportHeight - 20) {
-        popup.style.top = `${viewportHeight - rect.height - 20}px`;
+      // 에디터 아래쪽 경계를 넘어가는지 확인
+      if (position.top + rect.height > editorHeight - 20) {
+        popup.style.top = `${editorHeight - rect.height - 20}px`;
       }
     }
   }, [position]);
@@ -91,25 +102,31 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       position: 'absolute' as const,
       top: `${position.top}px`,
       left: `${position.left}px`,
-      zIndex: 1000,
+      zIndex: 9999,
       width: '220px',
-      boxShadow: '0 3px 10px rgba(0, 0, 0, 0.2)',
+      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
       fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       fontSize: '14px',
-      transition: 'transform 0.2s ease-in-out'
+      transition: 'transform 0.2s ease-in-out',
+      pointerEvents: 'auto' as const,
+      transformOrigin: 'top left',
+      backfaceVisibility: 'hidden' as const,
+      willChange: 'transform' as const
     },
     memoPopupHover: {
       transform: 'scale(1.02)'
     },
     memoPopupContent: {
       backgroundColor: '#fff7a5',
-      borderRadius: '2px',
+      borderRadius: '4px',
       overflow: 'hidden' as const,
       display: 'flex' as const,
       flexDirection: 'column' as const,
       minHeight: '120px',
       maxHeight: '300px',
-      border: '1px solid #e6e0a0'
+      border: '1px solid #e6e0a0',
+      WebkitBackfaceVisibility: 'hidden' as const,
+      WebkitTransform: 'translateZ(0)' as const
     },
     memoPopupHeader: {
       display: 'flex' as const,
