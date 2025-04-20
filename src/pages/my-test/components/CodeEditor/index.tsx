@@ -90,6 +90,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const memoPopupRootRef = useRef<ReactDOM.Root | null>(null);
   // 메모 팝업 컨테이너 참조
   const memoPopupContainerRef = useRef<HTMLDivElement | null>(null);
+  // 메모 팝업이 초기화되었는지 추적
+  const isMemoPopupInitializedRef = useRef<boolean>(false);
 
   // 메모 팝업 컨테이너 스타일 상수
   const MEMO_CONTAINER_STYLE = {
@@ -237,6 +239,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     })
   );
 
+  // 미니메뉴가 나타날 때 메모 팝업 닫기
+  useEffect(() => {
+    if (menuPosition && activeMemo) {
+      closeMemoPopup();
+    }
+  }, [menuPosition, activeMemo, closeMemoPopup]);
+
   // Yjs 협업 기능 추가
   if (!readOnly && ydocRef.current) {
     const ytext = ydocRef.current.getText('codemirror');
@@ -262,66 +271,83 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     console.log('메모 저장:', clientId, content);
   };
 
-  // 메모 팝업 관리를 위한 useEffect
+  // 메모 팝업 초기화를 위한 useEffect
   useEffect(() => {
-    console.log('[디버깅] 메모 팝업 useEffect 실행됨, activeMemo:', activeMemo ? activeMemo.clientId : 'null');
+    // 이미 초기화되었으면 건너뜀
+    if (isMemoPopupInitializedRef.current) return;
 
-    // 활성화된 메모가 있고 에디터 참조가 있는 경우
-    if (activeMemo && editorRef.current) {
-      console.log('[디버깅] 메모 팝업 렌더링 시작:', activeMemo.position);
+    // 에디터가 준비되었는지 확인
+    if (!editorRef.current) return;
 
-      // 이전 메모 팝업 정리 - setTimeout으로 비동기 처리
+    console.log('[디버깅] 메모 팝업 컨테이너 초기화');
+
+    // cm-scroller 요소 찾기 (실제 스크롤이 발생하는 요소)
+    const cmScroller = editorRef.current.dom.querySelector('.cm-scroller');
+    if (!cmScroller) {
+      console.error('.cm-scroller 요소를 찾을 수 없습니다.');
+      return;
+    }
+
+    // 메모 팝업 컨테이너 생성 (한 번만)
+    const container = document.createElement('div');
+    container.className = 'memo-popup-container';
+    container.style.display = 'none'; // 초기에는 숨김 상태
+
+    // 컨테이너 스타일 설정
+    Object.assign(container.style, MEMO_CONTAINER_STYLE);
+
+    // DOM에 추가
+    cmScroller.appendChild(container);
+    memoPopupContainerRef.current = container;
+
+    // React 루트 생성 (한 번만)
+    const root = ReactDOM.createRoot(container);
+    memoPopupRootRef.current = root;
+
+    // 초기화 완료 표시
+    isMemoPopupInitializedRef.current = true;
+
+    console.log('[디버깅] 메모 팝업 컨테이너 및 루트 초기화 완료');
+
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      console.log('[디버깅] 메모 팝업 정리');
       if (memoPopupRootRef.current) {
-        const prevRoot = memoPopupRootRef.current;
-        const prevContainer = memoPopupContainerRef.current;
+        try {
+          memoPopupRootRef.current.unmount();
+          memoPopupRootRef.current = null;
+        } catch (e) {
+          console.error('메모 팝업 루트 정리 중 오류:', e);
+        }
+      }
 
-        // 참조 초기화 (새 참조를 할당하기 전)
-        memoPopupRootRef.current = null;
+      if (memoPopupContainerRef.current && memoPopupContainerRef.current.parentNode) {
+        memoPopupContainerRef.current.parentNode.removeChild(memoPopupContainerRef.current);
         memoPopupContainerRef.current = null;
-
-        // 비동기적으로 이전 팝업 정리 (현재 렌더링 사이클 이후)
-        setTimeout(() => {
-          try {
-            prevRoot.unmount();
-            if (prevContainer && prevContainer.parentNode) {
-              prevContainer.parentNode.removeChild(prevContainer);
-            }
-          } catch (e) {
-            console.error('메모 팝업 정리 중 오류:', e);
-          }
-        }, 0);
       }
 
-      // cm-scroller 요소 찾기 (실제 스크롤이 발생하는 요소)
-      const cmScroller = editorRef.current.dom.querySelector('.cm-scroller');
-      if (!cmScroller) {
-        console.error('.cm-scroller 요소를 찾을 수 없습니다.');
-        return;
-      }
+      isMemoPopupInitializedRef.current = false;
+    };
+  }, [editorRef.current]); // editorRef.current가 설정되면 실행
 
-      // 메모 팝업 컨테이너 생성
-      const container = document.createElement('div');
-      container.className = 'memo-popup-container';
+  // 메모 팝업 내용 업데이트를 위한 useEffect
+  useEffect(() => {
+    console.log('[디버깅] 메모 팝업 내용 업데이트 useEffect 실행됨, activeMemo:', activeMemo ? activeMemo.clientId : 'null');
 
-      // 컨테이너 스타일 설정
-      Object.assign(container.style, MEMO_CONTAINER_STYLE);
+    // 컨테이너와 루트가 초기화되지 않았으면 무시
+    if (!memoPopupContainerRef.current || !memoPopupRootRef.current || !isMemoPopupInitializedRef.current) {
+      return;
+    }
 
-      // DOM에 추가
-      cmScroller.appendChild(container);
+    // 활성화된 메모가 있는 경우
+    if (activeMemo) {
+      console.log('[디버깅] 메모 팝업 표시:', activeMemo.position);
 
-      console.log('[디버깅] 메모 팝업 컨테이너 생성 - 스타일:', {
-        position: container.style.position,
-        zIndex: container.style.zIndex,
-        overflow: container.style.overflow,
-        parentStyle: window.getComputedStyle(cmScroller)
-      });
+      // 컨테이너를 표시하고 내용 렌더링
+      memoPopupContainerRef.current.style.display = 'block';
 
-      // 참조 저장
-      memoPopupContainerRef.current = container;
-
-      // React로 메모 팝업 렌더링
-      const root = ReactDOM.createRoot(container);
-      root.render(
+      // 내용 업데이트
+      memoPopupRootRef.current.render(
         <MemoPopup
           position={{
             top: activeMemo.position.top,
@@ -334,34 +360,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           onSave={handleSaveMemo}
         />
       );
-
-      // 참조 저장
-      memoPopupRootRef.current = root;
-
-      // 정리 함수
-      return () => {
-        // 정리 함수도 비동기적으로 처리
-        if (memoPopupRootRef.current) {
-          const root = memoPopupRootRef.current;
-          const container = memoPopupContainerRef.current;
-
-          memoPopupRootRef.current = null;
-          memoPopupContainerRef.current = null;
-
-          setTimeout(() => {
-            try {
-              root.unmount();
-              if (container && container.parentNode) {
-                container.parentNode.removeChild(container);
-              }
-            } catch (e) {
-              console.error('메모 팝업 정리 중 오류:', e);
-            }
-          }, 0);
-        }
-      };
+    } else {
+      // 활성화된 메모가 없으면 컨테이너만 숨김
+      if (memoPopupContainerRef.current) {
+        console.log('[디버깅] 메모 팝업 숨김');
+        memoPopupContainerRef.current.style.display = 'none';
+      }
     }
-  }, [activeMemo, closeMemoPopup, handleSaveMemo, memoContents]);
+  }, [activeMemo, closeMemoPopup, memoContents, handleSaveMemo]);
 
   return (
     <div className="code-editor-wrapper">

@@ -116,72 +116,66 @@ const createMemoIconWidget = (
       const iconContainer = document.createElement("span");
       iconContainer.style.position = "absolute";
       iconContainer.style.left = "0px";
-      iconContainer.style.top = "4px";
+      iconContainer.style.top = "3px";
       iconContainer.style.cursor = "pointer";
       iconContainer.title = "메모 보기/편집";
       iconContainer.dataset.clientId = clientId;
+
+      // 아이콘 스타일 최적화
+      iconContainer.style.display = "flex";
+      iconContainer.style.alignItems = "center";
+      iconContainer.style.justifyContent = "center";
+      iconContainer.style.width = "15px";
+      iconContainer.style.height = "15px";
+
+      // 사용자 선택 비활성화
+      iconContainer.style.userSelect = "none";
+      iconContainer.style.webkitUserSelect = "none";
+
       span.appendChild(iconContainer);
 
       const root = ReactDOM.createRoot(iconContainer);
-      root.render(React.createElement(FaNoteSticky, { color: color, size: '0.7em' }));
+      root.render(React.createElement(FaNoteSticky, { color: color, size: '0.8em' }));
 
+      // 클릭 이벤트 최적화 - 위치 계산 함수 분리
       iconContainer.addEventListener('click', (event) => {
         event.stopPropagation();
         console.log('메모 아이콘 클릭됨 - clientId:', clientId);
 
-        // 메모 포지션 계산
-        const coords = editorView.coordsAtPos(highlight.to);
-        if (coords) {
-          console.log('[디버깅] 아이콘 위치 좌표:', coords);
-
-          // cm-scroller 요소 찾기
-          const cmScroller = editorView.dom.querySelector('.cm-scroller');
-          if (!cmScroller) {
-            console.warn('.cm-scroller 요소를 찾을 수 없습니다.');
-            return;
-          }
-
-          // cm-scroller 기준 상대 위치 계산
-          const scrollerRect = cmScroller.getBoundingClientRect();
-
-          // 스크롤 위치 고려한 상대 위치 계산
-          const newTop = coords.top - scrollerRect.top + cmScroller.scrollTop + 20;
-          const newLeft = coords.left - scrollerRect.left + cmScroller.scrollLeft + 10;
-
-          console.log(`[디버깅] cm-scroller 기준 좌표 계산:`, {
-            newTop,
-            newLeft,
-            scrollerRect,
-            scrollPosition: {
-              top: cmScroller.scrollTop,
-              left: cmScroller.scrollLeft
-            },
-            computedStyle: {
-              position: window.getComputedStyle(cmScroller).position,
-              zIndex: window.getComputedStyle(cmScroller).zIndex,
-              overflow: window.getComputedStyle(cmScroller).overflow
-            }
-          });
-
-          // 팝업 상태 설정 대신 토글 함수 호출
-          // 새로운 상태 객체 생성
+        // 메모 위치 계산 함수 호출
+        const position = calculateMemoPosition(highlight.to, editorView);
+        if (position) {
+          // 팝업 상태 설정
           const newState: ActiveMemoState = {
             clientId,
             highlight,
-            position: { top: newTop, left: newLeft }
+            position
           };
-          toggleMemoPopup(newState); // toggleMemoPopup 호출
-
+          toggleMemoPopup(newState);
         } else {
           console.warn(`[경고] 메모 아이콘 위치 좌표 계산 실패: ${clientId}`);
-          // 에러 처리: 에디터 중앙 근처에 표시
-          // 실패 시에도 토글 함수 호출
+          // 실패 시에도 토글 함수 호출 - 기본 위치 사용
           const newState: ActiveMemoState = {
             clientId,
             highlight,
             position: { top: 100, left: 100 } // 실패 시 기본 위치
           };
-          toggleMemoPopup(newState); // toggleMemoPopup 호출
+          toggleMemoPopup(newState);
+        }
+      });
+
+      // // 더블클릭 이벤트 처리로 텍스트 선택 방지
+      // iconContainer.addEventListener('dblclick', (event) => {
+      //   event.preventDefault();
+      //   event.stopPropagation();
+      //   console.log('메모 아이콘 더블클릭 방지 처리 - clientId:', clientId);
+      // });
+
+      // 마우스다운 이벤트에서도 선택 방지
+      iconContainer.addEventListener('mousedown', (event) => {
+        // 중요: 왼쪽 버튼 클릭만 처리 (오른쪽 클릭은 컨텍스트 메뉴 등에 영향 주지 않도록)
+        if (event.button === 0) {
+          event.stopPropagation();
         }
       });
 
@@ -189,8 +183,42 @@ const createMemoIconWidget = (
     }
 
     ignoreEvent() {
-      return false; // 클릭 이벤트를 받기 위해 false 반환
+      // 클릭 이벤트를 받기 위해 false 반환하지만
+      // mousedown 이벤트는 위에서 stopPropagation으로 처리
+      return false;
     }
+  }
+}
+
+/**
+ * 메모 팝업 위치 계산 함수 - 성능 개선을 위해 분리
+ */
+const calculateMemoPosition = (pos: number, editorView: EditorView): { top: number; left: number } | null => {
+  try {
+    // 메모 포지션 계산
+    const coords = editorView.coordsAtPos(pos);
+    if (!coords) {
+      return null;
+    }
+
+    // cm-scroller 요소 찾기
+    const cmScroller = editorView.dom.querySelector('.cm-scroller');
+    if (!cmScroller) {
+      console.warn('.cm-scroller 요소를 찾을 수 없습니다.');
+      return null;
+    }
+
+    // cm-scroller 기준 상대 위치 계산
+    const scrollerRect = cmScroller.getBoundingClientRect();
+
+    // 스크롤 위치 고려한 상대 위치 계산
+    const newTop = coords.top - scrollerRect.top + cmScroller.scrollTop + 20;
+    const newLeft = coords.left - scrollerRect.left + cmScroller.scrollLeft + 10;
+
+    return { top: newTop, left: newLeft };
+  } catch (e) {
+    console.error('메모 위치 계산 중 오류:', e);
+    return null;
   }
 }
 
@@ -374,35 +402,20 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
             const currentHighlight = activeMemo.highlight;
             if (currentHighlight) {
               try {
-                // 하이라이트 끝 지점의 현재 좌표 다시 계산
-                const coords = view.coordsAtPos(currentHighlight.to);
-                if (coords) {
-                  // cm-scroller 요소 찾기
-                  const cmScroller = view.dom.querySelector('.cm-scroller');
-                  if (!cmScroller) {
-                    console.warn('.cm-scroller 요소를 찾을 수 없습니다.');
-                    return;
-                  }
-
-                  // cm-scroller 기준 상대 위치 계산
-                  const scrollerRect = cmScroller.getBoundingClientRect();
-
-                  // 스크롤 위치 고려한 상대 위치 계산
-                  const newTop = coords.top - scrollerRect.top + cmScroller.scrollTop + 20;
-                  const newLeft = coords.left - scrollerRect.left + cmScroller.scrollLeft + 10;
-
+                // 새 위치 계산 함수 사용
+                const newPosition = calculateMemoPosition(currentHighlight.to, view);
+                if (newPosition) {
                   // 위치가 실제로 변경되었는지 확인 후 업데이트 (불필요한 리렌더링 방지)
-                  if (Math.abs(newTop - activeMemo.position.top) > 3 ||
-                      Math.abs(newLeft - activeMemo.position.left) > 3) {
+                  if (Math.abs(newPosition.top - activeMemo.position.top) > 3 ||
+                      Math.abs(newPosition.left - activeMemo.position.left) > 3) {
                     console.log(`[디버깅] 메모 팝업 위치 업데이트 (스크롤): ${activeMemo.clientId}`, {
-                      top: newTop,
-                      left: newLeft,
-                      scrollTop: cmScroller.scrollTop
+                      top: newPosition.top,
+                      left: newPosition.left
                     });
 
                     setActiveMemo(prev => prev ? {
                       ...prev,
-                      position: { top: newTop, left: newLeft }
+                      position: newPosition
                     } : null);
                   }
                 } else {
