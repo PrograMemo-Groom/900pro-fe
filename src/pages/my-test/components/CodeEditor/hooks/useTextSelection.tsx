@@ -1,16 +1,24 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { EditorView } from '@codemirror/view';
 
+/**
+ * useTextSelection 훅의 속성 인터페이스
+ */
 export interface UseTextSelectionProps {
   editorRef: React.MutableRefObject<EditorView | null>;
 }
 
+/**
+ * 텍스트 선택 처리를 위한 커스텀 훅
+ */
 export function useTextSelection({ editorRef }: UseTextSelectionProps) {
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
   const [selectedRange, setSelectedRange] = useState<{ from: number; to: number } | null>(null);
   const isDragging = useRef(false);
 
-  // 현재 선택 영역에 기반하여 메뉴 위치를 결정하는 함수
+  /**
+   * 현재 선택 영역에 기반하여 메뉴 위치를 결정하는 함수
+   */
   const showMenuBasedOnSelection = useCallback(() => {
     const view = editorRef.current;
     if (!view) return;
@@ -44,7 +52,9 @@ export function useTextSelection({ editorRef }: UseTextSelectionProps) {
     }
   }, [editorRef]);
 
-  // 전역 mouseup 이벤트 리스너 설정
+  /**
+   * 마우스 드래그 완료 시 메뉴 표시를 위한 전역 이벤트 리스너
+   */
   useEffect(() => {
     const handleGlobalMouseUp = () => {
       if (isDragging.current) {
@@ -64,7 +74,9 @@ export function useTextSelection({ editorRef }: UseTextSelectionProps) {
     };
   }, [showMenuBasedOnSelection]);
 
-  // 문서 클릭 시 메뉴 닫기 이벤트 핸들러
+  /**
+   * 문서 클릭 시 메뉴 닫기 이벤트 처리
+   */
   useEffect(() => {
     const handleClickOutside = () => {
       setMenuPosition(null);
@@ -76,11 +88,13 @@ export function useTextSelection({ editorRef }: UseTextSelectionProps) {
     };
   }, []);
 
+  /**
+   * 마우스 드래그 시작 감지 핸들러
+   */
   const handleMouseDown = () => {
     isDragging.current = true;
   };
 
-  // 에디터 이벤트 핸들러
   const editorEventHandlers = {
     mousedown: handleMouseDown
   };

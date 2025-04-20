@@ -5,19 +5,83 @@ import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, WidgetType } from '@
 import { FaNoteSticky } from "react-icons/fa6";
 import ReactDOM from 'react-dom/client';
 
-// 하이라이트 정보를 저장할 인터페이스 정의
+/**
+ * 하이라이트 정보를 저장할 인터페이스
+ */
 export interface Highlight {
   clientId: string;     // 프론트엔드에서 생성한 임시 ID
   id?: string;          // 백엔드에서 부여한 영구 ID (없으면 미저장 상태)
-  from: number;
-  to: number;
-  color: string;
-  documentId: string;
+  from: number;         // 시작 위치
+  to: number;           // 끝 위치
+  color: string;        // 하이라이트 색상
+  documentId: string;   // 문서 ID
   isPending?: boolean;  // 백엔드 저장 대기 상태
-  isMemo?: boolean;    // 메모 하이라이트 여부 추가
+  isMemo?: boolean;     // 메모 하이라이트 여부
 }
 
-// 메모 아이콘 위젯 정의
+/**
+ * 하이라이트 필드 - CodeMirror 상태에 하이라이트 정보를 저장
+ */
+const highlightField = StateField.define<DecorationSet>({
+  create() {
+    console.log('[디버깅] 하이라이트 필드 생성');
+    return RangeSet.of([]);
+  },
+  update(highlights, tr) {
+    // 문서 변경에 맞게 하이라이트 위치 업데이트
+    highlights = highlights.map(tr.changes);
+
+    // 효과 처리
+    for (const e of tr.effects) {
+      // 모든 하이라이트 제거 효과
+      if (e.is(clearHighlightsEffect)) {
+        console.log('[디버깅] 모든 하이라이트 제거 효과 적용');
+        return RangeSet.of([]);
+      }
+
+      // 하이라이트 추가 효과
+      if (e.is(addHighlightEffect)) {
+        const { from, to, color, clientId, isMemo } = e.value;
+        console.log(`[디버깅] 하이라이트 효과 적용: ${clientId} (${from}-${to}), isMemo: ${!!isMemo}`);
+
+        // 데코레이션을 저장할 배열
+        const decorationsToAdd = [];
+
+        // 배경 하이라이트 데코레이션
+        const highlightDecoration = Decoration.mark({
+          class: 'cm-highlight',
+          attributes: {
+            'data-client-id': clientId,
+            title: isMemo ? '메모 및 하이라이트' : '하이라이트된 텍스트',
+            style: `background-color: ${color} !important;`
+          }
+        }).range(from, to);
+        decorationsToAdd.push(highlightDecoration);
+
+        // 메모인 경우 아이콘 위젯 추가
+        if (isMemo) {
+          const iconDecoration = Decoration.widget({
+            widget: new MemoIconWidget(clientId),
+            side: 1
+          }).range(to);
+          decorationsToAdd.push(iconDecoration);
+          console.log('[디버깅] 메모 아이콘 위젯 데코레이션 추가:', clientId);
+        }
+
+        highlights = highlights.update({
+          add: decorationsToAdd,
+        });
+      }
+    }
+
+    return highlights;
+  },
+  provide: field => EditorView.decorations.from(field)
+});
+
+/**
+ * 메모 아이콘 위젯 - 하이라이트 옆에 메모 아이콘 표시
+ */
 class MemoIconWidget extends WidgetType {
   constructor(readonly clientId: string) {
     super();
@@ -57,7 +121,9 @@ class MemoIconWidget extends WidgetType {
   }
 }
 
-// HEX 색상을 RGBA로 변환하는 유틸리티 함수
+/**
+ * HEX 색상을 RGBA로 변환하는 유틸리티 함수
+ */
 export const hexToRgba = (hex: string, opacity: number = 0.2): string => {
   if (!hex || typeof hex !== 'string' || !hex.startsWith('#')) {
     console.warn('유효하지 않은 HEX 색상:', hex);
@@ -80,7 +146,9 @@ export const hexToRgba = (hex: string, opacity: number = 0.2): string => {
   }
 };
 
-// opacity를 적용하는 함수
+/**
+ * 하이라이트 색상 생성 함수
+ */
 export const getHighlightColors = (hex: string): { background: string; border?: string } => {
   return {
     background: hexToRgba(hex, 0.2),
@@ -89,6 +157,7 @@ export const getHighlightColors = (hex: string): { background: string; border?: 
 
 // 하이라이트 효과 정의
 export const addHighlightEffect = StateEffect.define<Highlight>();
+export const clearHighlightsEffect = StateEffect.define<null>();
 
 // 하이라이트 테마 정의
 export const highlightTheme = EditorView.baseTheme({
@@ -105,166 +174,165 @@ export interface UseHighlightsProps {
   editorRef: React.MutableRefObject<EditorView | null>;
 }
 
+/**
+ * 하이라이트 기능을 관리하는 커스텀 훅
+ */
 export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const appliedHighlightIdsRef = useRef(new Set<string>());
+  const previousDocumentIdRef = useRef<string | null>(null);
 
-  // 하이라이트 저장 및 로드 함수
-  const saveHighlights = (highlightsToSave: Highlight[]) => {
-    console.log('[디버깅] 하이라이트 정보 저장:', highlightsToSave.length);
-    localStorage.setItem(`highlights-${documentId}`, JSON.stringify(highlightsToSave));
+  /**
+   * 하이라이트 추적 키 생성 함수
+   */
+  const createHighlightKey = (highlight: Highlight): string => {
+    return `${highlight.documentId}-${highlight.clientId}`;
   };
 
-  // 하이라이트를 위한 클라이언트 ID 생성 함수
+  /**
+   * 클라이언트 ID 생성 함수
+   */
   const generateClientId = (from: number, to: number): string => {
     return `${documentId}-${from}-${to}-${Date.now()}`;
   };
 
+  /**
+   * 하이라이트 데이터 저장 함수
+   */
+  const saveHighlights = (highlightsToSave: Highlight[]) => {
+    console.log('[디버깅] 하이라이트 정보 저장:', highlightsToSave.length);
+    try {
+      localStorage.setItem(`highlights-${documentId}`, JSON.stringify(highlightsToSave));
+    } catch (error) {
+      console.error('[오류] 하이라이트 저장 중 오류 발생:', error);
+    }
+  };
+
+  /**
+   * 하이라이트 데이터 로드 함수
+   */
   const loadHighlights = (): Highlight[] => {
     console.log(`[디버깅] loadHighlights 함수 호출 - documentId: ${documentId}`);
-    const savedHighlights = localStorage.getItem(`highlights-${documentId}`);
-    console.log(`[디버깅] 로컬스토리지에서 불러온 하이라이트 데이터 존재 여부:`, !!savedHighlights);
-    const parsedHighlights = savedHighlights ? JSON.parse(savedHighlights) : [];
-    console.log(`[디버깅] 파싱된 하이라이트 개수:`, parsedHighlights.length);
 
-    // 기존 하이라이트에 clientId가 없는 경우 추가
-    const updatedHighlights = parsedHighlights.map((highlight: Highlight) => {
-      if (!highlight.clientId) {
-        return {
-          ...highlight,
-          clientId: generateClientId(highlight.from, highlight.to),
-          isPending: false
-        };
+    try {
+      const savedHighlights = localStorage.getItem(`highlights-${documentId}`);
+      console.log(`[디버깅] 로컬스토리지에서 불러온 하이라이트 데이터 존재 여부:`, !!savedHighlights);
+
+      if (!savedHighlights) return [];
+
+      const parsedHighlights = JSON.parse(savedHighlights);
+      console.log(`[디버깅] 파싱된 하이라이트 개수:`, parsedHighlights.length);
+
+      // 기존 하이라이트에 clientId가 없는 경우 추가
+      const updatedHighlights = parsedHighlights.map((highlight: Highlight) => {
+        if (!highlight.clientId) {
+          return {
+            ...highlight,
+            clientId: generateClientId(highlight.from, highlight.to),
+            isPending: false
+          };
+        }
+        return highlight;
+      });
+
+      console.log('[디버깅] 하이라이트 정보 로드 완료:', updatedHighlights.length);
+      return updatedHighlights;
+    } catch (error) {
+      console.error('[오류] 하이라이트 로드 중 오류:', error);
+      return [];
+    }
+  };
+
+  /**
+   * 하이라이트 변경 감지 플러그인
+   */
+  const highlightPlugin = ViewPlugin.define(_view => {
+    console.log('[디버깅] 하이라이트 플러그인 초기화');
+
+    return {
+      update(update: ViewUpdate) {
+        if (update.docChanged) {
+          console.log('[디버깅] 문서가 변경되었습니다');
+        }
       }
-      return highlight;
-    });
+    };
+  });
 
-    console.log('[디버깅] 하이라이트 정보 로드 완료:', updatedHighlights.length);
-    return updatedHighlights;
-  };
-
-  // 하이라이트 데코레이션 확장 생성
-  const createHighlightExtension = () => {
-    // 하이라이트 상태 필드 정의
-    const highlightField = StateField.define<DecorationSet>({
-      create() {
-        console.log('[디버깅] 하이라이트 필드 생성');
-        return RangeSet.of([]);
-      },
-      update(highlights, tr) {
-        // 문서 변경에 맞게 하이라이트 위치 업데이트
-        highlights = highlights.map(tr.changes);
-
-        // 새 하이라이트 효과 처리
-        for (const e of tr.effects) {
-          if (e.is(addHighlightEffect)) {
-            const { from, to, color, clientId, isMemo } = e.value;
-            console.log(`[디버깅] 하이라이트 효과 적용: ${clientId} (${from}-${to}), isMemo: ${!!isMemo}`);
-
-            // 데코레이션을 저장할 배열
-            const decorationsToAdd = [];
-
-            // 배경 하이라이트 데코레이션
-            const highlightDecoration = Decoration.mark({
-              class: 'cm-highlight',
-              attributes: {
-                'data-client-id': clientId,
-                title: isMemo ? '메모 및 하이라이트' : '하이라이트된 텍스트',
-                style: `background-color: ${color} !important;`
-              }
-            }).range(from, to);
-            decorationsToAdd.push(highlightDecoration);
-
-            // 메모인 경우 아이콘 위젯 추가
-            if (isMemo) {
-              const iconDecoration = Decoration.widget({
-                widget: new MemoIconWidget(clientId),
-                side: 1
-              }).range(to);
-              decorationsToAdd.push(iconDecoration);
-              console.log('[디버깅] 메모 아이콘 위젯 데코레이션 추가:', clientId);
-            }
-
-            highlights = highlights.update({
-              add: decorationsToAdd,
-            });
-          }
-        }
-
-        return highlights;
-      },
-      provide: field => EditorView.decorations.from(field)
-    });
-
-    // 저장된 하이라이트를 로드하여 적용하는 플러그인
-    const highlightPlugin = ViewPlugin.define(view => {
-      console.log('[디버깅] 하이라이트 플러그인 초기화');
-      const loadedHighlights = loadHighlights();
-      console.log('[디버깅] 뷰 플러그인에서 하이라이트 로드:', loadedHighlights.length);
-
-      const initTime = Date.now();
-      console.log(`[디버깅] 하이라이트 플러그인 초기화 시간: ${initTime}`);
-
-      let isInitialLoadApplied = false;
-
-      setTimeout(() => {
-        if (isInitialLoadApplied) {
-          console.log('[디버깅] 이미 초기 하이라이트가 적용되었습니다.');
-          return;
-        }
-
-        console.log('[디버깅] 하이라이트 적용 타이머 실행');
-
-        loadedHighlights.forEach(highlight => {
-          if (highlight.documentId === documentId) {
-            const highlightKey = `${highlight.documentId}-${highlight.clientId}`;
-            if (!appliedHighlightIdsRef.current.has(highlightKey)) {
-              console.log('[디버깅] 하이라이트 적용:', highlight.clientId, `(${highlight.from}-${highlight.to}), isMemo: ${!!highlight.isMemo}`);
-              view.dispatch({
-                effects: addHighlightEffect.of({
-                  ...highlight,
-                  isMemo: !!highlight.isMemo
-                })
-              });
-              appliedHighlightIdsRef.current.add(highlightKey);
-            } else {
-              console.log('[디버깅] 중복 하이라이트 적용 방지:', highlight.clientId);
-            }
-          }
-        });
-
-        console.log('[디버깅] 총 적용된 하이라이트 개수:', appliedHighlightIdsRef.current.size);
-        isInitialLoadApplied = true;
-      }, 100);
-
-      return {
-        update(update: ViewUpdate) {
-          if (update.docChanged) {
-            console.log('[디버깅] 문서가 변경되었습니다');
-          }
-        }
-      };
-    });
-
-    return [highlightField, highlightPlugin];
-  };
-
-  // 하이라이트 확장 생성 (useMemo 사용)
+  /**
+   * CodeMirror 확장 생성
+   */
   const highlightExtensions = useMemo(() => {
     console.log('[디버깅] 하이라이트 확장 생성 (useMemo)');
-    return createHighlightExtension();
-  }, []);
-
-  // documentId 변경 시 하이라이트 로드
-  useEffect(() => {
-    console.log(`[디버깅] (New) documentId 변경 감지: ${documentId}. 하이라이트 로드 및 상태 초기화`);
-    appliedHighlightIdsRef.current.clear();
-    const loadedHighlights = loadHighlights();
-    console.log('[디버깅] (New) 로드된 하이라이트 개수:', loadedHighlights.length);
-    setHighlights(loadedHighlights);
+    return [highlightField, highlightPlugin, highlightTheme];
   }, [documentId]);
 
-  // 하이라이트 추가 함수
+  /**
+   * 문서 변경 시 하이라이트 로드 및 초기화
+   */
+  useEffect(() => {
+    console.log(`[디버깅] documentId 변경 감지: ${documentId}`);
+
+    if (previousDocumentIdRef.current !== documentId) {
+      console.log(`[디버깅] 이전 문서(${previousDocumentIdRef.current})와 다른 문서(${documentId})로 변경됨`);
+
+      // 에디터가 존재하면 이전 하이라이트 제거
+      if (editorRef.current) {
+        console.log('[디버깅] 이전 문서 하이라이트 제거 효과 디스패치');
+        editorRef.current.dispatch({
+          effects: clearHighlightsEffect.of(null)
+        });
+      }
+
+      appliedHighlightIdsRef.current.clear();
+      const loadedHighlights = loadHighlights();
+      setHighlights(loadedHighlights);
+
+      previousDocumentIdRef.current = documentId;
+    }
+  }, [documentId]);
+
+  /**
+   * 하이라이트 상태 변경 시 CodeMirror에 적용
+   */
+  useEffect(() => {
+    const view = editorRef.current;
+    if (!view) return;
+
+    console.log('[디버깅] highlights 상태 변경 감지:', highlights.length);
+
+    // 현재 문서와 관련된 하이라이트만 필터링
+    const relevantHighlights = highlights.filter(h => h.documentId === documentId);
+    if (relevantHighlights.length === 0) return;
+
+    // 새로 적용할 하이라이트 효과 모음
+    const effects: StateEffect<any>[] = [];
+
+    // 각 하이라이트에 대해 적용 여부 체크 후 효과 추가
+    relevantHighlights.forEach(highlight => {
+      const highlightKey = createHighlightKey(highlight);
+
+      if (!appliedHighlightIdsRef.current.has(highlightKey)) {
+        console.log('[디버깅] 하이라이트 효과 추가:', highlight.clientId);
+
+        effects.push(addHighlightEffect.of({
+          ...highlight,
+          isMemo: !!highlight.isMemo
+        }));
+
+        appliedHighlightIdsRef.current.add(highlightKey);
+      }
+    });
+
+    // 효과가 있는 경우만 디스패치
+    if (effects.length > 0) {
+      console.log(`[디버깅] ${effects.length}개 하이라이트 효과 디스패치`);
+      view.dispatch({ effects });
+    }
+  }, [highlights, documentId, editorRef.current]);
+
+  /**
+   * 하이라이트 추가 함수
+   */
   const addHighlight = (from: number, to: number, color: string, isMemo: boolean = false) => {
     if (!editorRef.current) return false;
 
@@ -280,46 +348,27 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
       return false;
     }
 
-    // 적용될 색상에 투명도 적용
-    const colors = getHighlightColors(color);
-    const finalColor = isMemo
-      ? hexToRgba('#FFDA63', 0.35) // 메모용 색상
-      : colors.background;
-
     // 새 하이라이트 생성
     const newHighlight: Highlight = {
       clientId: generateClientId(from, to),
       from,
       to,
-      color: finalColor,
+      color: getHighlightColors(color).background,
       documentId,
       isPending: true,
       isMemo: isMemo
     };
 
     console.log('새 하이라이트 추가:', newHighlight);
-    const updatedHighlights = [...highlights, newHighlight];
-    setHighlights(updatedHighlights);
-    saveHighlights(updatedHighlights);
 
-    // 에디터에 직접 하이라이트 효과 적용
-    try {
-      const highlightKey = `${newHighlight.documentId}-${newHighlight.clientId}`;
-      if (!appliedHighlightIdsRef.current.has(highlightKey)) {
-        editorRef.current.dispatch({
-          effects: addHighlightEffect.of(newHighlight)
-        });
-        appliedHighlightIdsRef.current.add(highlightKey);
-        console.log('하이라이트 효과 적용 성공');
-        return true;
-      } else {
-        console.log('이미 적용된 하이라이트 건너뜀:', newHighlight.clientId);
-        return false;
-      }
-    } catch (error) {
-      console.error('하이라이트 효과 적용 중 오류:', error);
-      return false;
-    }
+    // 함수형 업데이트 사용하여 상태 갱신
+    setHighlights(prevHighlights => {
+      const updatedHighlights = [...prevHighlights, newHighlight];
+      saveHighlights(updatedHighlights);
+      return updatedHighlights;
+    });
+
+    return true;
   };
 
   return {

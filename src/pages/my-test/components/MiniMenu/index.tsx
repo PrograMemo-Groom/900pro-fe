@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '@/pages/my-test/components/MiniMenu/MiniMenu.scss';
 
-// 하이라이트 색상 목록 정의
+/**
+ * 하이라이트에 사용할 색상 목록 상수
+ */
 const HIGHLIGHT_COLORS = [
   '#ff8383', // 빨간색
   '#ffc981', // 주황색
@@ -12,14 +14,18 @@ const HIGHLIGHT_COLORS = [
   '#efadff', // 보라색
 ];
 
-// MiniMenu 컴포넌트 Props 정의
+/**
+ * 미니 메뉴 컴포넌트의 속성 인터페이스
+ */
 interface MiniMenuProps {
-  position: { x: number; y: number } | null;
-  onHighlight: (color: string) => void;
-  onAddMemo: () => void;
+  position: { x: number; y: number } | null;  // 메뉴가 표시될 화면 위치 (null이면 표시하지 않음)
+  onHighlight: (color: string) => void;       // 하이라이트 버튼 클릭 시 호출될 콜백 함수
+  onAddMemo: (color: string) => void;         // 메모 버튼 클릭 시 호출될 콜백 함수
 }
 
-// MiniMenu 컴포넌트 구현
+/**
+ * 미니 메뉴 컴포넌트
+ */
 const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo }) => {
   // 선택된 색상 상태 관리
   const [selectedColor, setSelectedColor] = useState(HIGHLIGHT_COLORS[2]);
@@ -27,7 +33,9 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
   // 포털 사용을 위한 DOM 노드 참조
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
-  // 컴포넌트 마운트 시 포털 엘리먼트 설정
+  /**
+   * 컴포넌트 마운트 시 포털 루트 설정 (에디터 밖에서도 미니 메뉴 표시 가능)
+   */
   useEffect(() => {
     setPortalRoot(document.body);
   }, []);
@@ -35,14 +43,18 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
   // position이 null이면 아무것도 렌더링하지 않음
   if (!position || !portalRoot) return null;
 
-  // 색상 선택 핸들러
+  /**
+   * 색상 선택 시 호출되는 핸들러
+   */
   const handleColorSelect = (color: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setSelectedColor(color);
   };
 
-  // 하이라이트 버튼 클릭 핸들러
+  /**
+   * 하이라이트 버튼 클릭 시 호출되는 핸들러
+   */
   const handleHighlightClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -55,25 +67,32 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
     }
   };
 
-  // 메모 버튼 클릭 핸들러
+  /**
+   * 메모 버튼 클릭 시 호출되는 핸들러
+   */
   const handleMemoClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
-      onAddMemo();
+      onAddMemo(selectedColor);
       console.log('MiniMenu: onAddMemo 함수 직접 호출 완료');
     } catch (error) {
       console.error('MiniMenu: onAddMemo 함수 호출 중 오류:', error);
     }
   };
 
-  // 이벤트 전파 방지를 위한 핸들러
+  /**
+   * 이벤트 전파를 방지하는 유틸리티 함수
+   */
   const preventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
   };
 
+  /**
+   * 미니 메뉴 구성 JSX
+   */
   const menuContent = (
     <div
       className="mini-menu"

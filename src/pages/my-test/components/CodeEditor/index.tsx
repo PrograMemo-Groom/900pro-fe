@@ -16,28 +16,44 @@ import MiniMenu from '@/pages/my-test/components/MiniMenu';
 import { useHighlights } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
 import { useTextSelection } from '@/pages/my-test/components/CodeEditor/hooks/useTextSelection';
 
+/**
+ * 코드 에디터에서 지원하는 프로그래밍 언어 타입 정의
+ */
 export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'text';
+
+/**
+ * 코드 에디터 테마 타입 정의
+ */
 export type EditorTheme = 'light' | 'dark';
 
 // 렌더링 카운트 디버깅용 변수
 let renderCount = 0;
 
+/**
+ * 코드 에디터 컴포넌트 속성 인터페이스
+ */
 interface CodeEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  language?: CodeLanguage;
-  theme?: EditorTheme;
-  readOnly?: boolean;
-  documentId?: string; // 파일의 고유 ID
-  userName?: string; // 사용자 이름 (커서 표시용)
+  value: string;                    // 에디터의 초기 내용
+  onChange: (value: string) => void; // 내용 변경 시 호출될 콜백 함수
+  language?: CodeLanguage;          // 사용할 프로그래밍 언어
+  theme?: EditorTheme;              // 에디터 테마 (라이트/다크)
+  readOnly?: boolean;               // 읽기 전용 모드 여부
+  documentId?: string;              // 파일의 고유 ID
+  userName?: string;                // 사용자 이름 (커서 표시용)
 }
 
+/**
+ * 텍스트 모드에서 흰색 텍스트를 표시하기 위한 확장
+ */
 const whiteTextExtension = EditorView.theme({
   '.cm-content': {
     color: '#ffffff'
   }
 });
 
+/**
+ * 코드 에디터 컴포넌트 (CodeMirror)
+ */
 const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
   onChange,
@@ -52,7 +68,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const persistenceRef = useRef<IndexeddbPersistence | null>(null);
   const editorRef = useRef<EditorView | null>(null);
 
-  // 커스텀 훅 사용
   const { highlightExtensions, addHighlight, highlightTheme } = useHighlights({
     documentId,
     editorRef
@@ -67,29 +82,33 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     editorRef
   });
 
+  /**
+   * 에디터 초기화 및 정리를 담당하는 생명주기
+   */
   useEffect(() => {
-    // 로컬 세션에서만 작동하는 Yjs 설정
+    // [생명주기] 컴포넌트 마운트 시 또는 documentId/readOnly 변경 시 실행됨
     if (!readOnly) {
-      // 새 Y.Doc 인스턴스 생성
+      // 1. 편집 모드: Yjs 협업 설정
       const ydoc = new Y.Doc();
       ydocRef.current = ydoc;
       const ytext = ydoc.getText('codemirror'); // ytext 가져오기
 
-      // IndexedDB에 변경사항 저장
+      // IndexedDB에 변경사항 저장 (영구 저장소)
       const persistence = new IndexeddbPersistence(documentId, ydoc);
       persistenceRef.current = persistence;
 
-      // 연결 상태 확인 및 초기 콘텐츠 설정 (수정됨)
+      // 2. 초기 콘텐츠 설정 로직
       persistence.on('synced', (isSynced: boolean) => {
         console.log(`[디버깅] Yjs 동기화 상태 (${documentId}): ${isSynced}`);
-        // 동기화 완료 후이고, Yjs 문서가 비어있으며, value prop에 값이 있을 때 초기 콘텐츠 설정
+        // 동기화 완료 후이고, Yjs 문서가 비어있으며,
+        // value prop에 값이 있을 때 초기 콘텐츠 설정
         if (isSynced && ytext.length === 0 && value) {
             console.log(`[디버깅] Yjs 동기화 후 초기 콘텐츠 설정 (${documentId}):`, value.substring(0, 50) + '...');
             ytext.insert(0, value);
         }
       });
 
-      // 컴포넌트 언마운트시 정리 (수정됨: persistence 정리 추가)
+      // 3. 정리 함수 (컴포넌트 언마운트 또는 의존성 변경 시 실행)
       return () => {
         console.log(`[디버깅] Yjs 정리 시작 (${documentId})`);
         if (persistenceRef.current) {
@@ -103,7 +122,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         console.log(`[디버깅] Yjs Doc 및 Persistence 정리 완료 (${documentId})`);
       };
     } else {
-        // readOnly 모드일 때 기존 Yjs 인스턴스 정리 (수정됨)
+        // 4. 읽기 전용 모드: 기존 Yjs 인스턴스 정리
         if (persistenceRef.current) {
             persistenceRef.current.destroy();
             persistenceRef.current = null;
@@ -113,31 +132,34 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           ydocRef.current = null;
         }
         console.log('[디버깅] readOnly 모드로 전환, Yjs 인스턴스 정리됨');
-        return () => {}; // 정리할 필요 없음
+        return () => {}; // 빈 정리 함수
     }
-  }, [documentId, readOnly]); // value 의존성 제거됨
+  }, [documentId, readOnly, value]); // value 의존성 추가
 
-  // 하이라이트 버튼 클릭 핸들러
+  /**
+   * 하이라이트 버튼 클릭 핸들러
+   */
   const handleHighlight = (color: string) => {
     console.log('하이라이트 버튼 클릭됨');
     if (selectedRange) {
       const { from, to } = selectedRange;
       const success = addHighlight(from, to, color, false);
       if (success) {
-        setMenuPosition(null); // 메뉴 닫기
+        setMenuPosition(null);
       }
     }
   };
 
-  // 메모 버튼 클릭 핸들러
-  const handleAddMemo = () => {
+  /**
+   * 메모 버튼 클릭 핸들러
+   */
+  const handleAddMemo = (color: string) => {
     console.log('메모 추가 버튼 클릭됨');
     if (selectedRange) {
       const { from, to } = selectedRange;
-      const memoColorHex = '#FFDA63'; // 메모용 색상
-      const success = addHighlight(from, to, memoColorHex, true);
+      const success = addHighlight(from, to, color, true);
       if (success) {
-        setMenuPosition(null); // 메뉴 닫기
+        setMenuPosition(null);
       }
     }
   };
@@ -175,6 +197,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // 같은 단어 자동 하이라이팅 비활성화
   extensions.push(highlightSelectionMatches({ highlightWordAroundCursor: false, minSelectionLength: 100 }));
 
+  // 텍스트 모드에서 흰색 텍스트 확장 추가
   if (language === 'text') {
     extensions.push(whiteTextExtension);
   }
