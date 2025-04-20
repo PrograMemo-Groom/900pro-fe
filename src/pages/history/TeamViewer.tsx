@@ -2,8 +2,8 @@
 
 export default function TeamViewer() {
   return (
-    <div>
+    <main>
       팀뷰
-    </div>
+    </main>
   )
 }

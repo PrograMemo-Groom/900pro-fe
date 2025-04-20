@@ -1,10 +1,13 @@
 // import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import TeamViewer from '@/pages/history/TeamViewer.tsx';
+
+// 소켓 연결 import
+import { initStompClient, publishMessage, subscribe, unsubscribe } from '@/api/stompClient';
 
 type Chat = {
   id: number;

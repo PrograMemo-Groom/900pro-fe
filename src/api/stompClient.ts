@@ -64,7 +64,7 @@ export const initStompClient = (): Client => {
   reconnectAttempts = 0;
 
   stompClient = new Client({
-    webSocketFactory: () => new SockJS('/api/ws-chat'),
+    webSocketFactory: () => new SockJS('http://3.39.135.118:8080/ws-chat'),
     beforeConnect: () => {
       connectionTimeoutId = setTimeout(() => {
         if (connectionStatus === ConnectionStatus.CONNECTING) {
