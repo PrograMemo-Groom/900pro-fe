@@ -20,6 +20,15 @@ export interface Highlight {
 }
 
 /**
+ * 활성화된 메모 팝업 상태 인터페이스
+ */
+export interface ActiveMemoState {
+  clientId: string;                    // 활성화된 메모의 clientId
+  highlight: Highlight;                // 위치 계산을 위한 하이라이트 정보
+  position: { top: number; left: number }; // 화면상의 위치
+}
+
+/**
  * 하이라이트 필드 - CodeMirror 상태에 하이라이트 정보를 저장
  */
 const highlightField = StateField.define<DecorationSet>({
@@ -41,7 +50,8 @@ const highlightField = StateField.define<DecorationSet>({
 
       // 하이라이트 추가 효과
       if (e.is(addHighlightEffect)) {
-        const { from, to, color, clientId, isMemo } = e.value;
+        const { highlight, setActiveMemo, editorView } = e.value;
+        const { from, to, color, clientId, isMemo } = highlight;
         console.log(`[디버깅] 하이라이트 효과 적용: ${clientId} (${from}-${to}), isMemo: ${!!isMemo}`);
 
         // 데코레이션을 저장할 배열
@@ -59,16 +69,18 @@ const highlightField = StateField.define<DecorationSet>({
         decorationsToAdd.push(highlightDecoration);
 
         // 메모인 경우 아이콘 위젯 추가
-        if (isMemo) {
+        if (isMemo && editorView) {
           // 원본 색상 추출 (RGBA에서 원본 색상 추출)
           let iconColor = rgbaToHex(color);
 
           const iconDecoration = Decoration.widget({
-            widget: createMemoIconWidget(clientId, iconColor),
+            widget: createMemoIconWidget(clientId, iconColor, highlight, setActiveMemo, editorView),
             side: 0
           }).range(to);
           decorationsToAdd.push(iconDecoration);
           console.log('[디버깅] 메모 아이콘 위젯 데코레이션 추가:', clientId, '색상:', iconColor);
+        } else if (isMemo && !editorView) {
+          console.warn(`[경고] 메모 아이콘 생성 불가: editorView 없음 (${clientId})`);
         }
 
         highlights = highlights.update({
@@ -85,7 +97,13 @@ const highlightField = StateField.define<DecorationSet>({
 /**
  * 메모 아이콘 위젯 생성 함수 - 하이라이트 옆에 메모 아이콘 표시
  */
-const createMemoIconWidget = (clientId: string, color: string) => {
+const createMemoIconWidget = (
+  clientId: string,
+  color: string,
+  highlight: Highlight,
+  setActiveMemo: (state: ActiveMemoState | null) => void,
+  editorView: EditorView
+) => {
   return new class extends WidgetType {
     toDOM() {
       const span = document.createElement("span");
@@ -110,14 +128,42 @@ const createMemoIconWidget = (clientId: string, color: string) => {
       iconContainer.addEventListener('click', (event) => {
         event.stopPropagation();
         console.log('메모 아이콘 클릭됨 - clientId:', clientId);
-        // TODO: 여기서 메모 팝업 표시 로직
+
+        // 메모 포지션 계산
+        const coords = editorView.coordsAtPos(highlight.to);
+        if (coords) {
+          const editorRect = editorView.dom.getBoundingClientRect();
+          // 에디터 DOM 기준 절대 좌표 계산
+          const absoluteTop = window.scrollY + coords.top - 185;
+          const absoluteLeft = window.scrollX + coords.left - 40; // 아이콘 옆에 표시
+
+          console.log(`[디버깅] 아이콘 클릭 좌표 계산:`, { absoluteTop, absoluteLeft, coords, editorRect });
+
+          // 팝업 상태 설정
+          setActiveMemo({
+            clientId,
+            highlight,
+            position: { top: absoluteTop, left: absoluteLeft }
+          });
+        } else {
+          console.warn(`[경고] 메모 아이콘 위치 좌표 계산 실패: ${clientId}`);
+          // 에러 처리: 에디터 중앙 근처에 표시
+          const editorRect = editorView.dom.getBoundingClientRect();
+          const fallbackTop = editorRect.top + window.scrollY + editorRect.height / 2;
+          const fallbackLeft = editorRect.left + window.scrollX + editorRect.width / 2;
+          setActiveMemo({
+            clientId,
+            highlight,
+            position: { top: fallbackTop, left: fallbackLeft }
+          });
+        }
       });
 
       return span;
     }
 
     ignoreEvent() {
-      return true;
+      return false; // 클릭 이벤트를 받기 위해 false 반환
     }
   }
 }
@@ -180,7 +226,11 @@ export const getHighlightColors = (hex: string): { background: string; border?: 
 };
 
 // 하이라이트 효과 정의
-export const addHighlightEffect = StateEffect.define<Highlight>();
+export const addHighlightEffect = StateEffect.define<{
+  highlight: Highlight;
+  setActiveMemo: (state: ActiveMemoState | null) => void;
+  editorView: EditorView | null;
+}>();
 export const clearHighlightsEffect = StateEffect.define<null>();
 
 // 하이라이트 테마 정의
@@ -205,6 +255,8 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const appliedHighlightIdsRef = useRef(new Set<string>());
   const previousDocumentIdRef = useRef<string | null>(null);
+  // 활성화된 메모 팝업 상태
+  const [activeMemo, setActiveMemo] = useState<ActiveMemoState | null>(null);
 
   /**
    * 하이라이트 추적 키 생성 함수
@@ -283,12 +335,60 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
   });
 
   /**
+   * 스크롤 및 뷰 업데이트 리스너
+   */
+
+  const scrollListenerExtension = useMemo(() => {
+    return EditorView.updateListener.of((update) => {
+      // 스크롤, 문서 변경, 뷰포트 변경 등 위치에 영향을 줄 수 있는 업데이트 감지
+      if (update.docChanged || update.geometryChanged || update.transactions.some(tr => tr.scrollIntoView)) {
+        if (activeMemo) {
+          const view = editorRef.current;
+          if (view) {
+            // 현재 activeMemo에 해당하는 highlight 찾기
+            const currentHighlight = activeMemo.highlight;
+            if (currentHighlight) {
+              try {
+                // 하이라이트 끝 지점의 현재 좌표 다시 계산
+                const coords = view.coordsAtPos(currentHighlight.to);
+                if (coords) {
+                  const editorRect = view.dom.getBoundingClientRect();
+                  // 에디터 DOM 기준 절대 좌표 업데이트
+                  const newTop = editorRect.top + window.scrollY + coords.top;
+                  const newLeft = editorRect.left + window.scrollX + coords.left + 10; // 아이콘 옆 위치 유지
+
+                  // 위치가 실제로 변경되었는지 확인 후 업데이트 (불필요한 리렌더링 방지)
+                  if (newTop !== activeMemo.position.top || newLeft !== activeMemo.position.left) {
+                    console.log(`[디버깅] 메모 팝업 위치 업데이트: ${activeMemo.clientId}`, { top: newTop, left: newLeft });
+                    setActiveMemo(prev => prev ? { ...prev, position: { top: newTop, left: newLeft } } : null);
+                  }
+                } else {
+                  // 좌표 계산 실패 시 다른 처리 (필요한 경우)
+                  console.warn(`[경고] 스크롤 중 메모 위치 재계산 실패: ${activeMemo.clientId}`);
+                }
+              } catch (e) {
+                // coordsAtPos 등이 에러를 발생시킬 수 있는 경우
+                console.error(`[오류] 메모 위치 재계산 중 오류: ${activeMemo.clientId}`, e);
+              }
+            }
+          }
+        }
+      }
+    });
+  }, [activeMemo, editorRef]); // activeMemo 상태가 변경될 때 리스너 재생성
+
+  /**
    * CodeMirror 확장 생성
    */
   const highlightExtensions = useMemo(() => {
     console.log('[디버깅] 하이라이트 확장 생성 (useMemo)');
-    return [highlightField, highlightPlugin, highlightTheme];
-  }, [documentId]);
+    return [
+      highlightField,
+      highlightPlugin,
+      highlightTheme,
+      scrollListenerExtension // 스크롤 리스너 추가
+    ];
+  }, [documentId, scrollListenerExtension]);
 
   /**
    * 문서 변경 시 하이라이트 로드 및 초기화
@@ -310,6 +410,9 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
       appliedHighlightIdsRef.current.clear();
       const loadedHighlights = loadHighlights();
       setHighlights(loadedHighlights);
+
+      // 문서 변경 시 활성 메모 팝업 초기화
+      setActiveMemo(null);
 
       previousDocumentIdRef.current = documentId;
     }
@@ -339,8 +442,9 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
         console.log('[디버깅] 하이라이트 효과 추가:', highlight.clientId);
 
         effects.push(addHighlightEffect.of({
-          ...highlight,
-          isMemo: !!highlight.isMemo
+          highlight: highlight,
+          setActiveMemo: setActiveMemo,
+          editorView: view
         }));
 
         appliedHighlightIdsRef.current.add(highlightKey);
@@ -395,10 +499,19 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
     return true;
   };
 
+  /**
+   * 메모 팝업 닫기 함수
+   */
+  const closeMemoPopup = () => {
+    setActiveMemo(null);
+  };
+
   return {
     highlights,
     highlightExtensions,
     addHighlight,
-    highlightTheme
+    highlightTheme,
+    activeMemo,       // 활성화된 메모 팝업 상태
+    closeMemoPopup    // 메모 팝업 닫기 함수
   };
 }

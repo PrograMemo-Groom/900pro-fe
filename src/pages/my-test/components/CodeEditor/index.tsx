@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
@@ -15,6 +15,7 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 import MiniMenu from '@/pages/my-test/components/MiniMenu';
 import { useHighlights } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
 import { useTextSelection } from '@/pages/my-test/components/CodeEditor/hooks/useTextSelection';
+import MemoPopup from './components/MemoPopup';
 
 /**
  * 코드 에디터에서 지원하는 프로그래밍 언어 타입 정의
@@ -68,7 +69,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const persistenceRef = useRef<IndexeddbPersistence | null>(null);
   const editorRef = useRef<EditorView | null>(null);
 
-  const { highlightExtensions, addHighlight, highlightTheme } = useHighlights({
+  const { highlightExtensions, addHighlight, highlightTheme, activeMemo, closeMemoPopup } = useHighlights({
     documentId,
     editorRef
   });
@@ -81,6 +82,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   } = useTextSelection({
     editorRef
   });
+
+  // 메모 내용 저장 상태
+  const [memoContents, setMemoContents] = useState<Record<string, string>>({});
 
   /**
    * 에디터 초기화 및 정리를 담당하는 생명주기
@@ -249,6 +253,25 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           readOnly={readOnly}
         />
       </div>
+
+      {/* 메모 팝업 렌더링 */}
+      {activeMemo && (
+        <MemoPopup
+          position={activeMemo.position}
+          clientId={activeMemo.clientId}
+          content={memoContents[activeMemo.clientId] || ''}
+          onClose={closeMemoPopup}
+          onSave={(clientId, content) => {
+            setMemoContents(prev => ({
+              ...prev,
+              [clientId]: content
+            }));
+
+            // TODO: 메모 내용을 백엔드에 저장하는 로직 추가
+            console.log('메모 저장:', clientId, content);
+          }}
+        />
+      )}
     </div>
   );
 };
