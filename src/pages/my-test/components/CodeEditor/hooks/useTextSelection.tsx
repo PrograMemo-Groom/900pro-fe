@@ -26,6 +26,27 @@ export function useTextSelection({ editorRef }: UseTextSelectionProps) {
     const selection = view.state.selection.main;
     // 텍스트가 선택되었는지 확인
     if (!selection.empty) {
+      // 선택된 영역이 하이라이트 영역인지 확인
+      try {
+        // 선택 끝점의 위치에 있는 요소 확인
+        const pos = view.coordsAtPos(selection.to);
+        if (pos) {
+          // 해당 위치에서 DOM 요소 찾기
+          const element = document.elementFromPoint(pos.left, pos.top);
+          // 하이라이트 요소인지 확인
+          if (element && (
+              element.classList.contains('cm-highlight') ||
+              element.closest('.cm-highlight')
+            )) {
+            console.log('하이라이트된 영역을 선택했습니다. 메뉴를 표시하지 않습니다.');
+            setMenuPosition(null);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error('선택 영역 확인 중 오류:', e);
+      }
+
       // 드래그 방향에 따라 기준 위치 결정
       const targetPos = selection.head >= selection.anchor ? selection.to : selection.from;
       const coords = view.coordsAtPos(targetPos);
