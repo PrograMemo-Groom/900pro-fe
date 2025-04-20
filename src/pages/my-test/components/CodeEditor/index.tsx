@@ -329,6 +329,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           }}
           clientId={activeMemo.clientId}
           content={memoContents[activeMemo.clientId] || ''}
+          backgroundColor={activeMemo.highlight.color}
           onClose={closeMemoPopup}
           onSave={handleSaveMemo}
         />

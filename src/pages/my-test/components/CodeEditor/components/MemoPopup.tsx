@@ -5,6 +5,7 @@ export interface MemoPopupProps {
   position: { top: number; left: number };
   clientId: string;
   content?: string;
+  backgroundColor?: string;
   onClose: () => void;
   onSave?: (clientId: string, content: string) => void;
 }
@@ -16,6 +17,7 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
   position,
   clientId,
   content: initialContent = '',
+  backgroundColor,
   onClose,
   onSave
 }) => {
@@ -97,6 +99,29 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
     setIsEditing(true);
   };
 
+  // 배경색의 투명도를 1로 만드는 함수
+  const getOpaqueColor = (rgbaColor: string | undefined): string => {
+    if (!rgbaColor || !rgbaColor.startsWith('rgba')) {
+      return '#fff7a5'; // 기본 노란색으로 폴백
+    }
+    try {
+      const match = rgbaColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        const [, r, g, b] = match;
+        return `rgba(${r}, ${g}, ${b}, 1)`;
+      } else {
+        return '#fff7a5'; // 파싱 실패 시 폴백
+      }
+    } catch (error) {
+      console.error('메모 팝업 배경색 파싱 오류:', error);
+      return '#fff7a5'; // 오류 발생 시 폴백
+    }
+  };
+
+  // 불투명한 배경색 계산
+  const opaqueBackgroundColor = getOpaqueColor(backgroundColor);
+  const headerBackgroundColor = opaqueBackgroundColor; // 헤더도 동일한 색상 사용 (필요시 조정)
+
   const styles = {
     memoPopup: {
       position: 'absolute' as const,
@@ -117,14 +142,14 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       transform: 'scale(1.02)'
     },
     memoPopupContent: {
-      backgroundColor: '#fff7a5',
+      backgroundColor: opaqueBackgroundColor,
       borderRadius: '4px',
       overflow: 'hidden' as const,
       display: 'flex' as const,
       flexDirection: 'column' as const,
       minHeight: '120px',
       maxHeight: '300px',
-      border: '1px solid #e6e0a0',
+      border: '1px solid black',
       WebkitBackfaceVisibility: 'hidden' as const,
       WebkitTransform: 'translateZ(0)' as const
     },
@@ -133,13 +158,13 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       justifyContent: 'space-between' as const,
       alignItems: 'center' as const,
       padding: '8px 10px',
-      backgroundColor: '#fff389',
-      borderBottom: '1px solid #e6e0a0'
+      backgroundColor: headerBackgroundColor,
+      borderBottom: '1px solid black'
     },
     memoId: {
       fontWeight: 600,
       fontSize: '0.85em',
-      color: '#7d7a44'
+      color: 'black'
     },
     memoPopupActions: {
       display: 'flex' as const,
@@ -151,14 +176,14 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       cursor: 'pointer',
       padding: '2px',
       borderRadius: '3px',
-      color: '#7d7a44',
+      color: 'black',
       display: 'flex' as const,
       alignItems: 'center' as const,
       justifyContent: 'center' as const
     },
     memoButtonHover: {
       backgroundColor: 'rgba(0, 0, 0, 0.05)',
-      color: '#454236'
+      color: 'black'
     },
     closeButtonHover: {
       color: '#e53935'
@@ -175,23 +200,23 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       width: '100%',
       minHeight: '100px',
       backgroundColor: 'transparent',
-      border: '1px solid rgba(0, 0, 0, 0.1)',
+      border: '1px solid rgba(0, 0, 0, 1)',
       borderRadius: '3px',
       padding: '8px',
       resize: 'vertical' as const,
       fontFamily: 'inherit',
       fontSize: 'inherit',
-      color: '#454236'
+      color: 'black'
     },
     memoText: {
       whiteSpace: 'pre-wrap' as const,
       wordBreak: 'break-word' as const,
-      color: '#454236',
+      color: 'black',
       cursor: 'text',
       minHeight: '100px'
     },
     memoPlaceholder: {
-      color: '#84817a',
+      color: '#555',
       fontStyle: 'italic',
       fontSize: '0.9em'
     }
@@ -225,10 +250,12 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
                 onMouseOver={(e) => {
                   e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
                   e.currentTarget.style.color = '#2e7d32';
+                  e.currentTarget.style.color = 'black';
                 }}
                 onMouseOut={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.color = '#7d7a44';
+                  e.currentTarget.style.color = 'black';
                 }}
               >
                 <FaSave size="1em" />
@@ -241,10 +268,12 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
                 e.currentTarget.style.color = '#e53935';
+                e.currentTarget.style.color = 'black';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = '#7d7a44';
+                e.currentTarget.style.color = 'black';
               }}
             >
               <FaTimes size="1em" />
