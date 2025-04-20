@@ -138,9 +138,6 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       backfaceVisibility: 'hidden' as const,
       willChange: 'transform' as const
     },
-    memoPopupHover: {
-      transform: 'scale(1.02)'
-    },
     memoPopupContent: {
       backgroundColor: opaqueBackgroundColor,
       borderRadius: '4px',
@@ -157,7 +154,7 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       display: 'flex' as const,
       justifyContent: 'space-between' as const,
       alignItems: 'center' as const,
-      padding: '8px 10px',
+      padding: '2px 5px',
       backgroundColor: headerBackgroundColor,
       borderBottom: '1px solid black'
     },
@@ -181,16 +178,6 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       alignItems: 'center' as const,
       justifyContent: 'center' as const
     },
-    memoButtonHover: {
-      backgroundColor: 'rgba(0, 0, 0, 0.05)',
-      color: 'black'
-    },
-    closeButtonHover: {
-      color: '#e53935'
-    },
-    saveButtonHover: {
-      color: '#2e7d32'
-    },
     memoPopupBody: {
       padding: '10px',
       flex: 1,
@@ -200,10 +187,12 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       width: '100%',
       minHeight: '100px',
       backgroundColor: 'transparent',
-      border: '1px solid rgba(0, 0, 0, 1)',
-      borderRadius: '3px',
-      padding: '8px',
-      resize: 'vertical' as const,
+      // border: '1px solid rgba(0, 0, 0, 1)',
+      // borderRadius: '3px',
+      // padding: '0px',
+      border: 'none',
+      outline: 'none',
+      resize: 'none' as const,
       fontFamily: 'inherit',
       fontSize: 'inherit',
       color: 'black'
@@ -227,36 +216,16 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
       ref={popupRef}
       className="memo-popup"
       style={styles.memoPopup}
-      onMouseOver={() => {
-        if (popupRef.current) {
-          popupRef.current.style.transform = 'scale(1.02)';
-        }
-      }}
-      onMouseOut={() => {
-        if (popupRef.current) {
-          popupRef.current.style.transform = 'scale(1)';
-        }
-      }}
     >
       <div style={styles.memoPopupContent}>
         <div style={styles.memoPopupHeader}>
-          <span style={styles.memoId}>메모 #{clientId.split('-').pop()?.substring(0, 4)}</span>
+          <span style={styles.memoId}>#{clientId.split('-').pop()?.substring(0, 4)}</span>
           <div style={styles.memoPopupActions}>
             {isEditing && onSave && (
               <button
                 style={styles.memoButton}
                 onClick={handleSave}
                 title="저장"
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                  e.currentTarget.style.color = '#2e7d32';
-                  e.currentTarget.style.color = 'black';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = '#7d7a44';
-                  e.currentTarget.style.color = 'black';
-                }}
               >
                 <FaSave size="1em" />
               </button>
@@ -265,16 +234,6 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
               style={styles.memoButton}
               onClick={onClose}
               title="닫기"
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                e.currentTarget.style.color = '#e53935';
-                e.currentTarget.style.color = 'black';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#7d7a44';
-                e.currentTarget.style.color = 'black';
-              }}
             >
               <FaTimes size="1em" />
             </button>
@@ -287,7 +246,7 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
               ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="메모를 입력하세요..."
+              placeholder="programmer's memo..."
               style={styles.memoTextarea}
             />
           ) : (
