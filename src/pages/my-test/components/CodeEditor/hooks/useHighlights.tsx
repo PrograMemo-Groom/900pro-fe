@@ -50,7 +50,7 @@ const highlightField = StateField.define<DecorationSet>({
 
       // 하이라이트 추가 효과
       if (e.is(addHighlightEffect)) {
-        const { highlight, setActiveMemo, editorView } = e.value;
+        const { highlight, toggleMemoPopup, editorView } = e.value;
         const { from, to, color, clientId, isMemo } = highlight;
         console.log(`[디버깅] 하이라이트 효과 적용: ${clientId} (${from}-${to}), isMemo: ${!!isMemo}`);
 
@@ -74,7 +74,7 @@ const highlightField = StateField.define<DecorationSet>({
           let iconColor = rgbaToHex(color);
 
           const iconDecoration = Decoration.widget({
-            widget: createMemoIconWidget(clientId, iconColor, highlight, setActiveMemo, editorView),
+            widget: createMemoIconWidget(clientId, iconColor, highlight, toggleMemoPopup, editorView),
             side: 0
           }).range(to);
           decorationsToAdd.push(iconDecoration);
@@ -101,7 +101,7 @@ const createMemoIconWidget = (
   clientId: string,
   color: string,
   highlight: Highlight,
-  setActiveMemo: (state: ActiveMemoState | null) => void,
+  toggleMemoPopup: (state: ActiveMemoState | null) => void,
   editorView: EditorView
 ) => {
   return new class extends WidgetType {
@@ -116,7 +116,7 @@ const createMemoIconWidget = (
       const iconContainer = document.createElement("span");
       iconContainer.style.position = "absolute";
       iconContainer.style.left = "0px";
-      iconContainer.style.top = "6px";
+      iconContainer.style.top = "4px";
       iconContainer.style.cursor = "pointer";
       iconContainer.title = "메모 보기/편집";
       iconContainer.dataset.clientId = clientId;
@@ -163,20 +163,25 @@ const createMemoIconWidget = (
             }
           });
 
-          // 팝업 상태 설정
-          setActiveMemo({
+          // 팝업 상태 설정 대신 토글 함수 호출
+          // 새로운 상태 객체 생성
+          const newState: ActiveMemoState = {
             clientId,
             highlight,
             position: { top: newTop, left: newLeft }
-          });
+          };
+          toggleMemoPopup(newState); // toggleMemoPopup 호출
+
         } else {
           console.warn(`[경고] 메모 아이콘 위치 좌표 계산 실패: ${clientId}`);
           // 에러 처리: 에디터 중앙 근처에 표시
-          setActiveMemo({
+          // 실패 시에도 토글 함수 호출
+          const newState: ActiveMemoState = {
             clientId,
             highlight,
             position: { top: 100, left: 100 } // 실패 시 기본 위치
-          });
+          };
+          toggleMemoPopup(newState); // toggleMemoPopup 호출
         }
       });
 
@@ -249,7 +254,7 @@ export const getHighlightColors = (hex: string): { background: string; border?: 
 // 하이라이트 효과 정의
 export const addHighlightEffect = StateEffect.define<{
   highlight: Highlight;
-  setActiveMemo: (state: ActiveMemoState | null) => void;
+  toggleMemoPopup: (state: ActiveMemoState | null) => void;
   editorView: EditorView | null;
 }>();
 export const clearHighlightsEffect = StateEffect.define<null>();
@@ -455,6 +460,22 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
   }, [documentId]);
 
   /**
+   * 메모 팝업 토글 함수
+   */
+  const toggleMemoPopup = (newState: ActiveMemoState | null) => {
+    setActiveMemo(currentState => {
+      // newState가 있고, 현재 상태도 있으며, clientId가 같다면 닫기 (null로 설정)
+      if (newState && currentState && newState.clientId === currentState.clientId) {
+        console.log(`[디버깅] 메모 팝업 토글 닫기: ${currentState.clientId}`);
+        return null;
+      }
+      // 그렇지 않으면 새 상태로 설정 (열기 또는 다른 메모 열기)
+      console.log(`[디버깅] 메모 팝업 토글 열기/변경: ${newState?.clientId}`);
+      return newState;
+    });
+  };
+
+  /**
    * 하이라이트 상태 변경 시 CodeMirror에 적용
    */
   useEffect(() => {
@@ -479,7 +500,7 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
 
         effects.push(addHighlightEffect.of({
           highlight: highlight,
-          setActiveMemo: setActiveMemo,
+          toggleMemoPopup: toggleMemoPopup,
           editorView: view
         }));
 
@@ -536,11 +557,11 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
   };
 
   /**
-   * 메모 팝업 닫기 함수
+   * 메모 팝업 닫기 함수 (명시적 닫기용)
    */
   const closeMemoPopup = () => {
-    console.log('[디버깅] 메모 팝업 닫기 함수 호출됨');
-    setActiveMemo(null);
+    console.log('[디버깅] 메모 팝업 닫기 함수 호출됨 (명시적 닫기)');
+    setActiveMemo(null); // setActiveMemo 직접 호출
   };
 
   return {
@@ -549,6 +570,6 @@ export function useHighlights({ documentId, editorRef }: UseHighlightsProps) {
     addHighlight,
     highlightTheme,
     activeMemo,       // 활성화된 메모 팝업 상태
-    closeMemoPopup    // 메모 팝업 닫기 함수
+    closeMemoPopup    // 메모 팝업 닫기 함수 (팝업 내부 버튼용)
   };
 }
