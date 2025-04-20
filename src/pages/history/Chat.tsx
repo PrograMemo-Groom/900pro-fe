@@ -4,7 +4,6 @@ import styles from '@/css/history/Chat.module.scss'
 import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
-import TeamViewer from '@/pages/history/TeamViewer.tsx';
 
 // 소켓 연결 import
 import { initStompClient, publishMessage, subscribe, unsubscribe } from '@/api/stompClient';
@@ -38,13 +37,10 @@ function Chat() {
 
 
   return (
-    <div>
-      <main className={styles.container}>
-        <ChatLog messages={messages} />
-        <ChatInput onSubmit={handleSubmit} />
-      </main>
-      <TeamViewer />
-    </div>
+    <main className={styles.container}>
+      <ChatLog messages={messages} />
+      <ChatInput onSubmit={handleSubmit} />
+    </main>
   )
 }
 
