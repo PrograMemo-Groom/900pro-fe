@@ -3,7 +3,7 @@
 export default function TeamViewer() {
   return (
     <div>
-      팀뷰어
+      
     </div>
   )
 }
