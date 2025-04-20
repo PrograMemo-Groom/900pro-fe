@@ -60,12 +60,15 @@ const highlightField = StateField.define<DecorationSet>({
 
         // 메모인 경우 아이콘 위젯 추가
         if (isMemo) {
+          // 원본 색상 추출 (RGBA에서 원본 색상 추출)
+          let iconColor = rgbaToHex(color);
+
           const iconDecoration = Decoration.widget({
-            widget: new MemoIconWidget(clientId),
-            side: 1
+            widget: createMemoIconWidget(clientId, iconColor),
+            side: 0
           }).range(to);
           decorationsToAdd.push(iconDecoration);
-          console.log('[디버깅] 메모 아이콘 위젯 데코레이션 추가:', clientId);
+          console.log('[디버깅] 메모 아이콘 위젯 데코레이션 추가:', clientId, '색상:', iconColor);
         }
 
         highlights = highlights.update({
@@ -80,44 +83,42 @@ const highlightField = StateField.define<DecorationSet>({
 });
 
 /**
- * 메모 아이콘 위젯 - 하이라이트 옆에 메모 아이콘 표시
+ * 메모 아이콘 위젯 생성 함수 - 하이라이트 옆에 메모 아이콘 표시
  */
-class MemoIconWidget extends WidgetType {
-  constructor(readonly clientId: string) {
-    super();
-  }
+const createMemoIconWidget = (clientId: string, color: string) => {
+  return new class extends WidgetType {
+    toDOM() {
+      const span = document.createElement("span");
+      span.style.position = "relative";
+      span.style.display = "inline-block";
+      span.style.width = "1px";
+      span.style.height = "1em";
+      span.style.verticalAlign = "text-bottom";
 
-  toDOM() {
-    const span = document.createElement("span");
-    span.style.position = "relative";
-    span.style.display = "inline-block";
-    span.style.width = "1px";
-    span.style.height = "1em";
-    span.style.verticalAlign = "text-bottom";
+      const iconContainer = document.createElement("span");
+      iconContainer.style.position = "absolute";
+      iconContainer.style.left = "0px";
+      iconContainer.style.top = "6px";
+      iconContainer.style.cursor = "pointer";
+      iconContainer.title = "메모 보기/편집";
+      iconContainer.dataset.clientId = clientId;
+      span.appendChild(iconContainer);
 
-    const iconContainer = document.createElement("span");
-    iconContainer.style.position = "absolute";
-    iconContainer.style.left = "0px";
-    iconContainer.style.top = "6px";
-    iconContainer.style.cursor = "pointer";
-    iconContainer.title = "메모 보기/편집";
-    iconContainer.dataset.clientId = this.clientId;
-    span.appendChild(iconContainer);
+      const root = ReactDOM.createRoot(iconContainer);
+      root.render(React.createElement(FaNoteSticky, { color: color, size: '0.7em' }));
 
-    const root = ReactDOM.createRoot(iconContainer);
-    root.render(React.createElement(FaNoteSticky, { color: '#FFFFFF', size: '0.7em' }));
+      iconContainer.addEventListener('click', (event) => {
+        event.stopPropagation();
+        console.log('메모 아이콘 클릭됨 - clientId:', clientId);
+        // TODO: 여기서 메모 팝업 표시 로직
+      });
 
-    iconContainer.addEventListener('click', (event) => {
-      event.stopPropagation();
-      console.log('메모 아이콘 클릭됨 - clientId:', this.clientId);
-      // TODO: 여기서 메모 팝업 표시 로직
-    });
+      return span;
+    }
 
-    return span;
-  }
-
-  ignoreEvent() {
-    return true;
+    ignoreEvent() {
+      return true;
+    }
   }
 }
 
@@ -143,6 +144,29 @@ export const hexToRgba = (hex: string, opacity: number = 0.2): string => {
   } catch (error) {
     console.error('HEX에서 RGBA로 변환 중 오류:', error);
     return `rgba(248, 255, 156, ${opacity})`;
+  }
+};
+
+/**
+ * RGBA 색상을 HEX로 변환하는 유틸리티 함수
+ */
+export const rgbaToHex = (rgba: string): string => {
+  if (!rgba || typeof rgba !== 'string' || !rgba.includes('rgba')) {
+    return rgba;
+  }
+
+  try {
+    const rgbMatch = rgba.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
+
+    if (rgbMatch) {
+      const [, r, g, b] = rgbMatch;
+      return `#${Number(r).toString(16).padStart(2, '0')}${Number(g).toString(16).padStart(2, '0')}${Number(b).toString(16).padStart(2, '0')}`;
+    }
+
+    return rgba;
+  } catch (error) {
+    console.error('RGBA에서 HEX로 변환 중 오류:', error);
+    return rgba;
   }
 };
 
