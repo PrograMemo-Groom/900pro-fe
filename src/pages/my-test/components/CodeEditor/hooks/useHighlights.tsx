@@ -76,29 +76,37 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
 
   const scrollListenerExtension = useMemo(() => {
     return EditorView.updateListener.of((update) => {
-      if (update.docChanged || update.geometryChanged || update.transactions.some(tr => tr.scrollIntoView)) {
-        if (activeMemo) {
-          const view = editorRef.current;
-          if (view) {
-            const currentHighlight = activeMemo.highlight;
-            if (currentHighlight) {
-              try {
-                const newPosition = calculateMemoPosition(currentHighlight.to, view);
-                if (newPosition) {
-                  if (Math.abs(newPosition.top - activeMemo.position.top) > 3 ||
-                      Math.abs(newPosition.left - activeMemo.position.left) > 3) {
-                    setActiveMemo(prev => prev ? {
-                      ...prev,
-                      position: newPosition
-                    } : null);
-                  }
-                }
-              } catch (e) {
-                // Error handling removed
-              }
-            }
-          }
+      // 문서나 위치가 변경되지 않았으면 처리하지 않음
+      if (!(update.docChanged || update.geometryChanged || update.transactions.some(tr => tr.scrollIntoView))) {
+        return;
+      }
+
+      // 활성화된 메모가 없으면 처리하지 않음
+      if (!activeMemo) return;
+
+      const view = editorRef.current;
+      if (!view) return;
+
+      const currentHighlight = activeMemo.highlight;
+      if (!currentHighlight) return;
+
+      try {
+        const newPosition = calculateMemoPosition(currentHighlight.to, view);
+        if (!newPosition) return;
+
+        // 위치 변화가 충분히 큰 경우에만 메모 위치 업데이트
+        const hasSignificantMovement =
+          Math.abs(newPosition.top - activeMemo.position.top) > 3 ||
+          Math.abs(newPosition.left - activeMemo.position.left) > 3;
+
+        if (hasSignificantMovement) {
+          setActiveMemo(prev => prev ? {
+            ...prev,
+            position: newPosition
+          } : null);
         }
+      } catch (e) {
+        // Error handling removed
       }
     });
   }, [activeMemo, editorRef]);
