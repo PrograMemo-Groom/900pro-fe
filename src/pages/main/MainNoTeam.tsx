@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import Header from '@/pages/common/Header.tsx';
-import SearchBox from '@/pages/common/SearchBox.tsx';
+import SearchBox from '@/pages/main/component/SearchBox.tsx';
 import styles from "@/css/main/Layout.module.scss";
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
-import FilterOrder from '@/pages/common/FilterOrder.tsx';
-import FilterQuestion from '@/pages/common/FilterQuestion.tsx';
+import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
+import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
+import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
 
 const mainTeamData = [
   {"teamId" : 1,"teamName": "개 열심히 하죠", "time": "매일 오후 6시", "level" : "상", "problemCount":"4", "currentMembers" : "3"},
@@ -48,14 +49,7 @@ const MainNoTeam = () => {
   return (
     <div className={styles.mainContainer}>
       <Header />
-      <div className={styles.container}>
-        <SearchBox/>
-        <section>
-          <FilterOrder />
-          <FilterQuestion />
-          <button className={styles.teamCreateButton}>팀 생성</button>
-        </section>
-      </div>
+      <TeamHeader />
       <section>
         {teamList.length === 0 ? (
           <p> 가입 가능한 팀이 없습니다.</p>
