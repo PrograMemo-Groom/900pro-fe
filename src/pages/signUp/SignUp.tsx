@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styles from '@/css/login/Auth.module.scss';
-import { SignUpProps } from '@/pages/login/Login.interface.ts';
 import Landing from '@/pages/common/Landing.tsx';
 import { SignUpReq, SignUpRes } from '@/pages/signUp/SignUp.interfase.ts';
 import { AxiosResponse } from 'axios';
@@ -12,8 +11,13 @@ const SignUp = () => {
   const handleOnSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('form 실행', form);
-    const response:AxiosResponse<SignUpRes> = await API.post("/auth/join", form);
-    console.log("회원가입 요청 : ", response);
+    try {
+      const response :AxiosResponse<SignUpRes> = await API.post("/auth/join", form);
+      console.log("회원가입 요청 : ", response.data);
+    } catch (e) {
+      console.log("error : ", e.response.data?.message);
+    }
+
   };
   const handleOnChange = (e: React.FormEvent) => {
     const { id, value } = e.target;
@@ -23,11 +27,17 @@ const SignUp = () => {
     }));
   };
   const handleVerifyEmail = async (email:string) => {
-    const {data} :AxiosResponse<SampleResponse> = await API.post("/auth/dupCheck", { email });
-    console.log("[이메일 중복 확인] ; ",data);
-    if (data?.success) {
-      console.log("중복 확인 완료 : ", data?.message);
+    try {
+      const {data} :AxiosResponse<SampleResponse> = await API.post("/auth/dupCheck", { email });
+      console.log("[이메일 중복 확인] ; ",data);
+      if (data?.success) {
+        console.log("중복 확인 완료 : ", data?.message);
+      }
+    } catch (e) {
+      console.log("error : ", e.response.data?.message);
     }
+
+
   }
 
   return (
@@ -35,12 +45,14 @@ const SignUp = () => {
       <Landing />
       <form className={styles.loginForm} onSubmit={handleOnSubmit}>
         <div className={styles.inputForm}>
+          {/*닉네임은 최대 8자, 영문자와 숫자만 이용 가능*/}
           <label htmlFor="username">Name</label>
           <div className={styles.gradientBorder}>
             <input type="text" id="username"
                    onChange={(e) => handleOnChange(e)}
-                   placeholder="닉네임은 영문자와 소문자만 이용할 수 있습니다."
+                   placeholder="최대 8자, 영문자와 숫자만 이용 가능"
                    value={form.username}
+                   maxLength={8}
             />
           </div>
         </div>

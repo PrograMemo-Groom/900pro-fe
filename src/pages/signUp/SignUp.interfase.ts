@@ -3,8 +3,9 @@ export interface SignUpReq {
   email: string,
   password: string,
 }
-export interface SignUpRes {
-  "success": boolean,
+export type SignUpRes = SignUpSuccess | SignUpFail;
+export interface SignUpSuccess {
+  "success": true,
   "data": {
     "id": number,
     "email": string,
@@ -13,4 +14,9 @@ export interface SignUpRes {
     "active": boolean
   },
   "message": string
+}
+export interface SignUpFail {
+  success: false,
+  data: null,
+  message: string,
 }
