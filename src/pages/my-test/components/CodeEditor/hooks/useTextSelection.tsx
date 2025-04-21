@@ -1,12 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { EditorView } from '@codemirror/view';
-
-/**
- * useTextSelection 훅의 속성 인터페이스
- */
-export interface UseTextSelectionProps {
-  editorRef: React.MutableRefObject<EditorView | null>;
-}
+import { UseTextSelectionProps } from '@/pages/my-test/components/CodeEditor/types/types';
 
 /**
  * 텍스트 선택 처리를 위한 커스텀 훅

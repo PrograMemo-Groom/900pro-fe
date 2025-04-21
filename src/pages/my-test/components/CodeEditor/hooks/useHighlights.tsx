@@ -7,7 +7,7 @@ import {
   Highlight,
   ActiveMemoState,
   UseHighlightsProps
-} from '../types';
+} from '../types/types';
 
 // 유틸리티 임포트
 import { hexToRgba } from '../utils/colorUtils';
@@ -346,4 +346,4 @@ export type {
   ActiveMemoState,
   HighlightMenuState,
   UseHighlightsProps
-} from '../types';
+} from '../types/types';

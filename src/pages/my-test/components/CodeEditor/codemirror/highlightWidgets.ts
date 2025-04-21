@@ -1,5 +1,5 @@
 import { WidgetType, EditorView } from '@codemirror/view';
-import { Highlight, ActiveMemoState, HighlightMenuState } from '../types';
+import { Highlight, ActiveMemoState, HighlightMenuState } from '../types/types';
 import { createIconDOM, calculateMemoPosition } from '../utils/domUtils';
 import React from 'react';
 

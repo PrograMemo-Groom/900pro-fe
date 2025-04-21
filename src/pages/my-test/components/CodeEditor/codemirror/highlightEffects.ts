@@ -1,6 +1,6 @@
 import { StateEffect } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { Highlight, ActiveMemoState, HighlightMenuState } from '../types';
+import { Highlight, ActiveMemoState, HighlightMenuState } from '../types/types';
 
 /**
  * 하이라이트 색상 업데이트 효과 정의

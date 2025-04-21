@@ -1,26 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Highlight } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
+import { ActiveMiniMenuProps } from '@/pages/my-test/components/CodeEditor/types/types';
 import '@/pages/my-test/components/CodeEditor/components/ActiveMiniMenu.scss';
-
-/**
- * 하이라이트에 사용할 색상 목록 상수
- */
-const HIGHLIGHT_COLORS = [
-  '#ff8383', // 빨간색
-  '#ffc981', // 주황색
-  '#f8ff9c', // 노란색
-  '#9dffaf', // 초록색
-  '#9be3ff', // 파란색
-  '#efadff', // 보라색
-];
-
-export interface ActiveMiniMenuProps {
-  position: { top: number; left: number };
-  highlight: Highlight;
-  onClose: () => void;
-  onDelete?: (clientId: string) => void;
-  onColorChange?: (clientId: string, newColor: string) => void;
-}
+import { HIGHLIGHT_COLORS } from '@/pages/my-test/components/CodeEditor/constants/constants';
 
 /**
  * 하이라이트 클릭 시 표시되는 액션 메뉴 컴포넌트

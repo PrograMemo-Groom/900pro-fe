@@ -18,31 +18,12 @@ import { useTextSelection } from '@/pages/my-test/components/CodeEditor/hooks/us
 import MemoPopup from './components/MemoPopup';
 import ActiveMiniMenu from './components/ActiveMiniMenu';
 import ReactDOM from 'react-dom/client';
+import { CodeLanguage, EditorTheme, CodeEditorProps } from '@/pages/my-test/components/CodeEditor/types/types';
+import { MEMO_CONTAINER_STYLE, HIGHLIGHT_MENU_CONTAINER_STYLE } from '@/pages/my-test/components/CodeEditor/constants/constants';
 
 /**
- * 코드 에디터에서 지원하는 프로그래밍 언어 타입 정의
+ * 렌더링 카운트 디버깅용 변수
  */
-export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'text';
-
-/**
- * 코드 에디터 테마 타입 정의
- */
-export type EditorTheme = 'light' | 'dark';
-
-/**
- * 코드 에디터 컴포넌트 속성 인터페이스
- */
-interface CodeEditorProps {
-  value: string;                    // 에디터의 초기 내용
-  onChange: (value: string) => void; // 내용 변경 시 호출될 콜백 함수
-  language?: CodeLanguage;          // 사용할 프로그래밍 언어
-  theme?: EditorTheme;              // 에디터 테마 (라이트/다크)
-  readOnly?: boolean;               // 읽기 전용 모드 여부
-  documentId?: string;              // 파일의 고유 ID
-  userName?: string;                // 사용자 이름 (커서 표시용)
-}
-
-// 렌더링 카운트 디버깅용 변수
 let renderCount = 0;
 
 /**
@@ -86,28 +67,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // 각종 상태 정의
   const [memoContents, setMemoContents] = useState<Record<string, string>>({}); // 메모 내용 저장 상태
   const [highlightMenuState, setHighlightMenuState] = useState<HighlightMenuState | null>(null); // 하이라이트 메뉴 상태
-
-  // 메모 팝업 컨테이너 스타일 상수
-  const MEMO_CONTAINER_STYLE: React.CSSProperties = {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    pointerEvents: 'none', // 초기에는 상호작용 불가
-    zIndex: '9999',
-    overflow: 'visible',
-    opacity: 0, // 초기에는 투명하게
-    transition: 'opacity 0.15s ease-in-out' // 부드러운 전환 효과
-  };
-
-  // 하이라이트 메뉴 컨테이너 스타일
-  const HIGHLIGHT_MENU_CONTAINER_STYLE = {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    pointerEvents: 'none',
-    zIndex: '9999',
-    overflow: 'visible'
-  };
 
   // useHighlights 커스텀 훅 사용 (하이라이트 처리)
   const {

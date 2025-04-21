@@ -2,15 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { throttle } from 'lodash';
 import '@/pages/my-test/components/CodeEditor/components/MemoPopup.scss';
-
-export interface MemoPopupProps {
-  position: { top: number; left: number };
-  clientId: string;
-  content?: string;
-  backgroundColor?: string;
-  onClose: () => void;
-  onSave?: (clientId: string, content: string) => void;
-}
+import { MemoPopupProps } from '@/pages/my-test/components/CodeEditor/types/types';
+import { DEFAULT_MEMO_BACKGROUND_COLOR } from '@/pages/my-test/components/CodeEditor/constants/constants';
 
 /**
  * 포스트잇 형태의 메모 팝업 컴포넌트
@@ -37,7 +30,7 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
   // 배경색의 투명도를 1로 만드는 함수
   const getOpaqueColor = (rgbaColor: string | undefined): string => {
     if (!rgbaColor || !rgbaColor.startsWith('rgba')) {
-      return '#fff7a5'; // 기본 노란색으로 폴백
+      return DEFAULT_MEMO_BACKGROUND_COLOR; // 기본 노란색으로 폴백
     }
     try {
       const match = rgbaColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
@@ -45,11 +38,11 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
         const [, r, g, b] = match;
         return `rgba(${r}, ${g}, ${b}, 1)`;
       } else {
-        return '#fff7a5'; // 파싱 실패 시 폴백
+        return DEFAULT_MEMO_BACKGROUND_COLOR; // 파싱 실패 시 폴백
       }
     } catch (error) {
       console.error('메모 팝업 배경색 파싱 오류:', error);
-      return '#fff7a5'; // 오류 발생 시 폴백
+      return DEFAULT_MEMO_BACKGROUND_COLOR; // 오류 발생 시 폴백
     }
   };
 

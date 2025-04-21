@@ -1,27 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './MiniMenu.scss';
-
-/**
- * 하이라이트에 사용할 색상 목록 상수
- */
-const HIGHLIGHT_COLORS = [
-  '#ff8383', // 빨간색
-  '#ffc981', // 주황색
-  '#f8ff9c', // 노란색
-  '#9dffaf', // 초록색
-  '#9be3ff', // 파란색
-  '#efadff', // 보라색
-];
-
-/**
- * 미니 메뉴 컴포넌트의 속성 인터페이스
- */
-interface MiniMenuProps {
-  position: { x: number; y: number } | null;  // 메뉴가 표시될 화면 위치 (null이면 표시하지 않음)
-  onHighlight: (color: string) => void;       // 하이라이트 버튼 클릭 시 호출될 콜백 함수
-  onAddMemo: (color: string) => void;         // 메모 버튼 클릭 시 호출될 콜백 함수
-}
+import { MiniMenuProps } from '@/pages/my-test/components/CodeEditor/types/types';
+import { HIGHLIGHT_COLORS } from '@/pages/my-test/components/CodeEditor/constants/constants';
 
 /**
  * 미니 메뉴 컴포넌트
