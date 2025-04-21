@@ -51,51 +51,21 @@
         margin-left: 1rem;
       }
       .gradientBorder {
-        background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
-        padding: 3px;
+        @include gradientMixin;
         border-radius: 50px;
-        position: relative;
-        display: block;
-        width: 467px;
+        padding: 1rem 30px 1rem 30px;
+        background-color: transparent;
+        height: 80px;
+        display: flex;
+        align-items: center;
 
-        & > input {
-          background-color: #0f172a;
-          width: 467px;
-          height: 91px;
-          padding: 0 2rem;
-          font-size: 1.5rem;
-          border-radius: 50px;
-          color: white;
-          cursor: pointer;
-          border: 1px solid #D1F8EF;
-
-          &::placeholder {
-            font-size: 1.5rem;
-            color: #aaa;
-            font-weight: 300;
-            //font-style: italic;
-          }
-        }
-
-        & > button {
-          position: absolute;
-          top: 50%;
-          right: 10px;
-          transform: translateY(-50%);
-          width: 120px;
-          height: 70px;
-          background: linear-gradient(135deg, #b3ecff, #81d8f7);
-          border-radius: 50px;
+        input {
+          flex: 1;
+          background: transparent;
           border: none;
-          color: #000;
-          font-weight: bold;
-          font-size: 1.3rem;
-          cursor: pointer;
-          transition: all 0.2s ease-in-out;
-
-          &:hover {
-            background: linear-gradient(135deg, #a2dbf5, #6fc8ec);
-          }
+          outline: none;
+          color: white;
+          font-size: 20px;
         }
       }
     }

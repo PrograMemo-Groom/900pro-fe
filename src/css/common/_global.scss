@@ -10,3 +10,21 @@
   font-size: $fontSize;
   margin-top: -50px;
 }
+
+@mixin gradientMixin($padding:1px, $radius: 50px) {
+  position: relative;
+  z-index: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: $padding;
+    border-radius: $radius;
+    background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    z-index: -1;
+  }
+}
