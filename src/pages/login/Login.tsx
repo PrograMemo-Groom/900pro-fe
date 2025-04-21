@@ -1,19 +1,15 @@
 import React, {useState} from 'react';
 import styles from "@/css/login/Auth.module.scss";
-import { LoginFormValues, LoginProps } from '@/pages/login/Login.interface.ts';
+import { LoginDataResponse, LoginFormValues, LoginProps } from '@/pages/login/Login.interface.ts';
 import Landing from '@/pages/common/Landing.tsx';
-// import axios from "axios";
-// import type { AxiosResponse } from 'axios';
+import API from '@/store/api/ApiConfig.ts';
+import { AxiosResponse } from 'axios';
 
 const Login: React.FC<LoginProps> = ({initialValues}) => {
     const [form, setForm] = useState<LoginFormValues>({
         email: initialValues?.email || "",
         password: initialValues?.password || ""
     })
-    const handleOnSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("form 실행", form);
-    }
     const handleOnChange = (e: React.FormEvent) => {
         const {id, value} = e.target;
         setForm((prevState) => ({
@@ -21,15 +17,12 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             [id]: value,
         }));
     }
-
-    // const [data, setData] = useState("");
-    //
-    // useEffect(() => {
-    //     axios
-    //         .get('/api/data')
-    //         .then((res: AxiosResponse) => setData(res.data))
-    //         .catch((err: unknown) => console.log(err));
-    // }, []);
+    const handleOnSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("form 실행", form);
+        const response:AxiosResponse<LoginDataResponse> = await API.post("/auth/login");
+        console.log("login 했을 때 response ; ", response);
+    }
 
     return (
     <div className={styles.container}>

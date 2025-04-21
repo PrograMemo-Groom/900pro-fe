@@ -13,3 +13,12 @@ export interface LoginProps {
 export interface SignUpProps {
   initialValues?: SignUpFormValues;
 }
+
+
+export interface LoginDataResponse {
+  "status": number,
+  "message": string,
+  "path": string,
+  "error": string,
+  timestamp: string
+}
