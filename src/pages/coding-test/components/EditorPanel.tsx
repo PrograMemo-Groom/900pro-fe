@@ -293,7 +293,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
           </div>
         </Panel>
 
-        <PanelResizeHandle className="resize-handle" />
+        <PanelResizeHandle className="resize-handle-horizontal" />
 
         {/* 메인 에디터 영역 */}
         <Panel defaultSize={80}>
