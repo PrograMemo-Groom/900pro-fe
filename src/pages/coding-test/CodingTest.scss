@@ -1,19 +1,18 @@
-@import '@/pages/coding-test/components/_variables.scss';
 @import '@/pages/coding-test/components/EditorPanel.scss';
 @import '@/pages/coding-test/components/Header.scss';
 @import '@/pages/coding-test/components/ProblemPanel.scss';
 
 .coding-test-container {
   width: 94vw;
-  height: calc(94vh - $header-height);
-  color: $text-primary;
+  height: calc(94vh - 4rem);
+  color: #e0e0e0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: $radius-xl;
+  border-radius: 30px;
 
   &.dark-mode {
-    color: $text-primary;
+    color: #e0e0e0;
   }
 
   .main-content {
@@ -21,8 +20,8 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    border: 1px solid $border-secondary;
-    border-radius: $radius-xl;
+    border: 1px solid #666;
+    border-radius: 30px;
 
     > div {
       width: 100%;
@@ -33,16 +32,16 @@
     }
 
     .resize-handle {
-      width: 8px; /* 너비를 늘려서 마우스로 잡기 쉽게 함 */
-      margin: 0 -3px; /* 양쪽으로 마진을 음수값으로 설정하여 클릭 영역 확장 */
-      background-color: $border-primary;
+      width: 8px;
+      margin: 0 -3px;
+      background-color: #444;
       cursor: col-resize !important;
       transition: background-color 0.2s;
       position: relative;
       z-index: 10;
 
       &:hover, &:active {
-        background-color: $accent-primary;
+        background-color: #2b76c9;
       }
 
       &::before {
@@ -58,16 +57,16 @@
     }
 
     .resize-handle-vertical {
-      height: 8px; /* 높이를 늘려서 마우스로 잡기 쉽게 함 */
-      margin: -3px 0; /* 위아래로 마진을 음수값으로 설정하여 클릭 영역 확장 */
-      background-color: $border-primary;
+      height: 8px;
+      margin: -3px 0;
+      background-color: #444;
       cursor: row-resize !important;
       transition: background-color 0.2s;
       position: relative;
       z-index: 10;
 
       &:hover, &:active {
-        background-color: $accent-primary;
+        background-color: #2b76c9;
       }
 
       &::before {

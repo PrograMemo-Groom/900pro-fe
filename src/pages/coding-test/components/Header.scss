@@ -1,65 +1,71 @@
-@import '@/pages/coding-test/components/_variables.scss';
-
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 $spacing-lg $spacing-sm $spacing-lg;
-  height: $main-header-height;
-  min-height: $main-header-height;
+  padding: 0 1rem 0.5rem 1rem;
+  height: 50px;
+  min-height: 50px;
   flex-shrink: 0;
   position: relative;
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: $spacing-md;
+    gap: 0.75rem;
   }
 
   .header-timer {
     padding: 0.4rem 0.8rem;
     background-color: #888;
     color: #fff;
-    border-radius: $radius-lg;
+    border-radius: 15px;
     font-weight: 500;
-    font-size: $font-base;
+    font-size: 0.9rem;
     white-space: nowrap;
   }
 
   .header-title {
-    font-size: $font-title;
-    color: $text-white;
+    font-size: 2.6rem;
+    color: #ffffff;
     font-weight: bold;
     white-space: nowrap;
     position: absolute;
     left: 50%;
     top: 35%;
     transform: translate(-50%, -50%);
-    padding: 0 $spacing-lg;
+    padding: 0 1rem;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.05em;
   }
 
   .header-button {
-    @include blue-button;
+    padding: 0.5rem 1rem;
+    color: #ffffff;
+    border: none;
+    border-radius: 15px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
 
     &.run-button {
-      background-color: $accent-primary;
+      background-color: #2b76c9;
       &:hover:not(:disabled) {
-        background-color: $accent-hover;
+        background-color: #1e5daa;
       }
       &:disabled {
-        background-color: $disabled-bg;
-        color: $text-disabled;
+        background-color: #3a3a3a;
+        color: #888;
         cursor: not-allowed;
         opacity: 0.6;
       }
     }
 
     &.submit-button {
-      background-color: $accent-primary;
+      background-color: #2b76c9;
       &:hover {
-        background-color: $accent-hover;
+        background-color: #1e5daa;
       }
     }
   }
