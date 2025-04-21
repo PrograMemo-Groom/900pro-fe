@@ -1,0 +1,42 @@
+@use "@/css/common/_global" as *;
+
+.header {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+  height: 120px;
+  text-align: center;
+  gap: 2rem;
+
+  @media (max-width: 536px) {
+    flex-direction: column;
+  }
+
+
+  h1 {
+    @include projectTitle(80px);
+  }
+
+  .menuIcon {
+    position: absolute;
+    left: 13rem;
+    width: 72px;
+    height: 60px;
+    cursor: pointer;
+    margin-bottom: 4rem;
+
+    @media (max-width: 1000px) {
+      position: static;
+      margin-bottom: 2rem;
+      align-self: flex-start;
+    }
+    @media (max-width: 536px) {
+      position: static;
+      margin: 2rem;
+      align-self: flex-start;
+    }
+
+  }
+}
