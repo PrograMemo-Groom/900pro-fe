@@ -113,6 +113,11 @@
   & p:nth-of-type(2), p:nth-of-type(3) {
     font-size: 20px;
   }
+
+  &:hover {
+    @debug "팀 호버 시 색상값 조정 : .teamContent > &:hover (ps. 지금 너무 쨍함)";
+    background-color: #3674B5;
+  }
 }
 
 .gradientBorder {
