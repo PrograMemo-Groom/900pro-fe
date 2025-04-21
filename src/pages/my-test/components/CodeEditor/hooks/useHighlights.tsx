@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { EditorView } from '@codemirror/view';
-import { StateField, RangeSet, StateEffect } from '@codemirror/state';
+import { StateField, RangeSet, StateEffect, Extension } from '@codemirror/state';
 import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
 import { FaNoteSticky } from "react-icons/fa6";
 import ReactDOM from 'react-dom/client';
@@ -84,7 +84,7 @@ const highlightField = StateField.define<DecorationSet>({
 
       // 하이라이트 추가 효과
       if (e.is(addHighlightEffect)) {
-        const { highlight, toggleMemoPopup, editorView, onHighlightClick } = e.value;
+        const { highlight, setActiveMemo, editorView, onHighlightClick } = e.value;
         const { from, to, color, clientId, isMemo } = highlight;
         console.log(`[디버깅] 하이라이트 효과 적용: ${clientId} (${from}-${to}), isMemo: ${!!isMemo}`);
 
@@ -108,7 +108,7 @@ const highlightField = StateField.define<DecorationSet>({
           let iconColor = rgbaToHex(color);
 
           const iconDecoration = Decoration.widget({
-            widget: createMemoIconWidget(clientId, iconColor, highlight, toggleMemoPopup, editorView, onHighlightClick),
+            widget: createMemoIconWidget(clientId, iconColor, highlight, setActiveMemo, editorView, onHighlightClick),
             side: 0
           }).range(to);
           decorationsToAdd.push(iconDecoration);
@@ -216,7 +216,7 @@ const createMemoIconWidget = (
   clientId: string,
   color: string,
   highlight: Highlight,
-  toggleMemoPopup: (state: ActiveMemoState | null) => void,
+  setActiveMemo: React.Dispatch<React.SetStateAction<ActiveMemoState | null>>,
   editorView: EditorView,
   _onHighlightClick?: (state: HighlightMenuState) => void
 ) => {
@@ -253,31 +253,34 @@ const createMemoIconWidget = (
       const root = ReactDOM.createRoot(iconContainer);
       root.render(React.createElement(FaNoteSticky, { color: color, size: '0.8em' }));
 
-      // 클릭 이벤트 최적화 - 위치 계산 함수 분리
       iconContainer.addEventListener('click', (event) => {
         event.stopPropagation();
         console.log('메모 아이콘 클릭됨 - clientId:', clientId);
 
-        // 메모 위치 계산 함수 호출
-        const position = calculateMemoPosition(highlight.to, editorView);
-        if (position) {
-          // 팝업 상태 설정
-          const newState: ActiveMemoState = {
-            clientId,
-            highlight,
-            position
-          };
-          toggleMemoPopup(newState);
-        } else {
-          console.warn(`[경고] 메모 아이콘 위치 좌표 계산 실패: ${clientId}`);
-          // 실패 시에도 토글 함수 호출 - 기본 위치 사용
-          const newState: ActiveMemoState = {
-            clientId,
-            highlight,
-            position: { top: 100, left: 100 } // 실패 시 기본 위치
-          };
-          toggleMemoPopup(newState);
-        }
+        // 클릭된 시점의 clientId와 highlight를 클로저로 캡처
+        const memoClientId = clientId;
+        const memoHighlight = highlight;
+
+        // 함수형 업데이트 사용
+        setActiveMemo(prevActiveMemo => {
+          // 위치는 클릭 시점에 다시 계산하거나 기본값 사용
+          const position = calculateMemoPosition(memoHighlight.to, editorView);
+          const newPosition = position || { top: 100, left: 100 };
+
+          if (prevActiveMemo && prevActiveMemo.clientId === memoClientId) {
+            // 현재 열린 팝업과 같은 아이콘 클릭 -> 닫기
+            console.log('[디버깅] 같은 메모 아이콘 클릭, 팝업 닫음:', memoClientId);
+            return null;
+          } else {
+            // 다른 아이콘 클릭 또는 열린 팝업 없음 -> 열기/전환
+            console.log('[디버깅] 메모 팝업 열기/전환:', memoClientId);
+            return {
+              clientId: memoClientId,
+              highlight: memoHighlight,
+              position: newPosition
+            };
+          }
+        });
       });
 
       // 마우스다운 이벤트에서도 선택 방지
@@ -391,7 +394,7 @@ export const getHighlightColors = (hex: string): { background: string; border?: 
 // 하이라이트 효과 정의
 export const addHighlightEffect = StateEffect.define<{
   highlight: Highlight;
-  toggleMemoPopup: (state: ActiveMemoState | null) => void;
+  setActiveMemo: React.Dispatch<React.SetStateAction<ActiveMemoState | null>>;
   editorView: EditorView | null;
   onHighlightClick?: (state: HighlightMenuState) => void;
 }>();
@@ -606,17 +609,149 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
   }, [highlights, onHighlightClick]);
 
   /**
-   * CodeMirror 확장 생성
+   * 하이라이트 상태 변경 시 CodeMirror에 적용
    */
+  useEffect(() => {
+    const view = editorRef.current;
+    if (!view) return;
+
+    // 색상 변경 중이면 이 useEffect에서는 처리하지 않음
+    if (isChangingColorRef.current) {
+      console.log('[디버깅] 색상 변경 중이므로 자동 하이라이트 적용을 건너뜁니다');
+      return;
+    }
+
+    console.log('[디버깅] highlights 상태 변경 감지:', highlights.length);
+
+    // 현재 문서와 관련된 하이라이트만 필터링
+    const relevantHighlights = highlights.filter(h => h.documentId === documentId);
+    if (relevantHighlights.length === 0) return;
+
+    // 새로 적용할 하이라이트 효과 모음
+    const effects: StateEffect<any>[] = [];
+
+    // 각 하이라이트에 대해 적용 여부 체크 후 효과 추가
+    relevantHighlights.forEach(highlight => {
+      const highlightKey = createHighlightKey(highlight);
+
+      if (!appliedHighlightIdsRef.current.has(highlightKey)) {
+        console.log('[디버깅] 하이라이트 효과 추가:', highlight.clientId);
+
+        effects.push(addHighlightEffect.of({
+          highlight: highlight,
+          setActiveMemo: setActiveMemo,
+          editorView: view,
+          onHighlightClick
+        }));
+
+        appliedHighlightIdsRef.current.add(highlightKey);
+      } else {
+        console.log('[디버깅] 하이라이트 이미 적용됨, 중복 추가 방지:', highlight.clientId);
+      }
+    });
+
+    // 효과가 있는 경우만 디스패치
+    if (effects.length > 0) {
+      console.log(`[디버깅] ${effects.length}개 하이라이트 효과 디스패치`);
+      view.dispatch({ effects });
+    }
+  }, [highlights, documentId, editorRef.current, onHighlightClick]);
+
+  /**
+   * 하이라이트 추가 함수
+   */
+  const addHighlight = (from: number, to: number, color: string, isMemo: boolean = false) => {
+    if (!editorRef.current) return false;
+
+    // 중복 하이라이트 확인
+    const isDuplicate = highlights.some(h =>
+      h.documentId === documentId &&
+      h.from === from &&
+      h.to === to
+    );
+
+    if (isDuplicate) {
+      console.log('이미 하이라이트된 범위입니다');
+      return false;
+    }
+
+    // 새 하이라이트 생성
+    const newHighlight: Highlight = {
+      clientId: generateClientId(from, to),
+      from,
+      to,
+      color: getHighlightColors(color).background,
+      documentId,
+      isPending: true,
+      isMemo: isMemo
+    };
+
+    console.log('새 하이라이트 추가:', newHighlight);
+
+    // 함수형 업데이트 사용하여 상태 갱신
+    setHighlights(prevHighlights => {
+      const updatedHighlights = [...prevHighlights, newHighlight];
+      saveHighlights(updatedHighlights);
+      return updatedHighlights;
+    });
+
+    return true;
+  };
+
+  /**
+   * 메모 팝업 닫기 함수 (명시적 닫기용)
+   */
+  const closeMemoPopup = () => {
+    console.log('[디버깅] 메모 팝업 닫기 함수 호출됨 (명시적 닫기)');
+    setActiveMemo(null);
+  };
+
+  /**
+   * 하이라이트 제거 함수
+   */
+  const removeHighlight = (clientId: string) => {
+    if (!editorRef.current) return false;
+
+    console.log('하이라이트 제거:', clientId);
+
+    // 해당 clientId의 하이라이트 찾기
+    const targetHighlight = highlights.find(h => h.clientId === clientId);
+    if (!targetHighlight) {
+      console.warn(`[경고] 제거할 하이라이트를 찾을 수 없음: ${clientId}`);
+      return false;
+    }
+
+    // 메모 팝업이 열려있다면 닫기
+    if (activeMemo && activeMemo.clientId === clientId) {
+      setActiveMemo(null);
+    }
+
+    // 1. highlights 상태에서 제거
+    const updatedHighlights = highlights.filter(h => h.clientId !== clientId);
+    setHighlights(updatedHighlights);
+    saveHighlights(updatedHighlights);
+
+    // 2. CodeMirror에서 해당 하이라이트 제거 효과 적용
+    editorRef.current.dispatch({
+      effects: removeHighlightEffect.of(clientId)
+    });
+
+    // 3. 적용된 하이라이트 ID 목록에서 제거
+    appliedHighlightIdsRef.current.delete(createHighlightKey(targetHighlight));
+
+    return true;
+  };
+
+  // CodeMirror 확장 생성
   const highlightExtensions = useMemo(() => {
     console.log('[디버깅] 하이라이트 확장 생성 (useMemo)');
     return [
       highlightField,
       highlightPlugin,
       highlightTheme,
-      scrollListenerExtension, // 스크롤 리스너 추가
-      highlightClickHandler    // 하이라이트 클릭 핸들러 추가
-    ];
+      scrollListenerExtension,
+      highlightClickHandler
+    ] as Extension[];
   }, [documentId, scrollListenerExtension, highlightClickHandler]);
 
   /**
@@ -718,7 +853,7 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
       relevantHighlights.forEach(highlight => {
         effects.push(addHighlightEffect.of({
           highlight: highlight,
-          toggleMemoPopup: setActiveMemo,
+          setActiveMemo: setActiveMemo,
           editorView: editorRef.current,
           onHighlightClick
         }));
@@ -742,140 +877,6 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
       // 14. 성공이든 실패든 색상 변경 플래그 해제
       isChangingColorRef.current = false;
     }
-  };
-
-  /**
-   * 하이라이트 상태 변경 시 CodeMirror에 적용
-   */
-  useEffect(() => {
-    const view = editorRef.current;
-    if (!view) return;
-
-    // 색상 변경 중이면 이 useEffect에서는 처리하지 않음
-    if (isChangingColorRef.current) {
-      console.log('[디버깅] 색상 변경 중이므로 자동 하이라이트 적용을 건너뜁니다');
-      return;
-    }
-
-    console.log('[디버깅] highlights 상태 변경 감지:', highlights.length);
-
-    // 현재 문서와 관련된 하이라이트만 필터링
-    const relevantHighlights = highlights.filter(h => h.documentId === documentId);
-    if (relevantHighlights.length === 0) return;
-
-    // 새로 적용할 하이라이트 효과 모음
-    const effects: StateEffect<any>[] = [];
-
-    // 각 하이라이트에 대해 적용 여부 체크 후 효과 추가
-    relevantHighlights.forEach(highlight => {
-      const highlightKey = createHighlightKey(highlight);
-
-      if (!appliedHighlightIdsRef.current.has(highlightKey)) {
-        console.log('[디버깅] 하이라이트 효과 추가:', highlight.clientId);
-
-        effects.push(addHighlightEffect.of({
-          highlight: highlight,
-          toggleMemoPopup: setActiveMemo,
-          editorView: view,
-          onHighlightClick
-        }));
-
-        appliedHighlightIdsRef.current.add(highlightKey);
-      } else {
-        console.log('[디버깅] 하이라이트 이미 적용됨, 중복 추가 방지:', highlight.clientId);
-      }
-    });
-
-    // 효과가 있는 경우만 디스패치
-    if (effects.length > 0) {
-      console.log(`[디버깅] ${effects.length}개 하이라이트 효과 디스패치`);
-      view.dispatch({ effects });
-    }
-  }, [highlights, documentId, editorRef.current, onHighlightClick]);
-
-  /**
-   * 하이라이트 추가 함수
-   */
-  const addHighlight = (from: number, to: number, color: string, isMemo: boolean = false) => {
-    if (!editorRef.current) return false;
-
-    // 중복 하이라이트 확인
-    const isDuplicate = highlights.some(h =>
-      h.documentId === documentId &&
-      h.from === from &&
-      h.to === to
-    );
-
-    if (isDuplicate) {
-      console.log('이미 하이라이트된 범위입니다');
-      return false;
-    }
-
-    // 새 하이라이트 생성
-    const newHighlight: Highlight = {
-      clientId: generateClientId(from, to),
-      from,
-      to,
-      color: getHighlightColors(color).background,
-      documentId,
-      isPending: true,
-      isMemo: isMemo
-    };
-
-    console.log('새 하이라이트 추가:', newHighlight);
-
-    // 함수형 업데이트 사용하여 상태 갱신
-    setHighlights(prevHighlights => {
-      const updatedHighlights = [...prevHighlights, newHighlight];
-      saveHighlights(updatedHighlights);
-      return updatedHighlights;
-    });
-
-    return true;
-  };
-
-  /**
-   * 메모 팝업 닫기 함수 (명시적 닫기용)
-   */
-  const closeMemoPopup = () => {
-    console.log('[디버깅] 메모 팝업 닫기 함수 호출됨 (명시적 닫기)');
-    setActiveMemo(null); // setActiveMemo 직접 호출
-  };
-
-  /**
-   * 하이라이트 제거 함수
-   */
-  const removeHighlight = (clientId: string) => {
-    if (!editorRef.current) return false;
-
-    console.log('하이라이트 제거:', clientId);
-
-    // 해당 clientId의 하이라이트 찾기
-    const targetHighlight = highlights.find(h => h.clientId === clientId);
-    if (!targetHighlight) {
-      console.warn(`[경고] 제거할 하이라이트를 찾을 수 없음: ${clientId}`);
-      return false;
-    }
-
-    // 메모 팝업이 열려있다면 닫기
-    if (activeMemo && activeMemo.clientId === clientId) {
-      setActiveMemo(null);
-    }
-
-    // 1. highlights 상태에서 제거
-    const updatedHighlights = highlights.filter(h => h.clientId !== clientId);
-    setHighlights(updatedHighlights);
-    saveHighlights(updatedHighlights);
-
-    // 2. CodeMirror에서 해당 하이라이트 제거 효과 적용
-    editorRef.current.dispatch({
-      effects: removeHighlightEffect.of(clientId)
-    });
-
-    // 3. 적용된 하이라이트 ID 목록에서 제거
-    appliedHighlightIdsRef.current.delete(createHighlightKey(targetHighlight));
-
-    return true;
   };
 
   return {
