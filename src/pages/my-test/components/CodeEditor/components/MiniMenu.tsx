@@ -44,6 +44,14 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
   if (!position || !portalRoot) return null;
 
   /**
+   * 이벤트 전파를 방지하는 유틸리티 함수
+   */
+  const preventPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
+  /**
    * 색상 선택 시 호출되는 핸들러
    */
   const handleColorSelect = (color: string, e: React.MouseEvent) => {
@@ -80,14 +88,6 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
     } catch (error) {
       console.error('MiniMenu: onAddMemo 함수 호출 중 오류:', error);
     }
-  };
-
-  /**
-   * 이벤트 전파를 방지하는 유틸리티 함수
-   */
-  const preventPropagation = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
   };
 
   /**

@@ -61,6 +61,22 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
     };
   }, [onClose]);
 
+  /**
+   * 이벤트 전파를 방지하는 유틸리티 함수
+   */
+  const preventPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
+  // 색상 선택 핸들러
+  const handleColorSelect = (color: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(`[디버깅] 색상 선택됨: ${color}`);
+    setSelectedColor(color);
+  };
+
   // 색상 변경 클릭 핸들러
   const handleColorChange = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -73,14 +89,6 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
     onClose();
   };
 
-  // 색상 선택 핸들러
-  const handleColorSelect = (color: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log(`[디버깅] 색상 선택됨: ${color}`);
-    setSelectedColor(color);
-  };
-
   // 삭제 클릭 핸들러
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -90,14 +98,6 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
       onDelete(highlight.clientId);
     }
     onClose();
-  };
-
-  /**
-   * 이벤트 전파를 방지하는 유틸리티 함수
-   */
-  const preventPropagation = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
   };
 
   return (

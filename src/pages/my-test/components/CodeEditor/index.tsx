@@ -29,9 +29,6 @@ export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'tex
  */
 export type EditorTheme = 'light' | 'dark';
 
-// 렌더링 카운트 디버깅용 변수
-let renderCount = 0;
-
 /**
  * 코드 에디터 컴포넌트 속성 인터페이스
  */
@@ -44,6 +41,9 @@ interface CodeEditorProps {
   documentId?: string;              // 파일의 고유 ID
   userName?: string;                // 사용자 이름 (커서 표시용)
 }
+
+// 렌더링 카운트 디버깅용 변수
+let renderCount = 0;
 
 /**
  * 텍스트 모드에서 흰색 텍스트를 표시하기 위한 확장
@@ -67,22 +67,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   userName = '익명 사용자',
 }) => {
   console.log(`[디버깅] CodeEditor 컴포넌트 렌더링 #${++renderCount}, documentId: ${documentId}`);
+
+  // 에디터 및 문서 참조
   const ydocRef = useRef<Y.Doc | null>(null);
   const persistenceRef = useRef<IndexeddbPersistence | null>(null);
   const editorRef = useRef<EditorView | null>(null);
 
-  // 메모 팝업 루트 참조
+  // 메모 팝업 관련 참조
   const memoPopupRootRef = useRef<ReactDOM.Root | null>(null);
-  // 메모 팝업 컨테이너 참조
   const memoPopupContainerRef = useRef<HTMLDivElement | null>(null);
-  // 메모 팝업이 초기화되었는지 추적
   const isMemoPopupInitializedRef = useRef<boolean>(false);
 
-  // 하이라이트 메뉴 루트 참조
+  // 하이라이트 메뉴 관련 참조
   const highlightMenuRootRef = useRef<ReactDOM.Root | null>(null);
-  // 하이라이트 메뉴 컨테이너 참조
   const highlightMenuContainerRef = useRef<HTMLDivElement | null>(null);
-  // 하이라이트 메뉴가 초기화되었는지 추적
   const isHighlightMenuInitializedRef = useRef<boolean>(false);
 
   // 각종 상태 정의
@@ -147,6 +145,76 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   });
 
   /**
+   * 하이라이트 버튼 클릭 핸들러
+   */
+  const handleHighlight = (color: string) => {
+    console.log('하이라이트 버튼 클릭됨');
+    if (selectedRange) {
+      const { from, to } = selectedRange;
+      const success = addHighlight(from, to, color, false);
+      if (success) {
+        setMenuPosition(null);
+      }
+    }
+  };
+
+  /**
+   * 메모 버튼 클릭 핸들러
+   */
+  const handleAddMemo = (color: string) => {
+    console.log('메모 추가 버튼 클릭됨');
+    if (selectedRange) {
+      const { from, to } = selectedRange;
+      const success = addHighlight(from, to, color, true);
+      if (success) {
+        setMenuPosition(null);
+      }
+    }
+  };
+
+  /**
+   * 메모 저장 핸들러
+   */
+  const handleSaveMemo = (clientId: string, content: string) => {
+    setMemoContents(prev => ({
+      ...prev,
+      [clientId]: content
+    }));
+
+    // TODO: 메모 내용을 백엔드에 저장하는 로직 추가
+    console.log('메모 저장:', clientId, content);
+  };
+
+  /**
+   * 언어별 확장 생성 함수
+   */
+  const getLanguageExtension = (lang: CodeLanguage) => {
+    switch (lang) {
+      case 'python':
+        return python();
+      case 'javascript':
+        return javascript();
+      case 'java':
+        return java();
+      case 'cpp':
+        return cpp();
+      case 'c':
+        return cpp();
+      case 'text':
+        return null;
+      default:
+        return python();
+    }
+  };
+
+  /**
+   * 테마 설정 함수
+   */
+  const getTheme = (themeType: EditorTheme) => {
+    return themeType === 'dark' ? vscodeDark : undefined;
+  };
+
+  /**
    * 에디터 초기화 및 정리를 담당하는 생명주기
    */
   useEffect(() => {
@@ -200,34 +268,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   }, [documentId, readOnly, value]); // value 의존성 추가
 
-  /**
-   * 하이라이트 버튼 클릭 핸들러
-   */
-  const handleHighlight = (color: string) => {
-    console.log('하이라이트 버튼 클릭됨');
-    if (selectedRange) {
-      const { from, to } = selectedRange;
-      const success = addHighlight(from, to, color, false);
-      if (success) {
-        setMenuPosition(null);
-      }
-    }
-  };
-
-  /**
-   * 메모 버튼 클릭 핸들러
-   */
-  const handleAddMemo = (color: string) => {
-    console.log('메모 추가 버튼 클릭됨');
-    if (selectedRange) {
-      const { from, to } = selectedRange;
-      const success = addHighlight(from, to, color, true);
-      if (success) {
-        setMenuPosition(null);
-      }
-    }
-  };
-
   // 미니메뉴가 나타날 때 메모 팝업과 하이라이트 메뉴 닫기
   useEffect(() => {
     if (menuPosition) {
@@ -248,85 +288,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       setHighlightMenuState(null);
     }
   }, [highlightMenuState, activeMemo]);
-
-  // 메모 저장 핸들러
-  const handleSaveMemo = (clientId: string, content: string) => {
-    setMemoContents(prev => ({
-      ...prev,
-      [clientId]: content
-    }));
-
-    // TODO: 메모 내용을 백엔드에 저장하는 로직 추가
-    console.log('메모 저장:', clientId, content);
-  };
-
-  const getLanguageExtension = (lang: CodeLanguage) => {
-    switch (lang) {
-      case 'python':
-        return python();
-      case 'javascript':
-        return javascript();
-      case 'java':
-        return java();
-      case 'cpp':
-        return cpp();
-      case 'c':
-        return cpp();
-      case 'text':
-        return null;
-      default:
-        return python();
-    }
-  };
-
-  const getTheme = (themeType: EditorTheme) => {
-    return themeType === 'dark' ? vscodeDark : undefined;
-  };
-
-  const langExtension = getLanguageExtension(language);
-
-  const extensions: Extension[] = [];
-  if (langExtension) {
-    extensions.push(langExtension);
-  }
-
-  // 같은 단어 자동 하이라이팅 비활성화
-  extensions.push(highlightSelectionMatches({ highlightWordAroundCursor: false, minSelectionLength: 100 }));
-
-  // 텍스트 모드에서 흰색 텍스트 확장 추가
-  if (language === 'text') {
-    extensions.push(whiteTextExtension);
-  }
-
-  // 하이라이트 테마 추가
-  extensions.push(highlightTheme);
-
-  // 하이라이트 확장 추가
-  extensions.push(...highlightExtensions);
-
-  // 마우스 이벤트 핸들러 추가
-  extensions.push(
-    EditorView.domEventHandlers(editorEventHandlers),
-    EditorView.updateListener.of(update => {
-      if (update.view) {
-        editorRef.current = update.view;
-      }
-    })
-  );
-
-  // Yjs 협업 기능 추가
-  if (!readOnly && ydocRef.current) {
-    const ytext = ydocRef.current.getText('codemirror');
-
-    // 협업 확장 기능 추가
-    extensions.push(
-      yCollab(ytext, {
-        clientID: Math.floor(Math.random() * 100000),
-        username: userName,
-        userColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-      })
-    );
-  }
 
   // 메모 팝업 초기화를 위한 useEffect
   useEffect(() => {
@@ -523,6 +484,52 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
     }
   }, [highlightMenuState, removeHighlight, updateHighlightColor]);
+
+  // 확장 설정
+  const langExtension = getLanguageExtension(language);
+  const extensions: Extension[] = [];
+
+  if (langExtension) {
+    extensions.push(langExtension);
+  }
+
+  // 같은 단어 자동 하이라이팅 비활성화
+  extensions.push(highlightSelectionMatches({ highlightWordAroundCursor: false, minSelectionLength: 100 }));
+
+  // 텍스트 모드에서 흰색 텍스트 확장 추가
+  if (language === 'text') {
+    extensions.push(whiteTextExtension);
+  }
+
+  // 하이라이트 테마 추가
+  extensions.push(highlightTheme);
+
+  // 하이라이트 확장 추가
+  extensions.push(...highlightExtensions);
+
+  // 마우스 이벤트 핸들러 추가
+  extensions.push(
+    EditorView.domEventHandlers(editorEventHandlers),
+    EditorView.updateListener.of(update => {
+      if (update.view) {
+        editorRef.current = update.view;
+      }
+    })
+  );
+
+  // Yjs 협업 기능 추가
+  if (!readOnly && ydocRef.current) {
+    const ytext = ydocRef.current.getText('codemirror');
+
+    // 협업 확장 기능 추가
+    extensions.push(
+      yCollab(ytext, {
+        clientID: Math.floor(Math.random() * 100000),
+        username: userName,
+        userColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      })
+    );
+  }
 
   return (
     <div className="code-editor-wrapper">

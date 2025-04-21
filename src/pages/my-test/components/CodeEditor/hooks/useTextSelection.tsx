@@ -12,6 +12,7 @@ export interface UseTextSelectionProps {
  * 텍스트 선택 처리를 위한 커스텀 훅
  */
 export function useTextSelection({ editorRef }: UseTextSelectionProps) {
+  // 상태 및 참조
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
   const [selectedRange, setSelectedRange] = useState<{ from: number; to: number } | null>(null);
   const isDragging = useRef(false);
@@ -74,6 +75,13 @@ export function useTextSelection({ editorRef }: UseTextSelectionProps) {
   }, [editorRef]);
 
   /**
+   * 마우스 드래그 시작 감지 핸들러
+   */
+  const handleMouseDown = () => {
+    isDragging.current = true;
+  };
+
+  /**
    * 마우스 드래그 완료 시 메뉴 표시를 위한 전역 이벤트 리스너
    */
   useEffect(() => {
@@ -108,13 +116,6 @@ export function useTextSelection({ editorRef }: UseTextSelectionProps) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  /**
-   * 마우스 드래그 시작 감지 핸들러
-   */
-  const handleMouseDown = () => {
-    isDragging.current = true;
-  };
 
   const editorEventHandlers = {
     mousedown: handleMouseDown
