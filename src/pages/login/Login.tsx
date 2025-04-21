@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styles from "@/css/login/Auth.module.scss";
-import { LoginDataResponse, LoginFormValues, LoginProps } from '@/pages/login/Login.interface.ts';
+import { LoginFormValues, LoginProps, LoginResult } from '@/pages/login/Login.interface.ts';
 import Landing from '@/pages/common/Landing.tsx';
 import API from '@/store/api/ApiConfig.ts';
 import { AxiosResponse } from 'axios';
@@ -21,8 +21,13 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
     const handleOnSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log("form 실행", form);
-        const response:AxiosResponse<LoginDataResponse> = await API.post("/auth/login");
-        console.log("login 했을 때 response ; ", response);
+        try {
+            const response:AxiosResponse<LoginResult> = await API.post("/auth/login", form);
+            console.log("login 했을 때 response ; ", response);
+        } catch (e) {
+            console.log("error : ", e);
+        }
+
     }
 
     return (
