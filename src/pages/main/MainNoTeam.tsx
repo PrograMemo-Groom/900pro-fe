@@ -19,6 +19,7 @@ const mainTeamData = [
 ]
 const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
+  const [teamList, setTeamList] = React.useState([]);
 
   const handleOpenDialog = (index: number) => {
     setIsOpenDialog(true);
@@ -29,6 +30,11 @@ const MainNoTeam = () => {
         console.log("화면 렌더링 중에 이게 완료되면 렌더링");
         const response: AxiosResponse<teamDataResponse> = await API.get("/teams");
         console.log("팀 가입 안했을 때 팀 불러오기 : ",response);
+        const teamData = response.data;
+        if(teamData && Array.isArray(teamData)) {
+          setTeamList(teamData);
+        }
+
       } catch (e) {
         console.log(e);
       }
@@ -43,7 +49,10 @@ const MainNoTeam = () => {
         <Filter/>
       </div>
       <section>
-        {mainTeamData.map((item, index) => (
+        {teamList.length === 0 ? (
+          <p> 가입 가능한 팀이 없습니다.</p>
+        ) : (
+          teamList.map((item, index) => (
         <div className={styles.teamComponent} key={`teams-${item.teamId}`}>
             <button className={styles.teamContent} onClick={() => handleOpenDialog(index)}>
               <h3>{item.teamName}</h3>
@@ -52,7 +61,7 @@ const MainNoTeam = () => {
               <p>인원 {item.currentMembers} / 10</p>
             </button>
         </div>
-        ))}
+        )))}
       </section>
     </div>
   );
