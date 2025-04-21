@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/css/login/Auth.module.scss';
 import Landing from '@/pages/common/Landing.tsx';
 import { ResetForm, verifyForm } from '@/pages/resetPassword/ResetPassword.interface.ts';
@@ -7,14 +7,15 @@ import API from '@/store/api/ApiConfig.ts';
 
 const ResetPassword = () => {
   const [form, setForm] = useState<ResetForm>({ email: '', password: '' });
+  const [temporaryPassword, setTemporaryPassword] = useState(false);
   const handleOnSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('form 실행', form.email);
     try {
-      const response: AxiosResponse<ResetForm> = await API.post("/auth/verify", form);
-      console.log("이메일 인증 코드 요청 : ",response.data);
+      const response: AxiosResponse<ResetForm> = await API.post('/auth/verify', form);
+      console.log('이메일 인증 코드 요청 : ', response);
     } catch (e) {
-      console.log("error : ", e.response.data?.message);
+      console.log('error : ', e.response.data?.message);
     }
   };
   const handleOnChange = (e: React.FormEvent) => {
@@ -24,14 +25,15 @@ const ResetPassword = () => {
       [id]: value,
     }));
   };
-  const handleCheckEmail = async (email:string) => {
+  const handleCheckEmail = async (email: string) => {
     try {
-      const response: AxiosResponse<verifyForm> = await API.post("/mail/reset-password", { email });
-      console.log("이메일 인증 코드 요청 : ",response.data);
+      const response: AxiosResponse<verifyForm> = await API.post('/mail/reset-password', { email });
+      console.log('이메일 인증 코드 요청 : ', response.data);
+      setTemporaryPassword(response.data.success);
     } catch (e) {
-      console.log("error : ", e.response.data?.message);
+      console.log('error : ', e.response.data?.message);
     }
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -46,20 +48,22 @@ const ResetPassword = () => {
               // placeholder="email 을 입력해주세요"
                    value={form.email}
             />
-            <button type="button" onClick={()=> handleCheckEmail(form.email)}>메일전송</button>
+            <button type="button" onClick={() => handleCheckEmail(form.email)}>메일전송</button>
           </div>
         </div>
-        <div className={styles.inputForm}>
-          <label htmlFor="password">임시 Password</label>
-          <div className={styles.gradientBorder}>
-            <input type="password" id="password"
-                   onChange={(e) => handleOnChange(e)}
-              // placeholder="password 를 입력해주세요"
-                   value={form.password}
-            />
+        {temporaryPassword &&
+          <div className={styles.inputForm}>
+            <label htmlFor="password">임시 Password</label>
+            <div className={styles.gradientBorder}>
+              <input type="password" id="password"
+                     onChange={(e) => handleOnChange(e)}
+                // placeholder="password 를 입력해주세요"
+                     value={form.password}
+              />
+            </div>
           </div>
-        </div>
-        <button type="submit">재설정</button>
+        }
+        <button type="submit" disabled={!temporaryPassword || form.password.trim().length < 8}>재설정</button>
       </form>
     </div>
   );
