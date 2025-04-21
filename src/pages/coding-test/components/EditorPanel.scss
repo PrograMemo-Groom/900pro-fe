@@ -14,19 +14,21 @@
 }
 
 .sidebar-header {
-  padding: 8px 12px;
+  height: 40px;
+  padding: 0px 3px;
   font-size: 12px;
   font-weight: bold;
   color: #E7E7E7;
   border-bottom: 1px solid #1E1E1E;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .file-explorer {
   flex: 1;
   overflow: auto;
-  padding: 4px 0;
+  padding: 2px 0;
   scrollbar-width: none; // Firefox
   -ms-overflow-style: none; // IE, Edge (legacy)
 
@@ -82,7 +84,8 @@
   display: flex;
   background-color: #2D2D2D;
   border-bottom: 1px solid #1E1E1E;
-  height: 38px;
+  min-height: 40px;
+  box-sizing: border-box;
   overflow-x: auto;
   white-space: nowrap;
 }
@@ -103,7 +106,6 @@
   &.active {
     background-color: #1E1E1E;
     color: #FFFFFF;
-    border-top: 1px solid #007ACC;
   }
 
   .tab-name {
@@ -131,7 +133,7 @@
   display: flex;
   align-items: center;
   margin-left: auto;
-  padding: 0 12px;
+  padding: 0 20px;
 
   .language-selector {
     background: #3C3C3C;
@@ -155,6 +157,16 @@
 .editor-container {
   height: 100%;
   overflow: hidden;
+  background-color: #1E1E1E;
+  display: flex;
+  flex-direction: column;
+
+  .cm-theme {
+    flex: 1;
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+  }
 }
 
 .output-panel {
@@ -202,11 +214,7 @@
   border-radius: 3px;
 
   &:hover {
-    background-color: #2A2D2E;
-  }
-
-  &.active {
-    color: #FFFFFF;
     background-color: #37373D;
+    color: #FFFFFF;
   }
 }

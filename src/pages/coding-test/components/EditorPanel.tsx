@@ -130,9 +130,6 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
   ]);
   const [activeTabId, setActiveTabId] = useState<string>('tab1');
 
-  // 활성화된 사이드바 뷰
-  const [activeView, setActiveView] = useState<'files' | 'folders'>('files');
-
   // CodeMirror 인스턴스를 참조하기 위한 ref 추가
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
 
@@ -273,15 +270,13 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
           <div className="sidebar">
             <div className="sidebar-header">
               <button
-                className={`icon-button ${activeView === 'files' ? 'active' : ''}`}
-                onClick={() => setActiveView('files')}
+                className="icon-button"
                 title="파일 탐색기"
               >
                 <span role="img" aria-label="file">📄</span>
               </button>
               <button
-                className={`icon-button ${activeView === 'folders' ? 'active' : ''}`}
-                onClick={() => setActiveView('folders')}
+                className="icon-button"
                 title="폴더 구조"
               >
                 <span role="img" aria-label="folder">📂</span>

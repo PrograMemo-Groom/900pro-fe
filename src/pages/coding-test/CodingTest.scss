@@ -1,6 +1,6 @@
-@import '@/pages/coding-test/components/EditorPanel.scss';
-@import '@/pages/coding-test/components/Header.scss';
-@import '@/pages/coding-test/components/ProblemPanel.scss';
+@use '@/pages/coding-test/components/EditorPanel.scss';
+@use '@/pages/coding-test/components/Header.scss';
+@use '@/pages/coding-test/components/ProblemPanel.scss';
 
 .coding-test-container {
   width: 94vw;
