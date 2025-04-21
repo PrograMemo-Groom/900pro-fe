@@ -120,6 +120,56 @@
   }
 }
 
+.inputForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 479px;
+  width: 100%;
+
+  & > label {
+    font-size: 38px;
+    margin-left: 1rem;
+  }
+  .auth__input {
+    @include gradientMixin;
+    border-radius: 50px;
+    padding: 1rem 20px 1rem 30px;
+    background-color: transparent;
+    height: 80px;
+    display: flex;
+    align-items: center;
+
+    & input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 20px;
+    }
+    & button {
+      height: 100%;
+      padding: 0 1.5rem;
+      border: none;
+      border-radius: 40px;
+      background: #A1E3F9;
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background: rgba(161, 227, 249, 0.6);
+      }
+    }
+  }
+}
+
+
+
 .gradientBorder {
   background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
   padding: 3px;
