@@ -5,6 +5,8 @@ import styles from "@/css/main/Layout.module.scss";
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
+import FilterOrder from '@/pages/common/FilterOrder.tsx';
+import FilterQuestion from '@/pages/common/FilterQuestion.tsx';
 
 const mainTeamData = [
   {"teamId" : 1,"teamName": "개 열심히 하죠", "time": "매일 오후 6시", "level" : "상", "problemCount":"4", "currentMembers" : "3"},
@@ -48,6 +50,11 @@ const MainNoTeam = () => {
       <Header />
       <div className={styles.container}>
         <SearchBox/>
+        <section>
+          <FilterOrder />
+          <FilterQuestion />
+          <button>팀 생성</button>
+        </section>
       </div>
       <section>
         {teamList.length === 0 ? (
