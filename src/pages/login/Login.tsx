@@ -31,7 +31,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
         <form className={styles.loginForm} onSubmit={handleOnSubmit}>
             <div className={styles.inputForm}>
                 <label htmlFor="email">Email</label>
-                <div className={styles.gradientBorder}>
+                <div className={styles.auth__input}>
                     <input type="text" id="email"
                            onChange={(e) => handleOnChange(e)}
                            // placeholder="email 을 입력해주세요"
@@ -41,7 +41,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             </div>
             <div className={styles.inputForm}>
                 <label htmlFor="password">Password</label>
-                <div className={styles.gradientBorder}>
+                <div className={styles.auth__input}>
                     <input type="password" id="password"
                            onChange={(e) => handleOnChange(e)}
                            // placeholder="password 를 입력해주세요"
