@@ -90,13 +90,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const [highlightMenuState, setHighlightMenuState] = useState<HighlightMenuState | null>(null); // 하이라이트 메뉴 상태
 
   // 메모 팝업 컨테이너 스타일 상수
-  const MEMO_CONTAINER_STYLE = {
+  const MEMO_CONTAINER_STYLE: React.CSSProperties = {
     position: 'absolute',
     top: '0',
     left: '0',
-    pointerEvents: 'none',
+    pointerEvents: 'none', // 초기에는 상호작용 불가
     zIndex: '9999',
-    overflow: 'visible'
+    overflow: 'visible',
+    opacity: 0, // 초기에는 투명하게
+    transition: 'opacity 0.15s ease-in-out' // 부드러운 전환 효과
   };
 
   // 하이라이트 메뉴 컨테이너 스타일
@@ -402,7 +404,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     // 메모 팝업 컨테이너 생성 (한 번만)
     const container = document.createElement('div');
     container.className = 'memo-popup-container';
-    container.style.display = 'none'; // 초기에는 숨김 상태
+    // container.style.display = 'none'; // 초기에는 숨김 상태 -> opacity로 제어하므로 제거
 
     // 컨테이너 스타일 설정
     Object.assign(container.style, MEMO_CONTAINER_STYLE);
@@ -455,7 +457,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       console.log('[디버깅] 메모 팝업 표시:', activeMemo.position);
 
       // 컨테이너를 표시하고 내용 렌더링
-      memoPopupContainerRef.current.style.display = 'block';
+      // memoPopupContainerRef.current.style.display = 'block'; -> opacity로 대체
+      memoPopupContainerRef.current.style.opacity = '1'; // 불투명하게
+      memoPopupContainerRef.current.style.pointerEvents = 'auto'; // 상호작용 가능하게
 
       // 내용 업데이트
       memoPopupRootRef.current.render(
@@ -475,7 +479,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       // 활성화된 메모가 없으면 컨테이너만 숨김
       if (memoPopupContainerRef.current) {
         console.log('[디버깅] 메모 팝업 숨김');
-        memoPopupContainerRef.current.style.display = 'none';
+        // memoPopupContainerRef.current.style.display = 'none'; -> opacity로 대체
+        memoPopupContainerRef.current.style.opacity = '0'; // 투명하게
+        memoPopupContainerRef.current.style.pointerEvents = 'none'; // 상호작용 불가하게
       }
     }
   }, [activeMemo, closeMemoPopup, memoContents, handleSaveMemo]);
