@@ -54,6 +54,7 @@
     justify-content: space-between;
     align-items: center;
   }
+
   & > section {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -63,158 +64,31 @@
   }
 }
 
-@mixin gradientBorder($width:315px) {
-  background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
-  padding: 3px;
+.teamCard {
+  @include gradientMixin;
+  padding: 1.5rem;
   border-radius: 50px;
-  position: relative;
-  display: block;
-  width: $width;
-  //
-  //.gradientContent {
-  //  background-color: #0f172a;
-  //  width: 315px;
-  //  height: 62px;
-  //  padding: 0 2rem;
-  //  font-size: 1.5rem;
-  //  border-radius: 50px;
-  //  color: white;
-  //  cursor: pointer;
-  //  border: 1px solid #D1F8EF;
-  //}
-}
-
-.teamComponent {
-  @include gradientBorder($width:315px);
-
-
-  & > button {
-    background-color: #0f172a;
-    width: 315px;
-    padding: 0 2rem;
-    font-size: 1.5rem;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    border: 1px solid #D1F8EF;
-  }
-}
-.teamContent {
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-
-  & h3 {
-    font-size: 36px;
-  }
-  & p:nth-child(1) {
-    font-size: 24px;
-  }
-  & p:nth-of-type(2), p:nth-of-type(3) {
-    font-size: 20px;
-  }
+  gap: 0.6rem;
+  text-align: center;
 
   &:hover {
-    @debug "팀 호버 시 색상값 조정 : .teamContent > &:hover (ps. 지금 너무 쨍함)";
-    background-color: #3674B5;
-  }
-}
-
-.inputForm {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-width: 479px;
-  width: 100%;
-
-  & > label {
-    font-size: 38px;
-    margin-left: 1rem;
-  }
-  .auth__input {
-    @include gradientMixin;
-    border-radius: 50px;
-    padding: 1rem 20px 1rem 30px;
-    background-color: transparent;
-    height: 80px;
-    display: flex;
-    align-items: center;
-
-    & input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: white;
-      font-size: 20px;
-    }
-    & button {
-      height: 100%;
-      padding: 0 1.5rem;
-      border: none;
-      border-radius: 40px;
-      background: #A1E3F9;
-      font-size: 16px;
-      font-weight: 600;
-      color: #000;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: background 0.3s;
-
-      &:hover {
-        background: rgba(161, 227, 249, 0.6);
-      }
-    }
-  }
-}
-
-
-
-.gradientBorder {
-  background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
-  padding: 3px;
-  border-radius: 50px;
-  position: relative;
-  display: block;
-  width: 315px;
-
-  & > input {
-    background-color: #0f172a;
-    width: 315px;
-    height: 62px;
-    padding: 0 2rem;
-    font-size: 1.5rem;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    border: 1px solid #D1F8EF;
-
-    &::placeholder {
-      font-size: 1.5rem;
-      color: #aaa;
-      font-weight: 300;
-      //font-style: italic;
-    }
+    background: #3674B5;
   }
 
-  & > button {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 75px;
-    height: 52px;
-    background: linear-gradient(135deg, #b3ecff, #81d8f7);
-    border-radius: 50px;
-    border: none;
-    color: #000;
-    font-weight: bold;
-    font-size: 1.3rem;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+  & > header {
+    font-size: 36px;
+    font-weight: 700;
+  }
 
-    &:hover {
-      background: linear-gradient(135deg, #a2dbf5, #6fc8ec);
-    }
+  & > p {
+    font-size: 24px;
+  }
+  & > p:last-child {
+    font-size: 20px;
   }
 }

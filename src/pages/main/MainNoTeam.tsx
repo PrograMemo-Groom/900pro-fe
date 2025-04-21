@@ -9,7 +9,7 @@ import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
 const mainTeamData = [
   {"teamId" : 1,"teamName": "개 열심히 하죠", "time": "매일 오후 6시", "level" : "상", "problemCount":"4", "currentMembers" : "3"},
   {"teamId" : 2,"teamName": "천천히 하자", "time": "매일 오전 11시", "level" : "하", "problemCount":"1", "currentMembers" : "7"},
-  {"teamId" : 3,"teamName": "개구락지", "time": "매일 오전 2시", "level" : "최", "problemCount":"3", "currentMembers" : "5"},
+  {"teamId" : 3,"teamName": "개구락지", "time": "매일 오전 2시", "level" : "최상", "problemCount":"3", "currentMembers" : "5"},
   {"teamId" : 4,"teamName": "푸바오 못참지", "time": "매일 오후 8시", "level" : "중", "problemCount":"2", "currentMembers" : "2"},
   {"teamId" : 5,"teamName": "헤으응 개발", "time": "매일 오전 7시", "level" : "허", "problemCount":"4", "currentMembers" : "10"},
   {"teamId" : 6,"teamName": "초심을 찾자", "time": "매일 오전 3시", "level" : "하", "problemCount":"6", "currentMembers" : "9"},
@@ -20,6 +20,7 @@ const mainTeamData = [
 const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
   const [teamList, setTeamList] = React.useState([]);
+  // const [teamList, setTeamList] = React.useState(mainTeamData);
 
   const handleOpenDialog = (index: number) => {
     setIsOpenDialog(true);
@@ -53,14 +54,12 @@ const MainNoTeam = () => {
           <p> 가입 가능한 팀이 없습니다.</p>
         ) : (
           teamList.map((item, index) => (
-        <div className={styles.teamComponent} key={`teams-${item.teamId}`}>
-            <button className={styles.teamContent} onClick={() => handleOpenDialog(index)}>
-              <h3>{item.teamName}</h3>
+        <article className={styles.teamCard} key={`teams-${item.teamId}`} onClick={() => handleOpenDialog(index)}>
+              <header>{item.teamName}</header>
               <p>{item.time}</p>
               <p>난이도 {item.level} / {item.problemCount}문제</p>
               <p>인원 {item.currentMembers} / 10</p>
-            </button>
-        </div>
+        </article>
         )))}
       </section>
     </div>
