@@ -53,7 +53,7 @@ const MainNoTeam = () => {
         <section>
           <FilterOrder />
           <FilterQuestion />
-          <button>팀 생성</button>
+          <button className={styles.teamCreateButton}>팀 생성</button>
         </section>
       </div>
       <section>

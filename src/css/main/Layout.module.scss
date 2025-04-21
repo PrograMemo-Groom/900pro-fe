@@ -124,9 +124,11 @@
       border-radius: 50%;
     }
   }
+
   & ul, & li {
     list-style: none;
   }
+
   & ul {
     padding: 20px;
     position: absolute;
@@ -158,6 +160,24 @@
     }
   }
 }
+
+.teamCreateButton {
+  @include gradientMixin;
+  width: 80px;
+  height: 80px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.3s;
+  text-align: center;
+
+  &:hover {
+    background: rgba(161, 227, 249, 0.6);
+    border-radius: 50%;
+  }
+}
+
 .filterForm {
   display: flex;
   flex-direction: column;
