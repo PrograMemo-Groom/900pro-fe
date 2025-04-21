@@ -1,0 +1,66 @@
+@import '@/pages/coding-test/components/_variables.scss';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 $spacing-lg $spacing-sm $spacing-lg;
+  height: $main-header-height;
+  min-height: $main-header-height;
+  flex-shrink: 0;
+  position: relative;
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  .header-timer {
+    padding: 0.4rem 0.8rem;
+    background-color: #888;
+    color: #fff;
+    border-radius: $radius-lg;
+    font-weight: 500;
+    font-size: $font-base;
+    white-space: nowrap;
+  }
+
+  .header-title {
+    font-size: $font-title;
+    color: $text-white;
+    font-weight: bold;
+    white-space: nowrap;
+    position: absolute;
+    left: 50%;
+    top: 35%;
+    transform: translate(-50%, -50%);
+    padding: 0 $spacing-lg;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.05em;
+  }
+
+  .header-button {
+    @include blue-button;
+
+    &.run-button {
+      background-color: $accent-primary;
+      &:hover:not(:disabled) {
+        background-color: $accent-hover;
+      }
+      &:disabled {
+        background-color: $disabled-bg;
+        color: $text-disabled;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    &.submit-button {
+      background-color: $accent-primary;
+      &:hover {
+        background-color: $accent-hover;
+      }
+    }
+  }
+} 

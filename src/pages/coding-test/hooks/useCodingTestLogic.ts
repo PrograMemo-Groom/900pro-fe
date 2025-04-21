@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { CodeLanguage } from '../components/CodeEditor';
-import { defaultCode } from '../constants/constants';
+import { CodeLanguage } from '@/pages/coding-test/components/EditorPanel';
+import { defaultCode } from '@/pages/coding-test/constants/constants';
 
 export const useCodingTestLogic = () => {
   const [output, setOutput] = useState<string>('');

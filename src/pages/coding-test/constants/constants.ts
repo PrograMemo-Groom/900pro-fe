@@ -1,4 +1,4 @@
-import { CodeLanguage } from '../components/CodeEditor';
+import { CodeLanguage } from '@/pages/coding-test/components/EditorPanel';
 
 export const availableLanguages: CodeLanguage[] = ['python', 'javascript', 'java', 'cpp', 'c'];
 
