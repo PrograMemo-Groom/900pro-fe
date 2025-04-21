@@ -8,6 +8,7 @@ import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
 import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
 import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
+import TeamDetail from '@/pages/main/TeamDialog/TeamDetail.tsx';
 
 const mainTeamData = [
   {"teamId" : 1,"teamName": "개 열심히 하죠", "time": "매일 오후 6시", "level" : "상", "problemCount":"4", "currentMembers" : "3"},
@@ -24,9 +25,11 @@ const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
   // const [teamList, setTeamList] = React.useState([]);
   const [teamList, setTeamList] = React.useState(mainTeamData);
+  const [selectedIndex, setSelectedIndex] = React.useState('');
 
-  const handleOpenDialog = (index: number) => {
+  const handleOpenDialog = (index: string) => {
     setIsOpenDialog(true);
+    setSelectedIndex(index);
   }
   useEffect(() => {
     const fetchTeamData = async () => {
@@ -63,6 +66,10 @@ const MainNoTeam = () => {
         </article>
         )))}
       </section>
+
+      {isOpenDialog && (
+        <TeamDetail team={teamList[selectedIndex]} onClose={() => setIsOpenDialog(false)} />
+      )}
     </div>
   );
 };
