@@ -1,88 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CodeEditor, { CodeLanguage, EditorTheme } from '@/pages/coding-test/components/CodeEditor';
 import '@/pages/coding-test/CodingTest.scss';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-
-const availableLanguages: CodeLanguage[] = ['python', 'javascript', 'java', 'cpp', 'c'];
-
-const languageDisplayNames: Record<CodeLanguage, string> = {
-  python: 'Python',
-  javascript: 'JavaScript',
-  java: 'Java',
-  cpp: 'C++',
-  c: 'C'
-};
-
-const defaultCode: Record<CodeLanguage, string> = {
-  python: '# 파이썬 코드를 작성하세요\nprint("Hello World!")\n',
-  javascript: '// 자바스크립트 코드를 작성하세요\nconsole.log("Hello World!");\n',
-  java: '// 자바 코드를 작성하세요\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello World!");\n  }\n}\n',
-  cpp: '// C++ 코드를 작성하세요\n#include <iostream>\n\nint main() {\n  std::cout << "Hello World!" << std::endl;\n  return 0;\n}\n',
-  c: '// C 코드를 작성하세요\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!\\n");\n  return 0;\n}\n'
-};
+import { availableLanguages, languageDisplayNames } from './constants/constants';
+import { useCodingTestLogic } from './hooks/useCodingTestLogic';
 
 const CodingTestPage: React.FC = () => {
-  const [theme, setTheme] = useState<EditorTheme>('dark');
-  const [output, setOutput] = useState<string>('');
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [remainingTime, setRemainingTime] = useState<string>('1:48:54');
-  const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>('python');
-  const [codeContent, setCodeContent] = useState<Record<CodeLanguage, string>>({
-    python: defaultCode.python,
-    javascript: defaultCode.javascript,
-    java: defaultCode.java,
-    cpp: defaultCode.cpp,
-    c: defaultCode.c
-  });
+  const [theme] = useState<EditorTheme>('dark');
+  const {
+    output,
+    isRunning,
+    remainingTime,
+    selectedLanguage,
+    handleCodeChange,
+    handleLanguageChange,
+    handleRunCode,
+    handleSubmit,
+    currentCode
+  } = useCodingTestLogic();
 
-  useEffect(() => {
-    const savedCode = localStorage.getItem('codingTestCode');
-    if (savedCode) {
-      try {
-        const parsedCode = JSON.parse(savedCode) as Record<CodeLanguage, string>;
-        setCodeContent(parsedCode);
-      } catch (error) {
-        console.error('저장된 코드를 불러오는 중 오류가 발생했습니다:', error);
-      }
-    }
-  }, []);
-
-  const handleCodeChange = (value: string) => {
-    const updatedCode = {
-      ...codeContent,
-      [selectedLanguage]: value
-    };
-    setCodeContent(updatedCode);
-    localStorage.setItem('codingTestCode', JSON.stringify(updatedCode));
+  const onLanguageSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    handleLanguageChange(e.target.value as CodeLanguage);
   };
-
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value as CodeLanguage;
-    if (selectedLanguage !== newLanguage) {
-      localStorage.setItem('codingTestCode', JSON.stringify(codeContent));
-      setSelectedLanguage(newLanguage);
-    }
-  };
-
-  const handleRunCode = () => {
-    setIsRunning(true);
-    setOutput('실행하는 중...');
-    // 실제 구현에서는 백엔드로 코드를 보내 실행하고 결과를 받아오겠지만,
-    // 여기서는 시뮬레이션만 합니다.
-    setTimeout(() => {
-      const resultHeader = `--- ${selectedLanguage} 실행 결과 ---`;
-      const resultContent = codeContent[selectedLanguage].split('\n')[1] || '실행 완료.';
-      const resultFooter = '--------------------------';
-      setOutput(`${resultHeader}\n${resultContent}\n${resultFooter}`);
-      setIsRunning(false);
-    }, 1500);
-  };
-
-  const handleSubmit = () => {
-    alert('코드가 제출되었습니다!');
-  };
-
-  const currentCode = codeContent[selectedLanguage];
 
   return (
     <div className="coding-test-container dark-mode">
@@ -158,7 +97,7 @@ const CodingTestPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="language-selector-container">
-                    <select className="language-selector" value={selectedLanguage} onChange={handleLanguageChange}>
+                    <select className="language-selector" value={selectedLanguage} onChange={onLanguageSelectChange}>
                       {availableLanguages.map(lang => (
                         <option key={lang} value={lang}>
                           {languageDisplayNames[lang]}
