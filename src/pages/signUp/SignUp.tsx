@@ -47,7 +47,7 @@ const SignUp = () => {
         <div className={styles.inputForm}>
           {/*닉네임은 최대 8자, 영문자와 숫자만 이용 가능*/}
           <label htmlFor="username">Name</label>
-          <div className={styles.gradientBorder}>
+          <div className={styles.auth__input}>
             <input type="text" id="username"
                    onChange={(e) => handleOnChange(e)}
                    placeholder="최대 8자, 영문자와 숫자만 이용 가능"
@@ -58,7 +58,7 @@ const SignUp = () => {
         </div>
         <div className={styles.inputForm}>
           <label htmlFor="email">Email</label>
-          <div className={styles.gradientBorder}>
+          <div className={styles.auth__input}>
             <input type="text" id="email"
                    onChange={(e) => handleOnChange(e)}
               // placeholder="email 을 입력해주세요"
@@ -69,7 +69,7 @@ const SignUp = () => {
         </div>
         <div className={styles.inputForm}>
           <label htmlFor="password">Password</label>
-          <div className={styles.gradientBorder}>
+          <div className={styles.auth__input}>
             <input type="password" id="password"
                    onChange={(e) => handleOnChange(e)}
               // placeholder="password 를 입력해주세요"
@@ -77,7 +77,7 @@ const SignUp = () => {
             />
           </div>
         </div>
-        <button type="submit">Sign Up</button>
+        <button className={styles.auth__submit} type="submit">Sign Up</button>
         <div className={styles.checkAuth}>
           <p><strong>이미 회원이신가요?</strong> <a href="/"><span>로그인</span></a></p>
         </div>

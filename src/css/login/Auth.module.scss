@@ -47,13 +47,13 @@
       margin-bottom: 20px;
     }
 
+    // ---------------------  form 설정 공통 css 만 사용하는 코드
     .inputForm {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       max-width: 479px;
       width: 100%;
-
 
       & > label {
         font-size: 38px;
@@ -62,13 +62,13 @@
       .auth__input {
         @include gradientMixin;
         border-radius: 50px;
-        padding: 1rem 30px 1rem 30px;
+        padding: 1rem 20px 1rem 30px;
         background-color: transparent;
         height: 80px;
         display: flex;
         align-items: center;
 
-        input {
+        & input {
           flex: 1;
           background: transparent;
           border: none;
@@ -76,29 +76,27 @@
           color: white;
           font-size: 20px;
         }
-      }
-
-      .gradientBorder {
-        @include gradientMixin;
-        border-radius: 50px;
-        padding: 1rem 30px 1rem 30px;
-        background-color: transparent;
-        height: 80px;
-        display: flex;
-        align-items: center;
-
-        input {
-          flex: 1;
-          background: transparent;
+        & button {
+          height: 100%;
+          padding: 0 1.5rem;
           border: none;
-          outline: none;
-          color: white;
-          font-size: 20px;
+          border-radius: 40px;
+          background: #A1E3F9;
+          font-size: 16px;
+          font-weight: 600;
+          color: #000;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: background 0.3s;
+
+          &:hover {
+            background: rgba(161, 227, 249, 0.6);
+          }
         }
       }
     }
 
-    & > button[type="submit"] {
+    .auth__submit[type="submit"] {
       @include gradientMixin;
       height: 80px;
       border-radius: 50px;
@@ -107,6 +105,8 @@
       color: black;
       font-size: 2rem;
     }
+    // 공통 부분 -------------------------------------
+
     .checkAuth {
       display: flex;
       flex-direction: column;

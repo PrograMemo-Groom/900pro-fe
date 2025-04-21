@@ -49,7 +49,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
                     />
                 </div>
             </div>
-            <button type="submit">Sign in</button>
+            <button className={styles.auth__submit} type="submit">Sign in</button>
             <div className={styles.checkAuth}>
                 <p><strong>Don’t have an account?</strong> <a href="/signup"><span>Sign up</span></a></p>
                 <a href="/find"><p>Forgot Password</p></a>

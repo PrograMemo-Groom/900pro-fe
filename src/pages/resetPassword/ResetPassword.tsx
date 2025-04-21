@@ -46,7 +46,7 @@ const ResetPassword = () => {
         <h2>비밀번호 초기화</h2>
         <div className={styles.inputForm}>
           <label htmlFor="email">Email</label>
-          <div className={styles.gradientBorder}>
+          <div className={styles.auth__input}>
             <input type="text" id="email"
                    onChange={(e) => handleOnChange(e)}
               // placeholder="email 을 입력해주세요"
@@ -58,7 +58,7 @@ const ResetPassword = () => {
         {temporaryPassword &&
           <div className={styles.inputForm}>
             <label htmlFor="password">임시 Password</label>
-            <div className={styles.gradientBorder}>
+            <div className={styles.auth__input}>
               <input type="password" id="password"
                      onChange={(e) => handleOnChange(e)}
                 // placeholder="password 를 입력해주세요"
@@ -67,7 +67,7 @@ const ResetPassword = () => {
             </div>
           </div>
         }
-        <button type="submit" disabled={!temporaryPassword || form.password.trim().length < 8}>재설정</button>
+        <button className={styles.auth__submit} type="submit" disabled={!temporaryPassword || form.password.trim().length < 8}>재설정</button>
       </form>
     </div>
   );
