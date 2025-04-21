@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '@/css/main/Layout.module.scss';
 import searchBtn from "@/assets/Search.svg";
 
-const Filter = () => {
+const SearchBox = () => {
   const [search, setSearch] = React.useState<string>('');
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,7 +11,7 @@ const Filter = () => {
 
   return (
     <div className={styles.filterForm}>
-      <div className={styles.auth__input}>
+      <div className={styles.common__input}>
         <input type="text" id="search"
                onChange={(e) => handleOnChange(e)}
                value={search}
@@ -23,4 +23,4 @@ const Filter = () => {
   );
 };
 
-export default Filter;
+export default SearchBox;

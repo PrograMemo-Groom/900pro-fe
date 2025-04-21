@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from '@/pages/common/Header.tsx';
-import Filter from '@/pages/common/Filter.tsx';
+import SearchBox from '@/pages/common/SearchBox.tsx';
 import styles from "@/css/main/Layout.module.scss";
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
@@ -47,7 +47,7 @@ const MainNoTeam = () => {
     <div className={styles.mainContainer}>
       <Header />
       <div className={styles.container}>
-        <Filter/>
+        <SearchBox/>
       </div>
       <section>
         {teamList.length === 0 ? (
