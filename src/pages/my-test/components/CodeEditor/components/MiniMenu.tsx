@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import '@/pages/my-test/components/MiniMenu/MiniMenu.scss';
+import './MiniMenu.scss';
 
 /**
  * 하이라이트에 사용할 색상 목록 상수

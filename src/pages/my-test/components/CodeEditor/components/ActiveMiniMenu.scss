@@ -1,0 +1,43 @@
+.mini-menu {
+  position: absolute;
+  z-index: 9999;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  pointer-events: auto;
+
+  .color-palette {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+    margin-bottom: 4px;
+
+    .color-option {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      &.selected {
+        box-shadow: 0 0 0 2px #2d2d2d, 0 0 0 3px #ffffff;
+      }
+    }
+  }
+
+  button {
+    background: #4a4a4a;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    margin: 4px 0;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+}

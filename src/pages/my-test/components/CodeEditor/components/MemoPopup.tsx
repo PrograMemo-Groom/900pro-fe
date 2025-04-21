@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { throttle } from 'lodash';
+import '@/pages/my-test/components/CodeEditor/components/MemoPopup.scss';
 
 export interface MemoPopupProps {
   position: { top: number; left: number };
@@ -167,112 +168,25 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
 
   // 불투명한 배경색 계산
   const opaqueBackgroundColor = getOpaqueColor(backgroundColor);
-  const headerBackgroundColor = opaqueBackgroundColor; // 헤더도 동일한 색상 사용 (필요시 조정)
-
-  const styles = {
-    memoPopup: {
-      position: 'absolute' as const,
-      top: `${position.top}px`,
-      left: `${position.left}px`,
-      zIndex: 9999,
-      width: '220px',
-      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      fontSize: '14px',
-      transition: 'transform 0.2s ease-in-out',
-      pointerEvents: 'auto' as const,
-      transformOrigin: 'top left',
-      backfaceVisibility: 'hidden' as const,
-      willChange: 'transform' as const
-    },
-    memoPopupContent: {
-      backgroundColor: opaqueBackgroundColor,
-      borderRadius: '4px',
-      overflow: 'hidden' as const,
-      display: 'flex' as const,
-      flexDirection: 'column' as const,
-      minHeight: '120px',
-      maxHeight: '300px',
-      border: '1px solid black',
-      WebkitBackfaceVisibility: 'hidden' as const,
-      WebkitTransform: 'translateZ(0)' as const
-    },
-    memoPopupHeader: {
-      display: 'flex' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'center' as const,
-      padding: '2px 5px',
-      backgroundColor: headerBackgroundColor,
-      borderBottom: '1px solid black'
-    },
-    memoId: {
-      fontWeight: 600,
-      fontSize: '0.85em',
-      color: 'black'
-    },
-    memoPopupActions: {
-      display: 'flex' as const,
-      gap: '4px'
-    },
-    memoButton: {
-      background: 'transparent',
-      border: 'none',
-      cursor: 'pointer',
-      padding: '2px',
-      borderRadius: '3px',
-      color: 'black',
-      display: 'flex' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const
-    },
-    memoPopupBody: {
-      padding: '10px',
-      flex: 1,
-      overflowY: 'auto' as const
-    },
-    memoTextarea: {
-      width: '100%',
-      minHeight: '100px',
-      backgroundColor: 'transparent',
-      // border: '1px solid rgba(0, 0, 0, 1)',
-      // borderRadius: '3px',
-      // padding: '0px',
-      border: 'none',
-      outline: 'none',
-      resize: 'none' as const,
-      fontFamily: 'inherit',
-      fontSize: 'inherit',
-      color: 'black'
-    },
-    memoText: {
-      whiteSpace: 'pre-wrap' as const,
-      wordBreak: 'break-word' as const,
-      color: 'black',
-      cursor: 'text',
-      minHeight: '100px'
-    },
-    memoPlaceholder: {
-      color: '#555',
-      fontStyle: 'italic',
-      fontSize: '0.9em'
-    }
-  };
 
   return (
     <div
       ref={popupRef}
       className="memo-popup"
-      style={styles.memoPopup}
+      style={{
+        top: `${position.top}px`,
+        left: `${position.left}px`
+      }}
     >
-      <div style={styles.memoPopupContent}>
-        <div style={styles.memoPopupHeader}>
-          <span style={styles.memoId}>
+      <div className="memo-popup-content" style={{ backgroundColor: opaqueBackgroundColor }}>
+        <div className="memo-popup-header" style={{ backgroundColor: opaqueBackgroundColor }}>
+          <span className="memo-id">
             #{clientId.split('-').pop()?.substring(0, 4)}
             {isEditing && ' (편집중)'}
           </span>
-          <div style={styles.memoPopupActions}>
+          <div className="memo-popup-actions">
             <button
-              style={styles.memoButton}
+              className="memo-button"
               onClick={handleClose}
               title="닫기"
             >
@@ -281,13 +195,13 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
           </div>
         </div>
 
-        <div style={styles.memoPopupBody}>
+        <div className="memo-popup-body">
           <textarea
             ref={textareaRef}
+            className="memo-textarea"
             value={content}
             onChange={handleContentChange}
             placeholder="programmer's memo..."
-            style={styles.memoTextarea}
           />
         </div>
       </div>

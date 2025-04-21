@@ -346,7 +346,7 @@ const calculateMemoPosition = (pos: number, editorView: EditorView): { top: numb
     const scrollerRect = cmScroller.getBoundingClientRect();
 
     // 스크롤 위치 고려한 상대 위치 계산
-    const newTop = coords.top - scrollerRect.top + cmScroller.scrollTop + 20;
+    const newTop = coords.top - scrollerRect.top + cmScroller.scrollTop + 25;
     const newLeft = coords.left - scrollerRect.left + cmScroller.scrollLeft + 10;
 
     return { top: newTop, left: newLeft };

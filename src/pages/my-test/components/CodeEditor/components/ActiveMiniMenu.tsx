@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Highlight } from '../hooks/useHighlights';
+import { Highlight } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
+import '@/pages/my-test/components/CodeEditor/components/ActiveMiniMenu.scss';
 
 /**
  * 하이라이트에 사용할 색상 목록 상수
@@ -105,44 +106,17 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
       className="mini-menu"
       style={{
         top: position.top,
-        left: position.left,
-        position: 'absolute',
-        zIndex: 9999,
-        backgroundColor: '#2d2d2d',
-        border: '1px solid #444',
-        borderRadius: '4px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.7)',
-        padding: '4px 8px',
-        display: 'flex',
-        flexDirection: 'column',
-        minWidth: '120px',
-        pointerEvents: 'auto'
+        left: position.left
       }}
       onClick={preventPropagation}
       onMouseDown={preventPropagation}
     >
-      <div
-        className="color-palette"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          padding: '8px 0',
-          marginBottom: '4px'
-        }}
-      >
+      <div className="color-palette">
         {HIGHLIGHT_COLORS.map((color) => (
           <div
             key={color}
-            style={{
-              width: '16px',
-              height: '16px',
-              borderRadius: '50%',
-              cursor: 'pointer',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backgroundColor: color,
-              boxShadow: selectedColor === color ?
-                '0 0 0 2px #2d2d2d, 0 0 0 3px #ffffff' : 'none'
-            }}
+            className={`color-option ${selectedColor === color ? 'selected' : ''}`}
+            style={{ backgroundColor: color }}
             onClick={(e) => handleColorSelect(color, e)}
             onMouseDown={preventPropagation}
           />
@@ -150,32 +124,12 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
       </div>
 
       <button
-        style={{
-          background: '#4a4a4a',
-          color: 'white',
-          border: 'none',
-          padding: '4px 8px',
-          margin: '4px 0',
-          borderRadius: '3px',
-          cursor: 'pointer',
-          fontSize: '12px'
-        }}
         onClick={handleColorChange}
         onMouseDown={preventPropagation}
       >
         색상 변경
       </button>
       <button
-        style={{
-          background: '#4a4a4a',
-          color: 'white',
-          border: 'none',
-          padding: '4px 8px',
-          margin: '4px 0',
-          borderRadius: '3px',
-          cursor: 'pointer',
-          fontSize: '12px'
-        }}
         onClick={handleDeleteClick}
         onMouseDown={preventPropagation}
       >
@@ -185,4 +139,4 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
   );
 };
 
-export default ActiveMiniMenu; 
+export default ActiveMiniMenu;

@@ -12,7 +12,7 @@ import '@/pages/my-test/components/CodeEditor/CodeEditor.scss';
 import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
-import MiniMenu from '@/pages/my-test/components/MiniMenu';
+import MiniMenu from './components/MiniMenu';
 import { useHighlights, HighlightMenuState } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
 import { useTextSelection } from '@/pages/my-test/components/CodeEditor/hooks/useTextSelection';
 import MemoPopup from './components/MemoPopup';
