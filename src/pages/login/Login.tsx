@@ -6,6 +6,7 @@ import API from '@/store/api/ApiConfig.ts';
 import { AxiosResponse } from 'axios';
 
 const Login: React.FC<LoginProps> = ({initialValues}) => {
+    // TODO : 500 에러 발생해서, LOGIN 수정 되면 다시 하는걸로 => 전달 완료
     const [form, setForm] = useState<LoginFormValues>({
         email: initialValues?.email || "",
         password: initialValues?.password || ""
