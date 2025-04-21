@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { EditorView } from '@codemirror/view';
 import { StateField, RangeSet, StateEffect, Extension } from '@codemirror/state';
 import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
-import { FaNoteSticky } from "react-icons/fa6";
-import ReactDOM from 'react-dom/client';
 
 /**
  * 하이라이트 정보를 저장할 인터페이스
@@ -48,6 +46,13 @@ export const updateHighlightColorEffect = StateEffect.define<{
   to: number;
 }>();
 
+// 정사각형에 가깝고 우측 하단이 접힌 메모 아이콘 SVG
+const faNoteStickySVG = `
+<svg viewBox="0 0 448 448" fill="currentColor" height="1em" width="1em">
+  <path d="M400 32h-352C21.49 32 0 53.49 0 80v352C0 458.5 21.49 480 48 480h245.5c16.97 0 33.25-6.744 45.26-18.75l90.51-90.51C441.3 358.7 448 342.5 448 325.5V80C448 53.49 426.5 32 400 32zM64 96h320l-.001 224H320c-17.67 0-32 14.33-32 32v64H64V96z"/>
+</svg>
+`;
+
 /**
  * 하이라이트 필드 - CodeMirror 상태에 하이라이트 정보를 저장
  */
@@ -75,25 +80,7 @@ const highlightField = StateField.define<DecorationSet>({
 
         // clientId와 일치하는 데코레이션(mark 또는 widget) 제거
         highlights = highlights.update({
-          filter: (_from, _to, value) => {
-            // 1. 배경 하이라이트(mark)의 clientId 확인
-            const markClientId = value.spec.attributes?.['data-client-id'];
-            if (markClientId === clientIdToRemove) {
-              return false; // 제거 대상
-            }
-
-            // 2. 아이콘 위젯(widget)의 clientId 확인
-            // value.spec.widget이 WidgetType 인스턴스이고 widgetClientId 속성을 가지는지 확인
-            const widgetInstance = value.spec.widget as any; // 타입 단언 사용 (주의 필요)
-            if (widgetInstance && typeof widgetInstance === 'object' && 'widgetClientId' in widgetInstance) {
-              if (widgetInstance.widgetClientId === clientIdToRemove) {
-                return false; // 제거 대상
-              }
-            }
-
-            // 위 조건에 해당하지 않으면 데코레이션 유지
-            return true;
-          }
+          filter: (from, to, value) => filterByClientId(from, to, value, clientIdToRemove)
         });
       }
 
@@ -144,26 +131,12 @@ const highlightField = StateField.define<DecorationSet>({
 
         // 1. 해당 clientId를 가진 데코레이션 필터링 (Mark + Widget 모두)
         highlights = highlights.update({
-          filter: (_f, _t, value) => {
-             // Mark 데코레이션 필터링
-            const markClientId = value.spec.attributes?.['data-client-id'];
-            if (markClientId === clientId) return false;
-
-            // Widget 데코레이션 필터링 (기존 로직 개선: widgetClientId 직접 접근)
-            const widgetInstance = value.spec.widget as any;
-            if (widgetInstance && typeof widgetInstance === 'object' && 'widgetClientId' in widgetInstance) {
-              if (widgetInstance.widgetClientId === clientId) {
-                return false;
-              }
-            }
-            return true; // 유지
-          }
+          filter: (from, to, value) => filterByClientId(from, to, value, clientId)
         });
-
 
         // 새 색상으로 하이라이트 및 아이콘 추가
         const decorationsToAdd = [];
-        const newRgbaColor = hexToRgba(newColor); // updateHighlightColor 함수 호출 시 이미 RGBA로 변환됨. newColor는 HEX여야 함.
+        const newRgbaColor = hexToRgba(newColor);
 
         // 배경 하이라이트 데코레이션 (색상만 변경)
         const highlightDecoration = Decoration.mark({
@@ -176,64 +149,21 @@ const highlightField = StateField.define<DecorationSet>({
         }).range(from, to);
         decorationsToAdd.push(highlightDecoration);
 
-        // 메모인 경우 아이콘 위젯 추가 (Pure DOM 방식 적용)
+        // 메모인 경우 아이콘 위젯 추가 (함수화된 아이콘 생성 로직 사용)
         if (isMemo) {
           const iconColor = newColor; // HEX 색상 사용
 
           const iconDecoration = Decoration.widget({
             widget: new class extends WidgetType {
-              // 식별을 위해 clientId를 가질 수 있도록 추가 (필수는 아님)
+              // 식별을 위해 clientId를 가질 수 있도록 추가
               readonly widgetClientId: string = clientId;
 
               toDOM() {
-                // --- Pure DOM 아이콘 생성 로직 시작 ---
-                const span = document.createElement("span");
-                span.style.position = "relative";
-                span.style.display = "inline-block";
-                span.style.width = "1px";
-                span.style.height = "1em";
-                span.style.verticalAlign = "text-bottom";
-
-                const iconContainer = document.createElement("span");
-                iconContainer.style.position = "absolute";
-                iconContainer.style.left = "0px";
-                iconContainer.style.top = "5px";
-                iconContainer.style.cursor = "default"; // 클릭 핸들러 없으므로 default
-                iconContainer.title = "메모 아이콘"; // 간단한 툴팁
-                iconContainer.dataset.clientId = this.widgetClientId;
-
-                iconContainer.style.display = "flex";
-                iconContainer.style.alignItems = "center";
-                iconContainer.style.justifyContent = "center";
-                iconContainer.style.width = "15px";
-                iconContainer.style.height = "15px";
-                iconContainer.style.userSelect = "none";
-                iconContainer.style.webkitUserSelect = "none";
-
-                // SVG 아이콘 삽입
-                iconContainer.innerHTML = faNoteStickySVG; // 미리 정의된 SVG 사용
-                const svgElement = iconContainer.querySelector('svg');
-                if (svgElement) {
-                  svgElement.style.width = '0.8em';
-                  svgElement.style.height = '0.8em';
-                  svgElement.style.fill = iconColor; // HEX 색상 적용
-                }
-
-                // 마우스다운 이벤트 선택 방지 (클릭 리스너는 없음)
-                iconContainer.addEventListener('mousedown', (event) => {
-                   if (event.button === 0) {
-                       event.stopPropagation();
-                   }
-                });
-
-                span.appendChild(iconContainer);
-                return span;
-                // --- Pure DOM 아이콘 생성 로직 끝 ---
+                return createIconDOM(this.widgetClientId, iconColor);
               }
 
-              // 이벤트 무시 설정 (클릭 필요 없으므로 true 가능하나, mousedown 처리 위해 false 유지)
+              // 이벤트 무시 설정
               ignoreEvent() { return false; }
-
             },
             side: 0
           }).range(to);
@@ -252,15 +182,89 @@ const highlightField = StateField.define<DecorationSet>({
   provide: field => EditorView.decorations.from(field)
 });
 
-// 정사각형에 가깝고 우측 하단이 접힌 메모 아이콘 SVG
-const faNoteStickySVG = `
-<svg viewBox="0 0 448 448" fill="currentColor" height="1em" width="1em">
-  <path d="M400 32h-352C21.49 32 0 53.49 0 80v352C0 458.5 21.49 480 48 480h245.5c16.97 0 33.25-6.744 45.26-18.75l90.51-90.51C441.3 358.7 448 342.5 448 325.5V80C448 53.49 426.5 32 400 32zM64 96h320l-.001 224H320c-17.67 0-32 14.33-32 32v64H64V96z"/>
-</svg>
-`;
+/**
+ * 필터링 함수 - clientId로 하이라이트/위젯 필터링
+ */
+const filterByClientId = (_from: number, _to: number, value: any, clientIdToFilter: string): boolean => {
+  // 1. 배경 하이라이트(mark)의 clientId 확인
+  const markClientId = value.spec.attributes?.['data-client-id'];
+  if (markClientId === clientIdToFilter) {
+    return false; // 제거 대상
+  }
+
+  // 2. 아이콘 위젯(widget)의 clientId 확인
+  const widgetInstance = value.spec.widget as any;
+  if (widgetInstance && typeof widgetInstance === 'object' && 'widgetClientId' in widgetInstance) {
+    if (widgetInstance.widgetClientId === clientIdToFilter) {
+      return false; // 제거 대상
+    }
+  }
+
+  // 위 조건에 해당하지 않으면 데코레이션 유지
+  return true;
+};
 
 /**
- * 메모 아이콘 위젯 생성 함수 - Pure DOM 방식으로 변경
+ * 아이콘 DOM 생성 유틸리티 함수
+ */
+const createIconDOM = (clientId: string, iconColor: string, hasClickListener: boolean = false, onClick?: () => void): HTMLElement => {
+  // 1. 기본 span 요소 생성
+  const span = document.createElement("span");
+  span.style.position = "relative";
+  span.style.display = "inline-block";
+  span.style.width = "1px";
+  span.style.height = "1em";
+  span.style.verticalAlign = "text-bottom";
+
+  // 2. 아이콘을 담을 컨테이너 생성
+  const iconContainer = document.createElement("span");
+  iconContainer.style.position = "absolute";
+  iconContainer.style.left = hasClickListener ? "-10px" : "0px";
+  iconContainer.style.top = "5px";
+  iconContainer.style.cursor = hasClickListener ? "pointer" : "default";
+  iconContainer.title = hasClickListener ? "메모 보기/편집" : "메모 아이콘";
+  iconContainer.dataset.clientId = clientId;
+
+  // 아이콘 스타일 최적화
+  iconContainer.style.display = "flex";
+  iconContainer.style.alignItems = "center";
+  iconContainer.style.justifyContent = "center";
+  iconContainer.style.width = hasClickListener ? "25px" : "15px";
+  iconContainer.style.height = hasClickListener ? "25px" : "15px";
+  iconContainer.style.userSelect = "none";
+  iconContainer.style.webkitUserSelect = "none";
+
+  // 3. SVG 아이콘 생성 및 삽입
+  iconContainer.innerHTML = faNoteStickySVG;
+  const svgElement = iconContainer.querySelector('svg');
+  if (svgElement) {
+    svgElement.style.width = hasClickListener ? '0.7em' : '0.8em';
+    svgElement.style.height = hasClickListener ? '0.7em' : '0.8em';
+    svgElement.style.fill = iconColor; // HEX 색상 직접 적용
+  }
+
+  // 4. 클릭 이벤트 리스너 추가 (필요한 경우)
+  if (hasClickListener && onClick) {
+    iconContainer.addEventListener('click', (event) => {
+      event.stopPropagation();
+      onClick();
+    });
+  }
+
+  // 마우스다운 이벤트에서도 선택 방지
+  iconContainer.addEventListener('mousedown', (event) => {
+    // 중요: 왼쪽 버튼 클릭만 처리
+    if (event.button === 0) {
+      event.stopPropagation();
+    }
+  });
+
+  span.appendChild(iconContainer);
+  return span;
+};
+
+/**
+ * 메모 아이콘 위젯 생성 함수 - 함수화된 DOM 생성 로직 사용
  */
 const createMemoIconWidget = (
   clientId: string,
@@ -271,53 +275,17 @@ const createMemoIconWidget = (
   _onHighlightClick?: (state: HighlightMenuState) => void
 ) => {
   return new class extends WidgetType {
-    // 위젯 인스턴스에 clientId 저장 (필터링 등에서 활용 가능)
+    // 위젯 인스턴스에 clientId 저장
     readonly widgetClientId: string;
 
     constructor() {
       super();
-      this.widgetClientId = clientId; // 생성자에서 clientId 설정
+      this.widgetClientId = clientId;
     }
 
     toDOM() {
-      // 1. 기본 span 요소 생성
-      const span = document.createElement("span");
-      span.style.position = "relative";
-      span.style.display = "inline-block";
-      span.style.width = "1px";
-      span.style.height = "1em";
-      span.style.verticalAlign = "text-bottom";
-
-      // 2. 아이콘을 담을 컨테이너 생성
-      const iconContainer = document.createElement("span");
-      iconContainer.style.position = "absolute";
-      iconContainer.style.left = "-10px";
-      iconContainer.style.top = "5px";
-      iconContainer.style.cursor = "pointer";
-      iconContainer.title = "메모 보기/편집";
-      iconContainer.dataset.clientId = this.widgetClientId;
-
-      // 아이콘 스타일 최적화
-      iconContainer.style.display = "flex";
-      iconContainer.style.alignItems = "center";
-      iconContainer.style.justifyContent = "center";
-      iconContainer.style.width = "25px";
-      iconContainer.style.height = "25px";
-      iconContainer.style.userSelect = "none";
-      iconContainer.style.webkitUserSelect = "none";
-
-      // 3. SVG 아이콘 생성 및 삽입
-      iconContainer.innerHTML = faNoteStickySVG;
-      const svgElement = iconContainer.querySelector('svg');
-      if (svgElement) {
-        svgElement.style.width = '0.7em';
-        svgElement.style.height = '0.7em';
-        svgElement.style.fill = color; // HEX 색상 직접 적용
-      }
-
-      // 4. 클릭 이벤트 리스너 추가 (React 없이 직접 구현)
-      iconContainer.addEventListener('click', (event) => {
-        event.stopPropagation();
+      // 클릭 핸들러 정의
+      const handleIconClick = () => {
         console.log('메모 아이콘 클릭됨 (Pure DOM) - clientId:', this.widgetClientId);
 
         // 클릭 시점의 정보 사용
@@ -339,23 +307,14 @@ const createMemoIconWidget = (
             console.log('[디버깅] 메모 팝업 열기/전환:', memoClientId);
             return {
               clientId: memoClientId,
-              highlight: memoHighlight, // 클로저로 캡처된 highlight 사용
+              highlight: memoHighlight,
               position: newPosition
             };
           }
         });
-      });
+      };
 
-      // 마우스다운 이벤트에서도 선택 방지
-      iconContainer.addEventListener('mousedown', (event) => {
-        // 중요: 왼쪽 버튼 클릭만 처리
-        if (event.button === 0) {
-          event.stopPropagation();
-        }
-      });
-
-      span.appendChild(iconContainer);
-      return span;
+      return createIconDOM(this.widgetClientId, color, true, handleIconClick);
     }
 
     // CodeMirror가 위젯 내부 이벤트를 무시하지 않도록 설정
@@ -363,7 +322,7 @@ const createMemoIconWidget = (
       return false;
     }
   }
-}
+};
 
 /**
  * 메모 팝업 위치 계산 함수 - 성능 개선을 위해 분리

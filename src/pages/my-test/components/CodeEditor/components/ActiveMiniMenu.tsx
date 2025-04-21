@@ -13,11 +13,10 @@ const HIGHLIGHT_COLORS = [
   '#efadff', // 보라색
 ];
 
-export interface HighlightActionMenuProps {
+export interface ActiveMiniMenuProps {
   position: { top: number; left: number };
   highlight: Highlight;
   onClose: () => void;
-  onEdit?: (highlight: Highlight) => void;
   onDelete?: (clientId: string) => void;
   onColorChange?: (clientId: string, newColor: string) => void;
 }
@@ -25,11 +24,10 @@ export interface HighlightActionMenuProps {
 /**
  * 하이라이트 클릭 시 표시되는 액션 메뉴 컴포넌트
  */
-const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
+const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
   position,
   highlight,
   onClose,
-  onEdit,
   onDelete,
   onColorChange
 }) => {
@@ -61,17 +59,6 @@ const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [onClose]);
-
-  // 메모 수정 클릭 핸들러
-  const handleEditClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (onEdit) {
-      onEdit(highlight);
-    }
-    onClose();
-  };
 
   // 색상 변경 클릭 핸들러
   const handleColorChange = (e: React.MouseEvent) => {
@@ -198,4 +185,4 @@ const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
   );
 };
 
-export default HighlightActionMenu;
+export default ActiveMiniMenu; 

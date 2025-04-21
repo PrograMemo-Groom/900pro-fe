@@ -13,10 +13,10 @@ import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import MiniMenu from '@/pages/my-test/components/MiniMenu';
-import { useHighlights, HighlightMenuState, Highlight } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
+import { useHighlights, HighlightMenuState } from '@/pages/my-test/components/CodeEditor/hooks/useHighlights';
 import { useTextSelection } from '@/pages/my-test/components/CodeEditor/hooks/useTextSelection';
 import MemoPopup from './components/MemoPopup';
-import HighlightActionMenu from './components/HighlightActionMenu';
+import ActiveMiniMenu from './components/ActiveMiniMenu';
 import ReactDOM from 'react-dom/client';
 
 /**
@@ -119,8 +119,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     updateHighlightColor,
     highlightTheme,
     activeMemo,
-    closeMemoPopup,
-    setActiveMemo
+    closeMemoPopup
   } = useHighlights({
     documentId,
     editorRef,
@@ -146,61 +145,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   } = useTextSelection({
     editorRef
   });
-
-  /**
-   * 메모 위치 계산 함수 - useHighlights.tsx에서 가져온 함수와 동일
-   */
-  const calculateMemoPosition = (pos: number, editorView: EditorView): { top: number; left: number } | null => {
-    try {
-      // 메모 포지션 계산
-      const coords = editorView.coordsAtPos(pos);
-      if (!coords) {
-        return null;
-      }
-
-      // cm-scroller 요소 찾기
-      const cmScroller = editorView.dom.querySelector('.cm-scroller');
-      if (!cmScroller) {
-        console.warn('.cm-scroller 요소를 찾을 수 없습니다.');
-        return null;
-      }
-
-      // cm-scroller 기준 상대 위치 계산
-      const scrollerRect = cmScroller.getBoundingClientRect();
-
-      // 스크롤 위치 고려한 상대 위치 계산
-      const newTop = coords.top - scrollerRect.top + cmScroller.scrollTop + 20;
-      const newLeft = coords.left - scrollerRect.left + cmScroller.scrollLeft + 10;
-
-      return { top: newTop, left: newLeft };
-    } catch (e) {
-      console.error('메모 위치 계산 중 오류:', e);
-      return null;
-    }
-  };
-
-  /**
-   * 하이라이트 메모 수정/추가 핸들러
-   */
-  const handleEditHighlightMemo = (highlight: Highlight) => {
-    console.log('[디버깅] 하이라이트 메모 수정 요청:', highlight.clientId);
-
-    if (!editorRef.current) return;
-
-    // 메모 위치 계산
-    const position = calculateMemoPosition(highlight.to, editorRef.current);
-
-    if (position) {
-      // 메모 팝업 활성화
-      setActiveMemo({
-        clientId: highlight.clientId,
-        highlight,
-        position
-      });
-    } else {
-      console.warn(`[경고] 메모 팝업 위치 계산 실패: ${highlight.clientId}`);
-    }
-  };
 
   /**
    * 에디터 초기화 및 정리를 담당하는 생명주기
@@ -563,11 +507,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
       // 내용 업데이트
       highlightMenuRootRef.current.render(
-        <HighlightActionMenu
+        <ActiveMiniMenu
           position={highlightMenuState.position}
           highlight={highlightMenuState.highlight}
           onClose={() => setHighlightMenuState(null)}
-          onEdit={handleEditHighlightMemo}
           onDelete={removeHighlight}
           onColorChange={updateHighlightColor}
         />
@@ -579,7 +522,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         highlightMenuContainerRef.current.style.display = 'none';
       }
     }
-  }, [highlightMenuState, handleEditHighlightMemo, removeHighlight, updateHighlightColor]);
+  }, [highlightMenuState, removeHighlight, updateHighlightColor]);
 
   return (
     <div className="code-editor-wrapper">
