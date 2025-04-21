@@ -7,8 +7,8 @@ import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { SampleResponse } from '@/store/auth/thunks.ts';
 
-const SignUp: React.FC<SignUpProps> = ({ initialValues }) => {
-  const [form, setForm] = useState<SignUpReq>({ name: '', email: '', password: '' });
+const SignUp = () => {
+  const [form, setForm] = useState<SignUpReq>({ username: '', email: '', password: '' });
   const handleOnSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('form 실행', form);
@@ -35,12 +35,12 @@ const SignUp: React.FC<SignUpProps> = ({ initialValues }) => {
       <Landing />
       <form className={styles.loginForm} onSubmit={handleOnSubmit}>
         <div className={styles.inputForm}>
-          <label htmlFor="name">Name</label>
+          <label htmlFor="username">Name</label>
           <div className={styles.gradientBorder}>
-            <input type="text" id="name"
+            <input type="text" id="username"
                    onChange={(e) => handleOnChange(e)}
-              // placeholder="name 을 입력해주세요"
-                   value={form.name}
+                   placeholder="닉네임은 영문자와 소문자만 이용할 수 있습니다."
+                   value={form.username}
             />
           </div>
         </div>
