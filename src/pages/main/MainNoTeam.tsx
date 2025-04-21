@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Header from '@/pages/common/Header.tsx';
 import Filter from '@/pages/common/Filter.tsx';
 import styles from "@/css/main/Layout.module.scss";
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
 
