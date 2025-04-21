@@ -7,7 +7,6 @@ const Header = () => {
     <header className={styles.header}>
       <img src={Burger} alt="menu" className={styles.menuIcon} />
       <h1>9BACKPRO</h1>
-      <div/>
     </header>
   );
 };

@@ -37,6 +37,129 @@
       margin: 2rem;
       align-self: flex-start;
     }
+  }
+}
 
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100vw;
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  & > section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    //width: 100vw;
+    gap: 25px;
+    margin-top: 50px;
+  }
+}
+
+@mixin gradientBorder($width:315px) {
+  background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
+  padding: 3px;
+  border-radius: 50px;
+  position: relative;
+  display: block;
+  width: $width;
+  //
+  //.gradientContent {
+  //  background-color: #0f172a;
+  //  width: 315px;
+  //  height: 62px;
+  //  padding: 0 2rem;
+  //  font-size: 1.5rem;
+  //  border-radius: 50px;
+  //  color: white;
+  //  cursor: pointer;
+  //  border: 1px solid #D1F8EF;
+  //}
+}
+
+.teamComponent {
+  @include gradientBorder($width:315px);
+
+
+  & > button {
+    background-color: #0f172a;
+    width: 315px;
+    padding: 0 2rem;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    border: 1px solid #D1F8EF;
+  }
+}
+.teamContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  & h3 {
+    font-size: 36px;
+  }
+  & p:nth-child(1) {
+    font-size: 24px;
+  }
+  & p:nth-of-type(2), p:nth-of-type(3) {
+    font-size: 20px;
+  }
+}
+
+.gradientBorder {
+  background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
+  padding: 3px;
+  border-radius: 50px;
+  position: relative;
+  display: block;
+  width: 315px;
+
+  & > input {
+    background-color: #0f172a;
+    width: 315px;
+    height: 62px;
+    padding: 0 2rem;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    border: 1px solid #D1F8EF;
+
+    &::placeholder {
+      font-size: 1.5rem;
+      color: #aaa;
+      font-weight: 300;
+      //font-style: italic;
+    }
+  }
+
+  & > button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 75px;
+    height: 52px;
+    background: linear-gradient(135deg, #b3ecff, #81d8f7);
+    border-radius: 50px;
+    border: none;
+    color: #000;
+    font-weight: bold;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background: linear-gradient(135deg, #a2dbf5, #6fc8ec);
+    }
   }
 }
