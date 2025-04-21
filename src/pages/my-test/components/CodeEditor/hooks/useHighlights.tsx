@@ -38,6 +38,17 @@ export interface HighlightMenuState {
 }
 
 /**
+ * 하이라이트 색상 업데이트 효과 정의 (새로 추가)
+ */
+export const updateHighlightColorEffect = StateEffect.define<{
+  clientId: string;
+  newColor: string;
+  isMemo: boolean;
+  from: number;
+  to: number;
+}>();
+
+/**
  * 하이라이트 필드 - CodeMirror 상태에 하이라이트 정보를 저장
  */
 const highlightField = StateField.define<DecorationSet>({
@@ -110,6 +121,87 @@ const highlightField = StateField.define<DecorationSet>({
           add: decorationsToAdd,
         });
       }
+
+      // 하이라이트 색상 업데이트 효과 (새로 추가)
+      if (e.is(updateHighlightColorEffect)) {
+        const { clientId, newColor, isMemo, from, to } = e.value;
+        console.log(`[디버깅] 하이라이트 색상 업데이트 효과 적용: ${clientId}, 색상: ${newColor}`);
+
+        // 기존 하이라이트 제거
+        highlights = highlights.update({
+          filter: (_from, _to, value) => {
+            const attrClientId = value.spec.attributes?.['data-client-id'];
+            return attrClientId !== clientId;
+          }
+        });
+
+        // 새 색상으로 하이라이트 및 아이콘 추가
+        const decorationsToAdd = [];
+
+        // 배경 하이라이트 데코레이션
+        const highlightDecoration = Decoration.mark({
+          class: 'cm-highlight',
+          attributes: {
+            'data-client-id': clientId,
+            title: isMemo ? '메모 및 하이라이트' : '하이라이트된 텍스트',
+            style: `background-color: ${newColor} !important;`
+          }
+        }).range(from, to);
+        decorationsToAdd.push(highlightDecoration);
+
+        // 메모인 경우 아이콘 위젯 추가
+        if (isMemo) {
+          const iconColor = rgbaToHex(newColor);
+
+          // 현재 하이라이트와 동일한 아이콘 위젯 생성
+          // 실제 작동을 위한 최소한의 위젯만 생성
+          const iconDecoration = Decoration.widget({
+            widget: new class extends WidgetType {
+              toDOM() {
+                const span = document.createElement("span");
+                span.style.position = "relative";
+                span.style.display = "inline-block";
+                span.style.width = "1px";
+                span.style.height = "1em";
+                span.style.verticalAlign = "text-bottom";
+
+                const iconContainer = document.createElement("span");
+                iconContainer.style.position = "absolute";
+                iconContainer.style.left = "0px";
+                iconContainer.style.top = "5px";
+                iconContainer.style.cursor = "pointer";
+                iconContainer.title = "메모 보기/편집";
+                iconContainer.dataset.clientId = clientId;
+
+                // 아이콘 스타일 최적화
+                iconContainer.style.display = "flex";
+                iconContainer.style.alignItems = "center";
+                iconContainer.style.justifyContent = "center";
+                iconContainer.style.width = "15px";
+                iconContainer.style.height = "15px";
+
+                // 사용자 선택 비활성화
+                iconContainer.style.userSelect = "none";
+                iconContainer.style.webkitUserSelect = "none";
+
+                span.appendChild(iconContainer);
+
+                const root = ReactDOM.createRoot(iconContainer);
+                root.render(React.createElement(FaNoteSticky, { color: iconColor, size: '0.8em' }));
+
+                return span;
+              }
+            },
+            side: 0
+          }).range(to);
+
+          decorationsToAdd.push(iconDecoration);
+        }
+
+        highlights = highlights.update({
+          add: decorationsToAdd,
+        });
+      }
     }
 
     return highlights;
@@ -140,7 +232,7 @@ const createMemoIconWidget = (
       const iconContainer = document.createElement("span");
       iconContainer.style.position = "absolute";
       iconContainer.style.left = "0px";
-      iconContainer.style.top = "3px";
+      iconContainer.style.top = "5px";
       iconContainer.style.cursor = "pointer";
       iconContainer.title = "메모 보기/편집";
       iconContainer.dataset.clientId = clientId;
@@ -334,11 +426,15 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
   const previousDocumentIdRef = useRef<string | null>(null);
   // 활성화된 메모 팝업 상태
   const [activeMemo, setActiveMemo] = useState<ActiveMemoState | null>(null);
+  // 색상 변경 중임을 나타내는 플래그
+  const isChangingColorRef = useRef(false);
 
   /**
    * 하이라이트 추적 키 생성 함수
    */
   const createHighlightKey = (highlight: Highlight): string => {
+    // 문서ID, 클라이언트ID, 범위, 색상을 모두 포함하여 고유한 키 생성
+    // from과 to는 텍스트 변경 시 바뀔 수 있으므로 클라이언트ID를 중심으로 사용
     return `${highlight.documentId}-${highlight.clientId}`;
   };
 
@@ -552,19 +648,100 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
   }, [documentId]);
 
   /**
-   * 메모 팝업 토글 함수
+   * 하이라이트 색상 변경 함수 (Promise 기반 비동기 처리)
    */
-  const toggleMemoPopup = (newState: ActiveMemoState | null) => {
-    setActiveMemo(currentState => {
-      // newState가 있고, 현재 상태도 있으며, clientId가 같다면 닫기 (null로 설정)
-      if (newState && currentState && newState.clientId === currentState.clientId) {
-        console.log(`[디버깅] 메모 팝업 토글 닫기: ${currentState.clientId}`);
-        return null;
+  const updateHighlightColor = async (clientId: string, newColor: string) => {
+    if (!editorRef.current) return false;
+
+    console.log('[색상 변경] 시작 - clientId:', clientId, '색상:', newColor);
+
+    // 해당 clientId의 하이라이트 찾기
+    const targetHighlight = highlights.find(h => h.clientId === clientId);
+    if (!targetHighlight) {
+      console.warn(`[경고] 색상을 변경할 하이라이트를 찾을 수 없음: ${clientId}`);
+      return false;
+    }
+
+    try {
+      // 1. 색상 변경 플래그 설정
+      isChangingColorRef.current = true;
+
+      // 2. 새 색상으로 변환 (HEX => RGBA)
+      const newRgbaColor = getHighlightColors(newColor).background;
+
+      // 3. 모든 하이라이트 데코레이션 제거 (초기화)
+      console.log('[색상 변경] 모든 하이라이트를 일시적으로 제거합니다');
+      editorRef.current.dispatch({
+        effects: clearHighlightsEffect.of(null)
+      });
+
+      // 4. 추적 상태 초기화
+      appliedHighlightIdsRef.current.clear();
+
+      // 5. 상태에서 색상 업데이트
+      const updatedHighlights = highlights.map(h => {
+        if (h.clientId === clientId) {
+          return {
+            ...h,
+            color: newRgbaColor
+          };
+        }
+        return h;
+      });
+
+      // 6. React 상태 및 로컬 스토리지 업데이트
+      setHighlights(updatedHighlights);
+      saveHighlights(updatedHighlights);
+
+      // 7. Promise를 사용하여 마이크로태스크 큐에 작업 추가
+      // 이는 React의 상태 업데이트가 완료된 후 실행됨
+      await Promise.resolve();
+
+      // 8. 추가 마이크로태스크를 통해 브라우저 렌더링에 시간 부여
+      await new Promise<void>(resolve => {
+        queueMicrotask(() => resolve());
+      });
+
+      // 9. 이제 하이라이트를 다시 적용
+      if (!editorRef.current) {
+        throw new Error('에디터 참조가 유효하지 않습니다');
       }
-      // 그렇지 않으면 새 상태로 설정 (열기 또는 다른 메모 열기)
-      console.log(`[디버깅] 메모 팝업 토글 열기/변경: ${newState?.clientId}`);
-      return newState;
-    });
+
+      console.log('[색상 변경] 모든 하이라이트를 다시 적용합니다');
+
+      // 10. 모든 하이라이트를 위한 효과 배열 구성
+      const effects: StateEffect<any>[] = [];
+
+      // 11. 현재 문서와 관련된 모든 하이라이트를 다시 추가
+      const relevantHighlights = updatedHighlights.filter(h => h.documentId === documentId);
+
+      relevantHighlights.forEach(highlight => {
+        effects.push(addHighlightEffect.of({
+          highlight: highlight,
+          toggleMemoPopup: setActiveMemo,
+          editorView: editorRef.current,
+          onHighlightClick
+        }));
+
+        // 12. 추적 목록에 다시 추가
+        appliedHighlightIdsRef.current.add(createHighlightKey(highlight));
+      });
+
+      // 13. 모든 효과를 한 번에 디스패치
+      if (effects.length > 0) {
+        editorRef.current.dispatch({ effects });
+        console.log(`[색상 변경] ${effects.length}개 하이라이트를 다시 적용 완료`);
+      }
+
+      console.log('[색상 변경] 완료 - 색상 변경 성공:', clientId);
+      return true;
+    } catch (error) {
+      console.error('[색상 변경] 처리 중 오류:', error);
+      return false;
+    } finally {
+      // 14. 성공이든 실패든 색상 변경 플래그 해제
+      isChangingColorRef.current = false;
+    }
   };
 
   /**
@@ -573,6 +750,12 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
   useEffect(() => {
     const view = editorRef.current;
     if (!view) return;
+
+    // 색상 변경 중이면 이 useEffect에서는 처리하지 않음
+    if (isChangingColorRef.current) {
+      console.log('[디버깅] 색상 변경 중이므로 자동 하이라이트 적용을 건너뜁니다');
+      return;
+    }
 
     console.log('[디버깅] highlights 상태 변경 감지:', highlights.length);
 
@@ -592,12 +775,14 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
 
         effects.push(addHighlightEffect.of({
           highlight: highlight,
-          toggleMemoPopup: toggleMemoPopup,
+          toggleMemoPopup: setActiveMemo,
           editorView: view,
           onHighlightClick
         }));
 
         appliedHighlightIdsRef.current.add(highlightKey);
+      } else {
+        console.log('[디버깅] 하이라이트 이미 적용됨, 중복 추가 방지:', highlight.clientId);
       }
     });
 
@@ -698,9 +883,10 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
     highlightExtensions,
     addHighlight,
     removeHighlight,
+    updateHighlightColor,
     highlightTheme,
-    activeMemo,       // 활성화된 메모 팝업 상태
-    closeMemoPopup,    // 메모 팝업 닫기 함수 (팝업 내부 버튼용)
+    activeMemo,
+    closeMemoPopup,
     setActiveMemo
   };
 }

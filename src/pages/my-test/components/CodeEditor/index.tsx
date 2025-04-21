@@ -114,6 +114,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     highlightExtensions,
     addHighlight,
     removeHighlight,
+    updateHighlightColor,
     highlightTheme,
     activeMemo,
     closeMemoPopup,
@@ -562,6 +563,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           onClose={() => setHighlightMenuState(null)}
           onEdit={handleEditHighlightMemo}
           onDelete={removeHighlight}
+          onColorChange={updateHighlightColor}
         />
       );
     } else {
@@ -571,7 +573,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         highlightMenuContainerRef.current.style.display = 'none';
       }
     }
-  }, [highlightMenuState, handleEditHighlightMemo, removeHighlight]);
+  }, [highlightMenuState, handleEditHighlightMemo, removeHighlight, updateHighlightColor]);
 
   return (
     <div className="code-editor-wrapper">

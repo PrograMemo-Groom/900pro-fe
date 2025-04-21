@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Highlight } from '../hooks/useHighlights';
 
 /**
@@ -19,6 +19,7 @@ export interface HighlightActionMenuProps {
   onClose: () => void;
   onEdit?: (highlight: Highlight) => void;
   onDelete?: (clientId: string) => void;
+  onColorChange?: (clientId: string, newColor: string) => void;
 }
 
 /**
@@ -29,9 +30,23 @@ const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
   highlight,
   onClose,
   onEdit,
-  onDelete
+  onDelete,
+  onColorChange
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
+  const [selectedColor, setSelectedColor] = useState<string>(() => {
+    const currentColor = highlight.color;
+    let closestColor = HIGHLIGHT_COLORS[0];
+
+    for (const color of HIGHLIGHT_COLORS) {
+      if (currentColor.includes(color.substring(1))) {
+        closestColor = color;
+        break;
+      }
+    }
+
+    return closestColor;
+  });
 
   // 외부 클릭 감지 이벤트 핸들러
   useEffect(() => {
@@ -56,6 +71,26 @@ const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
       onEdit(highlight);
     }
     onClose();
+  };
+
+  // 색상 변경 클릭 핸들러
+  const handleColorChange = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log(`[디버깅] 색상 변경 버튼 클릭됨: ${highlight.clientId}, 색상: ${selectedColor}`);
+    if (onColorChange) {
+      onColorChange(highlight.clientId, selectedColor);
+    }
+    onClose();
+  };
+
+  // 색상 선택 핸들러
+  const handleColorSelect = (color: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(`[디버깅] 색상 선택됨: ${color}`);
+    setSelectedColor(color);
   };
 
   // 삭제 클릭 핸들러
@@ -118,10 +153,10 @@ const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
               cursor: 'pointer',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               backgroundColor: color,
-              boxShadow: highlight.color.includes(color.substring(1)) ?
+              boxShadow: selectedColor === color ?
                 '0 0 0 2px #2d2d2d, 0 0 0 3px #ffffff' : 'none'
             }}
-            onClick={preventPropagation}
+            onClick={(e) => handleColorSelect(color, e)}
             onMouseDown={preventPropagation}
           />
         ))}
@@ -138,10 +173,10 @@ const HighlightActionMenu: React.FC<HighlightActionMenuProps> = ({
           cursor: 'pointer',
           fontSize: '12px'
         }}
-        onClick={handleEditClick}
+        onClick={handleColorChange}
         onMouseDown={preventPropagation}
       >
-        메모 수정
+        색상 변경
       </button>
       <button
         style={{
