@@ -23,13 +23,12 @@ const MainNoTeam = () => {
   const handleOpenDialog = (index: number) => {
     setIsOpenDialog(true);
   }
-
   useEffect(() => {
     const fetchTeamData = async () => {
       try {
         console.log("화면 렌더링 중에 이게 완료되면 렌더링");
         const response: AxiosResponse<teamDataResponse> = await API.get("/teams");
-        console.log("response",response);
+        console.log("팀 가입 안했을 때 팀 불러오기 : ",response);
       } catch (e) {
         console.log(e);
       }
