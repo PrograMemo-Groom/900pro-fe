@@ -19,8 +19,8 @@ const mainTeamData = [
 ]
 const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
-  const [teamList, setTeamList] = React.useState([]);
-  // const [teamList, setTeamList] = React.useState(mainTeamData);
+  // const [teamList, setTeamList] = React.useState([]);
+  const [teamList, setTeamList] = React.useState(mainTeamData);
 
   const handleOpenDialog = (index: number) => {
     setIsOpenDialog(true);

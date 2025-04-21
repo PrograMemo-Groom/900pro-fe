@@ -10,7 +10,7 @@ const Filter = () => {
   }
 
   return (
-    <div className={styles.inputForm}>
+    <div className={styles.filterForm}>
       <div className={styles.auth__input}>
         <input type="text" id="search"
                onChange={(e) => handleOnChange(e)}
