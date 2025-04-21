@@ -6,6 +6,10 @@ import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 
 const ResetPassword = () => {
+  // TODO : 재설정 버튼 비활성화 색상 추가
+  // TODO : 이메일 인증 코드 입력 후 비밀번호 초기화 COMPONENT 추가
+  // TODO : 비밀번호 초기화 VIEW 추가후 재 설정 시 LOGIN 페이지로 이동
+  // TODO : 인증 관련 API는 전부 되어 있으나, 페이지 추가 필요
   const [form, setForm] = useState<ResetForm>({ email: '', password: '' });
   const [temporaryPassword, setTemporaryPassword] = useState(false);
   const handleOnSubmit = async (e: React.FormEvent) => {
