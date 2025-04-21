@@ -11,4 +11,4 @@ export const highlightPlugin = ViewPlugin.define(_view => {
       }
     }
   };
-}); 
+});

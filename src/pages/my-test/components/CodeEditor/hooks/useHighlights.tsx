@@ -7,11 +7,11 @@ import {
   Highlight,
   ActiveMemoState,
   UseHighlightsProps
-} from '../types/types';
+} from '@/pages/my-test/components/CodeEditor/types/types';
 
 // 유틸리티 임포트
-import { hexToRgba } from '../utils/colorUtils';
-import { calculateMemoPosition } from '../utils/domUtils';
+import { hexToRgba } from '@/pages/my-test/components/CodeEditor/utils/colorUtils';
+import { calculateMemoPosition } from '@/pages/my-test/components/CodeEditor/utils/domUtils';
 
 // CodeMirror 확장 임포트
 import {
@@ -20,9 +20,9 @@ import {
   removeHighlightEffect,
   updateHighlightColorEffect,
   highlightTheme
-} from '../codemirror/highlightEffects';
-import { highlightField } from '../codemirror/highlightField';
-import { highlightPlugin } from '../codemirror/highlightPlugins';
+} from '@/pages/my-test/components/CodeEditor/codemirror/highlightEffects';
+import { highlightField } from '@/pages/my-test/components/CodeEditor/codemirror/highlightField';
+import { highlightPlugin } from '@/pages/my-test/components/CodeEditor/codemirror/highlightPlugins';
 
 /**
  * 하이라이트 관리를 위한 커스텀 훅
@@ -331,7 +331,7 @@ export {
   hexToRgba,
   rgbaToHex,
   getHighlightColors
-} from '../utils/colorUtils';
+} from '@/pages/my-test/components/CodeEditor/utils/colorUtils';
 
 export {
   addHighlightEffect,
@@ -339,11 +339,11 @@ export {
   removeHighlightEffect,
   updateHighlightColorEffect,
   highlightTheme
-} from '../codemirror/highlightEffects';
+} from '@/pages/my-test/components/CodeEditor/codemirror/highlightEffects';
 
 export type {
   Highlight,
   ActiveMemoState,
   HighlightMenuState,
   UseHighlightsProps
-} from '../types/types';
+} from '@/pages/my-test/components/CodeEditor/types/types';

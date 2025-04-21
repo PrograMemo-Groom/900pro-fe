@@ -1,6 +1,6 @@
 import { WidgetType, EditorView } from '@codemirror/view';
-import { Highlight, ActiveMemoState, HighlightMenuState } from '../types/types';
-import { createIconDOM, calculateMemoPosition } from '../utils/domUtils';
+import { Highlight, ActiveMemoState, HighlightMenuState } from '@/pages/my-test/components/CodeEditor/types/types';
+import { createIconDOM, calculateMemoPosition } from '@/pages/my-test/components/CodeEditor/utils/domUtils';
 import React from 'react';
 
 /**
@@ -70,4 +70,4 @@ export const createMemoIconWidget = (
       return false;
     }
   }
-}; 
+};

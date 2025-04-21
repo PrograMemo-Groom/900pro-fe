@@ -1,9 +1,9 @@
 import { StateField, RangeSet } from '@codemirror/state';
 import { Decoration, DecorationSet, EditorView, WidgetType } from '@codemirror/view';
-import { filterByClientId, createMemoIconWidget } from './highlightWidgets';
-import { addHighlightEffect, clearHighlightsEffect, removeHighlightEffect, updateHighlightColorEffect } from './highlightEffects';
-import { hexToRgba, rgbaToHex } from '../utils/colorUtils';
-import { createIconDOM } from '../utils/domUtils';
+import { filterByClientId, createMemoIconWidget } from '@/pages/my-test/components/CodeEditor/codemirror/highlightWidgets';
+import { addHighlightEffect, clearHighlightsEffect, removeHighlightEffect, updateHighlightColorEffect } from '@/pages/my-test/components/CodeEditor/codemirror/highlightEffects';
+import { hexToRgba, rgbaToHex } from '@/pages/my-test/components/CodeEditor/utils/colorUtils';
+import { createIconDOM } from '@/pages/my-test/components/CodeEditor/utils/domUtils';
 
 /**
  * 하이라이트 필드 - CodeMirror 상태에 하이라이트 정보를 저장
@@ -106,4 +106,4 @@ export const highlightField = StateField.define<DecorationSet>({
     return highlights;
   },
   provide: field => EditorView.decorations.from(field)
-}); 
+});

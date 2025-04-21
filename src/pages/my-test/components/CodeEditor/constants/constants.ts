@@ -41,4 +41,4 @@ export const HIGHLIGHT_MENU_CONTAINER_STYLE: CSSProperties = {
 /**
  * 기본 메모 배경색 (폴백)
  */
-export const DEFAULT_MEMO_BACKGROUND_COLOR = '#fff7a5'; 
+export const DEFAULT_MEMO_BACKGROUND_COLOR = '#fff7a5';

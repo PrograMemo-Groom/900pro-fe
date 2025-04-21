@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import './MiniMenu.scss';
+import '@/pages/my-test/components/CodeEditor/components/MiniMenu.scss';
 import { MiniMenuProps } from '@/pages/my-test/components/CodeEditor/types/types';
 import { HIGHLIGHT_COLORS } from '@/pages/my-test/components/CodeEditor/constants/constants';
 

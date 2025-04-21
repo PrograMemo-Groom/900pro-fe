@@ -1,6 +1,6 @@
 import { StateEffect } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { Highlight, ActiveMemoState, HighlightMenuState } from '../types/types';
+import { Highlight, ActiveMemoState, HighlightMenuState } from '@/pages/my-test/components/CodeEditor/types/types';
 
 /**
  * 하이라이트 색상 업데이트 효과 정의
@@ -43,4 +43,4 @@ export const highlightTheme = EditorView.baseTheme({
     padding: '0 1px',
     transition: 'background-color 0.1s ease-in-out, border-color 0.1s ease-in-out'
   }
-}); 
+});
