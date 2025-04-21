@@ -70,14 +70,29 @@ const highlightField = StateField.define<DecorationSet>({
 
       // 특정 하이라이트 제거 효과
       if (e.is(removeHighlightEffect)) {
-        const clientId = e.value;
-        console.log(`[디버깅] 하이라이트 제거 효과 적용: ${clientId}`);
+        const clientIdToRemove = e.value; // 제거할 clientId
+        console.log(`[디버깅] 하이라이트 제거 효과 적용: ${clientIdToRemove}`);
 
-        // clientId와 일치하지 않는 하이라이트만 필터링
+        // clientId와 일치하는 데코레이션(mark 또는 widget) 제거
         highlights = highlights.update({
           filter: (_from, _to, value) => {
-            const attrClientId = value.spec.attributes?.['data-client-id'];
-            return attrClientId !== clientId;
+            // 1. 배경 하이라이트(mark)의 clientId 확인
+            const markClientId = value.spec.attributes?.['data-client-id'];
+            if (markClientId === clientIdToRemove) {
+              return false; // 제거 대상
+            }
+
+            // 2. 아이콘 위젯(widget)의 clientId 확인
+            // value.spec.widget이 WidgetType 인스턴스이고 widgetClientId 속성을 가지는지 확인
+            const widgetInstance = value.spec.widget as any; // 타입 단언 사용 (주의 필요)
+            if (widgetInstance && typeof widgetInstance === 'object' && 'widgetClientId' in widgetInstance) {
+              if (widgetInstance.widgetClientId === clientIdToRemove) {
+                return false; // 제거 대상
+              }
+            }
+
+            // 위 조건에 해당하지 않으면 데코레이션 유지
+            return true;
           }
         });
       }
@@ -221,6 +236,14 @@ const createMemoIconWidget = (
   _onHighlightClick?: (state: HighlightMenuState) => void
 ) => {
   return new class extends WidgetType {
+    // 위젯 인스턴스에 clientId 저장
+    readonly widgetClientId: string;
+
+    constructor() {
+      super();
+      this.widgetClientId = clientId; // 생성자에서 clientId 설정
+    }
+
     toDOM() {
       const span = document.createElement("span");
       span.style.position = "relative";
@@ -235,7 +258,7 @@ const createMemoIconWidget = (
       iconContainer.style.top = "5px";
       iconContainer.style.cursor = "pointer";
       iconContainer.title = "메모 보기/편집";
-      iconContainer.dataset.clientId = clientId;
+      iconContainer.dataset.clientId = this.widgetClientId;
 
       // 아이콘 스타일 최적화
       iconContainer.style.display = "flex";
@@ -255,10 +278,10 @@ const createMemoIconWidget = (
 
       iconContainer.addEventListener('click', (event) => {
         event.stopPropagation();
-        console.log('메모 아이콘 클릭됨 - clientId:', clientId);
+        console.log('메모 아이콘 클릭됨 - clientId:', this.widgetClientId);
 
         // 클릭된 시점의 clientId와 highlight를 클로저로 캡처
-        const memoClientId = clientId;
+        const memoClientId = this.widgetClientId;
         const memoHighlight = highlight;
 
         // 함수형 업데이트 사용
