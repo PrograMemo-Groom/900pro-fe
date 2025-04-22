@@ -20,7 +20,7 @@
     display: flex;
     align-items: center;
     height: 55px;
-    padding: 0.6rem 2.4rem;
+    padding: 0.6rem 2.0rem;
     background-color: #657382;
     color: #fff;
     border: 1px solid #ffffff;
@@ -61,7 +61,7 @@
     justify-content: center;
     height: 55px;
     margin-left: 0.6rem;
-    padding: 0.6rem 2.4rem;
+    padding: 0.6rem 2.0rem;
     color: #ffffff;
     border: 1px solid #ffffff;
     border-radius: 50px;
@@ -89,6 +89,15 @@
       &:hover {
         background-color: #4a7089;
       }
+    }
+  }
+}
+
+// 1150px 이하 화면에서 제목 숨기기
+@media (max-width: 1150px) {
+  .header {
+    .header-title {
+      display: none;
     }
   }
 }

@@ -8,7 +8,7 @@ import { cpp } from '@codemirror/lang-cpp';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
-import { availableLanguages, languageDisplayNames } from '@/pages/coding-test/constants/constants';
+import { languageDisplayNames } from '@/pages/coding-test/constants/constants';
 import '@/css/coding-test/EditorPanel.scss';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -39,7 +39,6 @@ interface Tab {
 
 interface EditorPanelProps {
   selectedLanguage: CodeLanguage;
-  onLanguageDropdownChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onTabLanguageChange: (lang: CodeLanguage) => void;
   currentCode: string;
   handleCodeChange: (value: string) => void;
@@ -51,7 +50,7 @@ interface EditorPanelProps {
 // whiteTextExtension 주석 해제
 const whiteTextExtension = EditorView.theme({
   '.cm-content': {
-    color: '#ffffff'
+    color: '#ccc'
   }
 });
 
@@ -118,7 +117,6 @@ const sampleFileStructure: FileItem[] = [
 
 const EditorPanel = ({
   selectedLanguage,
-  onLanguageDropdownChange,
   onTabLanguageChange,
   currentCode,
   handleCodeChange,
@@ -472,17 +470,9 @@ const EditorPanel = ({
                 ))}
               </div>
               <div className="language-selector-container">
-                <select
-                  className="language-selector"
-                  value={selectedLanguage}
-                  onChange={onLanguageDropdownChange}
-                >
-                  {availableLanguages.map(lang => (
-                    <option key={lang} value={lang}>
-                      {languageDisplayNames[lang]}
-                    </option>
-                  ))}
-                </select>
+                <div className="language-display">
+                  {languageDisplayNames[selectedLanguage]}
+                </div>
               </div>
             </div>
 
