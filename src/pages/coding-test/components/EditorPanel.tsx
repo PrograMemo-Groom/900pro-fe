@@ -202,7 +202,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
   // 사이드바 접힘 상태 관리
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-  const [sidebarSize, setSidebarSize] = useState(15);
+  const [sidebarSize, setSidebarSize] = useState(0);
 
   // 컴포넌트 마운트 시 사이드바 초기 상태 설정
   useEffect(() => {
@@ -217,7 +217,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
     const panel = sidebarPanelRef.current;
     if (panel) {
       if (isSidebarCollapsed) {
-        panel.expand();
+        panel.expand(15);
       } else {
         panel.collapse();
       }
