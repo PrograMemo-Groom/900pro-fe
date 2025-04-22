@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
 import Header from '@/pages/common/Header.tsx';
-import SearchBox from '@/pages/main/component/SearchBox.tsx';
 import styles from "@/css/main/Layout.module.scss";
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
-import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
-import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
 import TeamDetail from '@/pages/main/TeamDialog/TeamDetail.tsx';
 
@@ -23,8 +20,8 @@ const mainTeamData = [
 ]
 const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
-  // const [teamList, setTeamList] = React.useState([]);
   const [teamList, setTeamList] = React.useState(mainTeamData);
+  const [keyword, setKeyword] = React.useState<string>('');
   const [selectedIndex, setSelectedIndex] = React.useState('');
 
   const handleOpenDialog = (index: string) => {
@@ -52,7 +49,7 @@ const MainNoTeam = () => {
   return (
     <div className={styles.mainContainer}>
       <Header />
-      <TeamHeader setTeamList={setTeamList} />
+      <TeamHeader setTeamList={setTeamList} keyword={keyword} setKeyword={setKeyword} />
       <section>
         {teamList.length === 0 ? (
           <p> 가입 가능한 팀이 없습니다.</p>

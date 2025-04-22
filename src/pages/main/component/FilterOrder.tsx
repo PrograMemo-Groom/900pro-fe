@@ -10,7 +10,7 @@ const options = [
 ]
 
 
-const FilterOrder = () => {
+const FilterOrder = ({setTeamList}) => {
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(options[0]);
 

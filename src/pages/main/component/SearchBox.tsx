@@ -3,9 +3,7 @@ import styles from '@/css/main/Layout.module.scss';
 import searchBtn from "@/assets/Search.svg";
 import API from '@/store/api/ApiConfig.ts';
 
-const SearchBox = ({setTeamList}) => {
-  const [keyword, setKeyword] = React.useState<string>('');
-
+const SearchBox = ({setTeamList, keyword, setKeyword}) => {
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
   }
