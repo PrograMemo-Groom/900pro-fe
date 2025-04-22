@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CodeLanguage } from '@/pages/coding-test/components/EditorPanel';
+import { CodeLanguage } from '@/pages/coding-test/types/types';
 import { defaultCode } from '@/pages/coding-test/constants/constants';
 
 export const useCodingTestLogic = () => {

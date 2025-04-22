@@ -11,6 +11,8 @@ import { Extension } from '@codemirror/state';
 import { languageDisplayNames } from '@/pages/coding-test/constants/constants';
 import '@/css/coding-test/EditorPanel.scss';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { CodeLanguage, EditorTheme, FileItem, Tab, EditorPanelProps } from '@/pages/coding-test/types/types';
+import { sampleFileStructure } from '@/pages/coding-test/data/fileStructure';
 
 // SVG 아이콘 임포트
 import pythonIcon from '@/assets/python.svg';
@@ -19,35 +21,6 @@ import javaIcon from '@/assets/java.svg';
 import cppIcon from '@/assets/cpp.svg';
 import cIcon from '@/assets/c.svg';
 
-export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'txt';
-export type EditorTheme = 'light' | 'dark';
-
-interface FileItem {
-  id: string;
-  name: string;
-  type: 'file' | 'folder';
-  extension?: string;
-  children?: FileItem[];
-  isOpen?: boolean;
-}
-
-interface Tab {
-  id: string;
-  name: string;
-  language: CodeLanguage;
-}
-
-interface EditorPanelProps {
-  selectedLanguage: CodeLanguage;
-  onTabLanguageChange: (lang: CodeLanguage) => void;
-  currentCode: string;
-  handleCodeChange: (value: string) => void;
-  theme: EditorTheme;
-  isRunning: boolean;
-  output: string;
-}
-
-// whiteTextExtension 주석 해제
 const whiteTextExtension = EditorView.theme({
   '.cm-content': {
     color: '#ccc'
@@ -75,45 +48,6 @@ const getLanguageExtension = (lang: CodeLanguage) => {
 const getTheme = (themeType: EditorTheme) => {
   return themeType === 'dark' ? vscodeDark : undefined;
 };
-
-// 샘플 파일 구조 데이터
-const sampleFileStructure: FileItem[] = [
-  {
-    id: '1',
-    name: 'src',
-    type: 'folder',
-    isOpen: true,
-    children: [
-      {
-        id: '2',
-        name: 'main',
-        type: 'folder',
-        children: [
-          { id: '3', name: 'main.java', type: 'file', extension: 'java' },
-          { id: '4', name: 'Untitled.txt', type: 'file', extension: 'txt' },
-        ]
-      },
-      {
-        id: '5',
-        name: 'test',
-        type: 'folder',
-        children: [
-          { id: '6', name: 'input.txt', type: 'file', extension: 'txt' },
-        ]
-      },
-    ]
-  },
-  {
-    id: '7',
-    name: 'etc',
-    type: 'folder',
-    children: [
-      { id: '8', name: 'practice.js', type: 'file', extension: 'js' },
-      { id: '9', name: 'practice.cpp', type: 'file', extension: 'cpp' },
-      { id: '10', name: 'practice.py', type: 'file', extension: 'py' },
-    ]
-  },
-];
 
 const EditorPanel = ({
   selectedLanguage,

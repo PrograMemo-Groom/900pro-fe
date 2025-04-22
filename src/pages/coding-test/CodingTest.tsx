@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import EditorPanel, { EditorTheme } from '@/pages/coding-test/components/EditorPanel';
+import EditorPanel from '@/pages/coding-test/components/EditorPanel';
 import ProblemPanel from '@/pages/coding-test/components/ProblemPanel';
 import Header from '@/pages/coding-test/components/Header';
 import { useCodingTestLogic } from '@/pages/coding-test/hooks/useCodingTestLogic';
+import { EditorTheme } from '@/pages/coding-test/types/types';
 import '@/css/coding-test/CodingTest.scss';
 
 const CodingTest= () => {
