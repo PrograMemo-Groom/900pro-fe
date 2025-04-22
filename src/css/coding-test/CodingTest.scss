@@ -36,21 +36,28 @@
 
     .resize-handle {
       width: 2px;
-      margin: 0 -3px;
+      margin: 0;
       background-color: #444;
       cursor: col-resize !important;
       transition: background-color 0.2s;
       position: relative;
       z-index: 10;
+      @include gradientMixin;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      text-align: center;
 
       &:hover, &:active {
         background-color: #2b76c9;
       }
 
       &::before {
+        padding: 2px;
         content: "";
         position: absolute;
-        left: -3px;
+        left: 0;
         top: 0;
         width: 14px;
         height: 100%;

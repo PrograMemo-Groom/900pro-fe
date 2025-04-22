@@ -13,19 +13,19 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #252526;
+  background-color: #19314A;
   color: #CCCCCC;
   overflow: hidden;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .sidebar-header {
   height: 40px;
-  padding: 0px 3px;
+  padding: 0px 8px;
   font-size: 12px;
   font-weight: bold;
   color: #E7E7E7;
-  border-bottom: 1px solid #1E1E1E;
+  // border-bottom: 1px solid #1E1E1E;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -56,7 +56,7 @@
   .folder {
     display: flex;
     align-items: center;
-    padding: 3px 12px;
+    padding: 0 12px;
     cursor: pointer;
     user-select: none;
   }
@@ -64,13 +64,13 @@
   .file {
     display: flex;
     align-items: center;
-    padding: 3px 12px;
+    padding: 0 12px;
     cursor: pointer;
     user-select: none;
     // width: fit-content;
 
     &.active {
-      background-color: #37373D;
+      background-color: #102133;
     }
   }
 
@@ -87,8 +87,8 @@
 
 .editor-header {
   display: flex;
-  background-color: #2D2D2D;
-  border-bottom: 1px solid #1E1E1E;
+  background-color: #19314A;
+  // border-bottom: 1px solid #eee;
   min-height: 40px;
   position: relative;
 }
@@ -115,15 +115,18 @@
   height: 100%;
   min-width: 120px;
   max-width: 200px;
-  background-color: #2D2D2D;
+  background-color: #051420;
   color: #CCCCCC;
-  border-right: 1px solid #252526;
+  // border-left: 1px solid #19314A;
+  // border-right: 1px solid #19314A;
   cursor: pointer;
   position: relative;
 
   &.active {
-    background-color: #1E1E1E;
+    background-color: #0C2131;
     color: #FFFFFF;
+    // border-left: 1px solid #eee;
+    // border-right: 1px solid #eee;
   }
 
   .file {
@@ -170,11 +173,10 @@
   display: flex;
   align-items: center;
   padding: 0 20px 0 10px;
-  background-color: #2D2D2D;
-  // border-left: 1px solid #252526;
+  background-color: #19314A;
 
   .language-selector {
-    background: #3C3C3C;
+    background: #102133;
     color: #CCCCCC;
     border: none;
     padding: 4px 8px;
@@ -195,7 +197,7 @@
 .editor-container {
   height: 100%;
   overflow: hidden;
-  background-color: #1E1E1E;
+  background-color: #0C2131;
   display: flex;
   flex-direction: column;
 
@@ -204,26 +206,43 @@
     overflow: auto;
     height: 100%;
     width: 100%;
+    background-color: #0C2131;
+  }
+
+  .cm-editor {
+    background-color: #0C2131;
+    padding-left: 15px;
+
+    .cm-activeLine {
+      background-color: #19314A !important;
+    }
+
+    .cm-activeLineGutter {
+      background-color: #19314A !important;
+    }
   }
 
   .cm-gutters {
-    padding-left: 15px;
+    background-color: #0C2131;
+    border-right: none;
+    position: relative;
   }
 }
 
 .output-panel {
   height: 100%;
-  background-color: #1E1E1E;
+  background-color: #051420;
   color: #CCCCCC;
   overflow: auto;
-  padding: 8px;
+  padding: 12px 8px 8px 8px;
+  font-size: 14px;
   font-family: monospace;
 }
 
 .resize-handle-horizontal {
-  width: 2px;
+  width: 3px;
   margin: 0 -3px;
-  background-color: #444;
+  background-color: transparent;
   cursor: col-resize !important;
   transition: background-color 0.2s;
   position: relative;
@@ -246,9 +265,9 @@
 }
 
 .resize-handle-vertical {
-  height: 2px;
+  height: 3px;
   margin: -3px 0;
-  background-color: #444;
+  background-color: transparent;
   cursor: row-resize !important;
   transition: background-color 0.2s;
   position: relative;
@@ -273,11 +292,9 @@
 .icon-button {
   background: none;
   border: none;
-  color: #CCCCCC;
   font-size: 16px;
-  padding: 4px 8px;
+  padding: 4px 4px;
   cursor: pointer;
-  margin-right: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,24 +313,23 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
-  width: 18px;
+  width: 20px;
   height: 40px;
-  background-color: #37373D;
+  background-color: #2A4B6D;
   color: #CCCCCC;
-  border: 1px solid #1E1E1E;
-  border-left: none;
-  border-radius: 0 4px 4px 0;
+  border: none;
+  border-radius: 2px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  font-weight: bold;
-  transition: left 0.3s ease, background-color 0.3s ease;
+  font-size: 14px;
+  transition: left 0.3s ease, background-color 0.2s ease;
 
   &:hover {
-    background-color: #4d4d4d;
+    // background-color: #193A5C;
     color: #FFFFFF;
+    font-weight: bold;
   }
 }
 

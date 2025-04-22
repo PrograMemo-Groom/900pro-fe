@@ -10,6 +10,7 @@ import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { availableLanguages, languageDisplayNames } from '@/pages/coding-test/constants/constants';
 import '@/css/coding-test/EditorPanel.scss';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 // SVG 아이콘 임포트
 import pythonIcon from '@/assets/python.svg';
@@ -393,12 +394,12 @@ const EditorPanel = ({
         className="sidebar-toggle-button"
         onClick={toggleSidebar}
         style={{
-          left: isSidebarCollapsed ? '0px' : `${sidebarSize}%`,
+          left: isSidebarCollapsed ? '0px' : `calc(${sidebarSize}% - 3px)`,
           transform: isSidebarCollapsed ? 'translateX(0)' : 'translateX(-100%)',
         }}
         title={isSidebarCollapsed ? "탐색기 펼치기" : "탐색기 접기"}
       >
-        {isSidebarCollapsed ? '>' : '<'}
+        {isSidebarCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
       </button>
 
       <PanelGroup direction="horizontal">
