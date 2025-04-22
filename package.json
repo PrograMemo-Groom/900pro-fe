@@ -14,6 +14,7 @@
     "@stomp/stompjs": "^7.1.1",
     "@uiw/react-codemirror": "^4.23.10",
     "axios": "^1.8.4",
+    "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.2.0",
