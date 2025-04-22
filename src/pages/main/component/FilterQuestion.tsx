@@ -1,27 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from '@/css/main/Layout.module.scss';
+import { useTeamFilter } from '@/context/team/TeamFilterContext.tsx';
 
 const levels = [
   {value:"all", label: "All"},
-  {value:"high", label: "난이도 상"},
-  {value:"middle", label: "난이도 중"},
-  {value:"low", label: "난이도 하"},
+  {value:"hard", label: "난이도 상"},
+  {value:"medium", label: "난이도 중"},
+  {value:"easy", label: "난이도 하"},
 ]
 
-const FilterQuestion = () => {
-
-  const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(levels[0]);
+const FilterQuestion = ({isOpen, onToggle}: { isOpen: boolean, onToggle: () => void }) => {
+  const { level, setLevel, handleSearchTeam } = useTeamFilter();
+  const [selected, setSelected] = React.useState(
+    levels.find(l => l.value === level) || levels[0]
+  );
 
   const handleSelected = (option) => {
     setSelected(option);
-    setOpen(false);
+    setLevel(option.value);
+    onToggle();
   }
+
+  useEffect(() => {
+    (async () => {
+      await handleSearchTeam();
+    })();
+  }, [level]);
+
 
   return (
     <div className={styles.common__select}>
-      <button onClick={() => setOpen(!open)}>↓ {selected.label}</button>
-      {open && (
+      <button onClick={onToggle}>↓ {selected.label}</button>
+      {isOpen && (
         <ul>
           {levels.map((option) => (
             <li key={option.value} onClick={() => handleSelected(option)}>

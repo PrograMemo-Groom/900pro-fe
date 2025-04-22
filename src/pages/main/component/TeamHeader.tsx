@@ -5,18 +5,25 @@ import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
 import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamCreate from '@/pages/main/TeamDialog/TeamCreate.tsx';
 
-const TeamHeader = ({setTeamList, keyword, setKeyword}) => {
+const TeamHeader = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
+  const [isFilterOpen, setIsFilterOpen] = React.useState<"order" | "question" | null>(null);
 
   const handleCreateTeam = () => {
     setIsOpenDialog(true);
   }
   return (
     <div className={styles.container}>
-      <SearchBox setTeamList={setTeamList} keyword={keyword} setKeyword={setKeyword}/>
+      <SearchBox />
       <section>
-        <FilterOrder setTeamList={setTeamList} />
-        <FilterQuestion />
+        <FilterOrder isOpen={isFilterOpen === "order"}
+                     onToggle={() =>
+                       setIsFilterOpen(prev => (prev === "order" ? null : "order"))
+                     }/>
+        <FilterQuestion isOpen={isFilterOpen === "question"}
+                        onToggle={() =>
+                          setIsFilterOpen(prev => (prev === "question" ? null : "question"))
+                        }/>
         <button className={styles.teamCreateButton} onClick={() => handleCreateTeam()}>팀 생성</button>
       </section>
 

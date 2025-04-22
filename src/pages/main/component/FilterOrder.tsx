@@ -1,28 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from "@/css/main/Layout.module.scss";
+import { useTeamFilter } from '@/context/team/TeamFilterContext.tsx';
 
 const options = [
-  {value:"teamLatest", label: "최신순"},
-  {value:"teamQuestCount", label: "문제개수"},
-  {value:"teamName", label: "이름순"},
-  {value:"teamCreatedAt", label: "최신순"},
-  {value:"teamJoinCount", label: "참가 가능 방"},
+  {value:"createdAt", label: "최신순"},
+  {value:"problemCount", label: "문제개수"},
+  {value:"name", label: "이름순"},
+  {value:"currentMembers", label: "참가 가능 방"},
 ]
+const FilterOrder = ({isOpen, onToggle}: { isOpen: boolean, onToggle: () => void }) => {
+  const { sort, setSort, handleSearchTeam } = useTeamFilter();
+  const [selected, setSelected] = React.useState(options.find(option => option.value === sort) || options[0]);
 
-
-const FilterOrder = ({setTeamList}) => {
-  const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(options[0]);
-
-  const handleSelected = (option) => {
+  const handleSelected = async (option) => {
     setSelected(option);
-    setOpen(false);
+    setSort(option.value);
+    onToggle();
   }
+
+  useEffect(() => {
+    (async () => {
+      await handleSearchTeam();
+    })();
+  }, [sort]);
 
   return (
     <div className={styles.common__select}>
-      <button onClick={() => setOpen(!open)}>↓ {selected.label}</button>
-      {open && (
+      <button onClick={onToggle}>↓ {selected.label}</button>
+      {isOpen && (
         <ul>
           {options.map((option) => (
             <li key={option.value} onClick={() => handleSelected(option)}>
