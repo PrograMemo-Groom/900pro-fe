@@ -26,7 +26,7 @@ const SignUp = () => {
       const response: AxiosResponse<SignUpRes> = await API.post('/auth/join', form);
       console.log('회원가입 요청 : ', response.data);
       alert('회원가입 성공!');
-      navigator('/main');
+      navigator('/'); // 로그인 창으로 이동
     } catch (e) {
       console.log('error : ', e.response.data?.message);
     }

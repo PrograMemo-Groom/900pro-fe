@@ -4,9 +4,10 @@ import { LoginFormValues, LoginProps, LoginResult } from '@/pages/login/Login.in
 import Landing from '@/pages/common/Landing.tsx';
 import API from '@/store/api/ApiConfig.ts';
 import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC<LoginProps> = ({initialValues}) => {
-    // TODO : 500 에러 발생해서, LOGIN 수정 되면 다시 하는걸로 => 전달 완료
+    const navigator = useNavigate();
     const [form, setForm] = useState<LoginFormValues>({
         email: initialValues?.email || "",
         password: initialValues?.password || ""
@@ -24,6 +25,13 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
         try {
             const response:AxiosResponse<LoginResult> = await API.post("/auth/login", form);
             console.log("login 했을 때 response ; ", response);
+            if (response.data.success) {
+                alert("로그인 성공!");
+                sessionStorage.setItem("token", response.data.data); // sessionStorage에 jwt 토큰 값 추가
+                navigator("/main"); // 팀 페이지로 이동
+            } else {
+                alert("로그인 실패! 이메일과 비밀번호를 확인해주세요.");
+            }
         } catch (e) {
             console.log("error : ", e);
         }
@@ -41,6 +49,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
                            onChange={(e) => handleOnChange(e)}
                            // placeholder="email 을 입력해주세요"
                            value={form.email}
+                           autoComplete="email"
                     />
                 </div>
             </div>
@@ -51,6 +60,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
                            onChange={(e) => handleOnChange(e)}
                            // placeholder="password 를 입력해주세요"
                            value={form.password}
+                           autoComplete="password"
                     />
                 </div>
             </div>
