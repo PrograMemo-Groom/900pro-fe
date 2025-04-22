@@ -6,7 +6,7 @@ import Header from '@/pages/coding-test/components/Header';
 import { useCodingTestLogic } from '@/pages/coding-test/hooks/useCodingTestLogic';
 import '@/pages/coding-test/CodingTest.scss';
 
-const CodingTestPage = () => {
+const CodingTest= () => {
   const [theme] = useState<EditorTheme>('dark');
   const {
     output,
@@ -65,4 +65,4 @@ const CodingTestPage = () => {
   );
 };
 
-export default CodingTestPage;
+export default CodingTest;
