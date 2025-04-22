@@ -24,7 +24,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
         console.log("form 실행", form);
         try {
             const response:AxiosResponse<LoginResult> = await API.post("/auth/login", form);
-            console.log("login 했을 때 response ; ", response);
+            // console.log("login 했을 때 response ; ", response);
             if (response.data.success) {
                 alert("로그인 성공!");
                 sessionStorage.setItem("token", response.data.data); // sessionStorage에 jwt 토큰 값 추가

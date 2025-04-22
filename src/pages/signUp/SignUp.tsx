@@ -24,14 +24,16 @@ const SignUp = () => {
     console.log('form 실행', form);
     try {
       const response: AxiosResponse<SignUpRes> = await API.post('/auth/join', form);
-      console.log('회원가입 요청 : ', response.data);
-      alert('회원가입 성공!');
-      navigator('/'); // 로그인 창으로 이동
+      // console.log('회원가입 요청 : ', response.data);
+      if (response.data.success) {
+        alert('회원가입 성공!');
+        navigator('/'); // 로그인 창으로 이동
+      }
     } catch (e) {
       console.log('error : ', e.response.data?.message);
     }
-
   };
+
   const handleOnChange = (e: React.FormEvent) => {
     const { id, value } = e.target;
     setForm((prevState) => ({
