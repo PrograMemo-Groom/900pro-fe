@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import styles from "@/css/main/Layout.module.scss";
 import API from '@/store/api/ApiConfig.ts';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const TeamDetail = ({team, onClose}) => {
+  const navigator = useNavigate();
 
 
   useEffect(() => {
@@ -16,7 +18,8 @@ const TeamDetail = ({team, onClose}) => {
     if (response.data.success) {
       alert(response.data.message);
       onClose();
-    // TODO : 여기서 사용자가 팀 가입 후 팀 화면으로 이동해야 함
+    // 여기서 사용자가 팀 가입 후 팀 화면으로 이동해야 함
+      navigator("/teams", {state: {team}});
     }
   }
 

@@ -6,6 +6,7 @@ import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 import { TeamFilterProvider } from '@/context/team/TeamFilterContext.tsx';
+import MainTeam from '@/pages/main/MainTeam.tsx';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             <MainNoTeam />
           </TeamFilterProvider>
         ),
+      },
+      {
+        path: "/teams",
+        element: <MainTeam />
       },
       // {
       //   path: '/coding-test',
