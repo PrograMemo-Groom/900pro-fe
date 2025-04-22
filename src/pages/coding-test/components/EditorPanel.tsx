@@ -115,7 +115,7 @@ const sampleFileStructure: FileItem[] = [
   },
 ];
 
-const EditorPanel: React.FC<EditorPanelProps> = ({
+const EditorPanel = ({
   selectedLanguage,
   onLanguageDropdownChange,
   onTabLanguageChange,
@@ -124,7 +124,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
   theme,
   isRunning,
   output
-}) => {
+}: EditorPanelProps) => {
   const langExtension = getLanguageExtension(selectedLanguage);
   const extensions: Extension[] = [];
 

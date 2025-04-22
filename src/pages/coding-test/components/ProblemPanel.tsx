@@ -1,6 +1,4 @@
-import React from 'react';
-
-const ProblemPanel: React.FC = () => {
+const ProblemPanel = () => {
   return (
     <div className="problem-panel">
       <div className="problem-header">

@@ -1,4 +1,3 @@
-import React from 'react';
 import './Header.scss';
 
 interface HeaderProps {
@@ -8,12 +7,12 @@ interface HeaderProps {
   handleSubmit: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
+const Header = ({
   remainingTime,
   isRunning,
   handleRunCode,
   handleSubmit
-}) => {
+}: HeaderProps) => {
   return (
     <div className="header">
       <div className="header-timer">남은 시간 {remainingTime}</div>
@@ -32,4 +31,4 @@ const Header: React.FC<HeaderProps> = ({
   );
 };
 
-export default Header; 
+export default Header;
