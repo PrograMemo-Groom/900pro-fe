@@ -25,7 +25,6 @@ const SignUp = () => {
     try {
       const response: AxiosResponse<SignUpRes> = await API.post('/auth/join', form);
       console.log('회원가입 요청 : ', response.data);
-      // sessionStorage.setItem("token", response.data);
       alert('회원가입 성공!');
       navigator('/main');
     } catch (e) {
@@ -41,17 +40,20 @@ const SignUp = () => {
     }));
   };
   const handleVerifyEmail = async (email: string) => {
-    try {
-      const { data }: AxiosResponse<SampleResponse> = await API.post('/auth/dupCheck', { email });
-      console.log('[이메일 중복 확인] ; ', data);
-      if (data?.success) {
-        console.log('중복 확인 완료 : ', data?.message);
-        setEmailCheck(true);
+    if (email.trim().length > 0) {
+      try {
+        const { data }: AxiosResponse<SampleResponse> = await API.post('/auth/dupCheck', { email });
+        console.log('[이메일 중복 확인] ; ', data);
+        if (data?.success) {
+          console.log('중복 확인 완료 : ', data?.message);
+          setEmailCheck(true);
+        }
+      } catch (e) {
+        console.log('error : ', e.response.data?.message);
+        setEmailCheck(false);
       }
-    } catch (e) {
-      console.log('error : ', e.response.data?.message);
-      setEmailCheck(false);
     }
+
 
 
   };
@@ -69,6 +71,7 @@ const SignUp = () => {
                    placeholder="최대 8자, 영문자와 숫자만 이용 가능"
                    value={form.username}
                    maxLength={8}
+                   autoComplete="username"
             />
           </div>
         </div>
@@ -79,8 +82,9 @@ const SignUp = () => {
                    onChange={(e) => handleOnChange(e)}
               // placeholder="email 을 입력해주세요"
                    value={form.email}
+                   autoComplete="email"
             />
-            <button type="button" onClick={() => handleVerifyEmail(form.email)}>중복 확인</button>
+            <button type="button" onClick={() => handleVerifyEmail(form.email)} disabled={form.email.trim().length === 0}>중복 확인</button>
           </div>
           {(emailCheck === true ? <p className={styles.success}>사용 가능한 이메일 입니다.</p> : emailCheck === false && <p className={styles.failed}>이미 사용 중 인 이메일 입니다.</p>)}
         </div>
@@ -91,6 +95,7 @@ const SignUp = () => {
                    onChange={(e) => handleOnChange(e)}
               // placeholder="password 를 입력해주세요"
                    value={form.password}
+                   autoComplete="password"
             />
           </div>
         </div>
