@@ -8,9 +8,9 @@ import { useTeamFilter } from '@/context/team/TeamFilterContext.tsx';
 const MainNoTeam = () => {
   const { teamList } = useTeamFilter();
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
-  const [selectedIndex, setSelectedIndex] = React.useState('');
+  const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
 
-  const handleOpenDialog = (index: string) => {
+  const handleOpenDialog = (index: number) => {
     setIsOpenDialog(true);
     setSelectedIndex(index);
   };
