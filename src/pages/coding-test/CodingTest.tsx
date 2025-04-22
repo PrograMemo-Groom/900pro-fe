@@ -50,7 +50,8 @@ const CodingTestPage: React.FC = () => {
           <Panel defaultSize={60} minSize={30}>
             <EditorPanel
               selectedLanguage={selectedLanguage}
-              onLanguageSelectChange={onLanguageSelectChange}
+              onLanguageDropdownChange={onLanguageSelectChange}
+              onTabLanguageChange={handleLanguageChange}
               currentCode={currentCode}
               handleCodeChange={handleCodeChange}
               theme={theme}

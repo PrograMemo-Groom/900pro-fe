@@ -34,12 +34,12 @@ interface Tab {
   id: string;
   name: string;
   language: CodeLanguage;
-  content: string;
 }
 
 interface EditorPanelProps {
   selectedLanguage: CodeLanguage;
-  onLanguageSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onLanguageDropdownChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onTabLanguageChange: (lang: CodeLanguage) => void;
   currentCode: string;
   handleCodeChange: (value: string) => void;
   theme: EditorTheme;
@@ -115,7 +115,8 @@ const sampleFileStructure: FileItem[] = [
 
 const EditorPanel: React.FC<EditorPanelProps> = ({
   selectedLanguage,
-  onLanguageSelectChange,
+  onLanguageDropdownChange,
+  onTabLanguageChange,
   currentCode,
   handleCodeChange,
   theme,
@@ -132,10 +133,19 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
   const [fileStructure, setFileStructure] = useState<FileItem[]>(sampleFileStructure);
 
   // 탭 관리 상태
-  const [tabs, setTabs] = useState<Tab[]>([
-    { id: 'tab1', name: 'main.js', language: 'javascript', content: currentCode }
-  ]);
-  const [activeTabId, setActiveTabId] = useState<string>('tab1');
+  const [tabs, setTabs] = useState<Tab[]>(() => {
+    // 초기 selectedLanguage에 맞는 기본 탭 이름 설정
+    let initialTabName = 'main';
+    if (selectedLanguage === 'python') initialTabName += '.py';
+    else if (selectedLanguage === 'javascript') initialTabName += '.js';
+    else if (selectedLanguage === 'java') initialTabName += '.java';
+    else if (selectedLanguage === 'cpp') initialTabName += '.cpp';
+    else if (selectedLanguage === 'c') initialTabName += '.c';
+    else initialTabName += '.txt'; // 예외 처리
+
+    return [{ id: 'initialTab', name: initialTabName, language: selectedLanguage }];
+  });
+  const [activeTabId, setActiveTabId] = useState<string>('initialTab');
 
   // CodeMirror 인스턴스를 참조하기 위한 ref 추가
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
@@ -211,51 +221,78 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 
   // 파일 클릭 함수
   const handleFileClick = (file: FileItem) => {
-    // 이미 열려있는 탭인지 확인
     const existingTab = tabs.find(tab => tab.id === file.id);
 
+    let fileLanguage: CodeLanguage = 'javascript'; // 기본값
+    const fileExtension = file.extension || '';
+    if (fileExtension === 'py') fileLanguage = 'python';
+    else if (fileExtension === 'java') fileLanguage = 'java';
+    else if (fileExtension === 'cpp' || fileExtension === 'c') fileLanguage = fileExtension as CodeLanguage;
+    else if (fileExtension === 'js') fileLanguage = 'javascript';
+
     if (existingTab) {
-      // 이미 열려있는 파일이면 해당 탭을 활성화
+      // 이미 열려있는 탭이면 해당 탭을 활성화하고, 해당 탭의 언어로 전역 언어 변경
       setActiveTabId(file.id);
+      if (selectedLanguage !== existingTab.language) {
+        onTabLanguageChange(existingTab.language); // 전역 언어 변경 콜백 호출
+      }
     } else {
-      // 새 탭 추가
-      const fileExtension = file.extension || '';
-      let language: CodeLanguage = 'javascript';
-
-      // 확장자에 따라 언어 설정
-      if (fileExtension === 'py') language = 'python';
-      else if (fileExtension === 'java') language = 'java';
-      else if (fileExtension === 'cpp' || fileExtension === 'c') language = fileExtension as CodeLanguage;
-      else if (fileExtension === 'js') language = 'javascript';
-      else language = 'javascript'; // 기본값 (txt 등 다른 파일)
-
+      // 새 탭 추가 (content 없이)
       const newTab: Tab = {
         id: file.id,
         name: file.name,
-        language,
-        content: `// ${file.name} 내용`
+        language: fileLanguage,
       };
-
-      setTabs([...tabs, newTab]);
+      const newTabs = [...tabs, newTab];
+      setTabs(newTabs);
       setActiveTabId(file.id);
+      // 새 탭의 언어로 전역 언어 변경
+      if (selectedLanguage !== fileLanguage) {
+        onTabLanguageChange(fileLanguage); // 전역 언어 변경 콜백 호출
+      }
     }
   };
 
   // 탭 닫기 함수
   const closeTab = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    const closingTabIndex = tabs.findIndex(tab => tab.id === id);
     const filteredTabs = tabs.filter(tab => tab.id !== id);
 
     if (filteredTabs.length === 0) {
-      // 모든 탭이 닫힌 경우 새 탭 추가
-      setTabs([{ id: 'newtab', name: 'untitled', language: selectedLanguage, content: '' }]);
+      // 모든 탭이 닫힌 경우: 새 기본 탭 추가 (초기 상태와 유사하게 처리 필요 - 여기서는 간단히 js로)
+      const defaultLang = 'javascript';
+      const newTab: Tab = { id: 'newtab', name: 'untitled.js', language: defaultLang };
+      setTabs([newTab]);
       setActiveTabId('newtab');
+      if (selectedLanguage !== defaultLang) {
+        onTabLanguageChange(defaultLang);
+      }
     } else if (activeTabId === id) {
-      // 활성화된 탭이 닫힌 경우 마지막 탭을 활성화
-      setActiveTabId(filteredTabs[filteredTabs.length - 1].id);
+      // 활성화된 탭이 닫힌 경우: 이전 탭 또는 첫번째 탭 활성화
+      const newActiveIndex = Math.max(0, closingTabIndex - 1);
+      const newActiveTab = filteredTabs[newActiveIndex];
+      setActiveTabId(newActiveTab.id);
+      // 새로 활성화된 탭의 언어로 변경
+      if (selectedLanguage !== newActiveTab.language) {
+        onTabLanguageChange(newActiveTab.language);
+      }
+      setTabs(filteredTabs); // 상태 업데이트는 여기서 한 번만
+    } else {
+       // 비활성 탭이 닫힌 경우: 활성 탭 유지, 탭 목록만 업데이트
+       setTabs(filteredTabs);
     }
+  };
 
-    setTabs(filteredTabs);
+  // 탭 클릭 핸들러 추가: 클릭된 탭의 언어로 전역 언어 변경
+  const handleTabClick = (tabId: string) => {
+    const clickedTab = tabs.find(tab => tab.id === tabId);
+    if (clickedTab) {
+      setActiveTabId(tabId);
+      if (selectedLanguage !== clickedTab.language) {
+        onTabLanguageChange(clickedTab.language); // 전역 언어 변경 콜백 호출
+      }
+    }
   };
 
   // 재귀적으로 파일 구조 렌더링
@@ -356,7 +393,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                   <div
                     key={tab.id}
                     className={`editor-tab ${activeTabId === tab.id ? 'active' : ''}`}
-                    onClick={() => setActiveTabId(tab.id)}
+                    onClick={() => handleTabClick(tab.id)}
                   >
                     <div className="file">
                       <span className="file-icon">
@@ -381,7 +418,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                 <select
                   className="language-selector"
                   value={selectedLanguage}
-                  onChange={onLanguageSelectChange}
+                  onChange={onLanguageDropdownChange}
                 >
                   {availableLanguages.map(lang => (
                     <option key={lang} value={lang}>
