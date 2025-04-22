@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
+import { PanelGroup, Panel, PanelResizeHandle, ImperativePanelHandle } from 'react-resizable-panels';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
@@ -133,6 +133,23 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
   // CodeMirror 인스턴스를 참조하기 위한 ref 추가
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
 
+  // 사이드바 접힘 상태 관리
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+  const [sidebarSize, setSidebarSize] = useState(20);
+
+  // 사이드바 토글 함수
+  const toggleSidebar = () => {
+    const panel = sidebarPanelRef.current;
+    if (panel) {
+      if (isSidebarCollapsed) {
+        panel.expand();
+      } else {
+        panel.collapse();
+      }
+    }
+  };
+
   // editor-container 클릭 시 마지막 줄로 커서 이동
   const handleEditorContainerClick = (e: React.MouseEvent) => {
     if (!(e.target as HTMLElement).closest('.cm-editor')) {
@@ -264,21 +281,38 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 
   return (
     <div className="editor-panel">
+      <button
+        className="sidebar-toggle-button"
+        onClick={toggleSidebar}
+        style={{
+          left: isSidebarCollapsed ? '0px' : `${sidebarSize}%`,
+          transform: isSidebarCollapsed ? 'translateX(0)' : 'translateX(-100%)',
+        }}
+        title={isSidebarCollapsed ? "탐색기 펼치기" : "탐색기 접기"}
+      >
+        {isSidebarCollapsed ? '>' : '<'}
+      </button>
+
       <PanelGroup direction="horizontal">
         {/* 좌측 사이드바 - 파일 구조 */}
-        <Panel defaultSize={20} minSize={15} maxSize={30}>
+        <Panel
+          ref={sidebarPanelRef}
+          defaultSize={sidebarSize}
+          minSize={15}
+          maxSize={30}
+          collapsible={true}
+          onCollapse={() => setIsSidebarCollapsed(true)}
+          onExpand={() => setIsSidebarCollapsed(false)}
+          onResize={setSidebarSize}
+          order={1}
+          className="sidebar-panel"
+        >
           <div className="sidebar">
             <div className="sidebar-header">
-              <button
-                className="icon-button"
-                title="파일 탐색기"
-              >
+              <button className="icon-button" title="파일 탐색기">
                 <span role="img" aria-label="file">📄</span>
               </button>
-              <button
-                className="icon-button"
-                title="폴더 구조"
-              >
+              <button className="icon-button" title="폴더 구조">
                 <span role="img" aria-label="folder">📂</span>
               </button>
             </div>
@@ -288,10 +322,12 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
           </div>
         </Panel>
 
-        <PanelResizeHandle className="resize-handle-horizontal" />
+        {!isSidebarCollapsed && (
+          <PanelResizeHandle className="resize-handle-horizontal" />
+        )}
 
         {/* 메인 에디터 영역 */}
-        <Panel defaultSize={80}>
+        <Panel defaultSize={80} order={2}>
           <div className="main-editor-area">
             {/* 탭바 */}
             <div className="editor-tabs">
