@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import API from '@/store/api/ApiConfig.ts';
 
 const MainTeam = () => {
   const location = useLocation();
+  const user = jwtDecode(sessionStorage.getItem('token'));
   const [team, setTeam] = useState(location.state?.team || []);
+  const navigator = useNavigate();
+
+  const handleTeamOut = async () => {
+      await API.delete(`/teams/${team.id}/members?userId=${user.userId}`);
+      alert(`${team.teamName}을 탈퇴했습니다. 팀 list로 돌아갑니다.`);
+      navigator("/main");
+  }
 
   useEffect(() => {
     if (team) {
@@ -34,6 +44,9 @@ const MainTeam = () => {
   return (
     <div>
       팀이 있는 경우 디자인 필요
+      {/* 히스토리 버튼 클릭 시 넘겨야 하는 data 정보에 대해서 명시하지 않았기 때문에, api 호출 이후의 값들에 대한 명시가 필요함 */}
+      <button onClick={() => navigator("/history", {state: {team}})}>히스토리</button>
+      <p onClick={() => handleTeamOut()}>팀 탈퇴하기</p>
     </div>
   );
 };
