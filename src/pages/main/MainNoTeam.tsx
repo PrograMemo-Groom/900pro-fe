@@ -4,15 +4,18 @@ import styles from '@/css/main/Layout.module.scss';
 import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
 import TeamDetail from '@/pages/main/TeamDialog/TeamDetail.tsx';
 import { useTeamFilter } from '@/context/team/TeamFilterContext.tsx';
+import API from '@/store/api/ApiConfig.ts';
 
 const MainNoTeam = () => {
   const { teamList } = useTeamFilter();
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
-  const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
+  const [teamDetail, setTeamDetail] = React.useState(null);
 
-  const handleOpenDialog = (index: number) => {
+  const handleOpenDialog = async (index: number) => {
+    const response = await API.get(`/teams/${teamList[index].teamId}`);
+    setTeamDetail(response.data);
+    // console.log("team Detail",response.data);
     setIsOpenDialog(true);
-    setSelectedIndex(index);
   };
 
   return (
@@ -34,7 +37,7 @@ const MainNoTeam = () => {
       </section>
 
       {isOpenDialog && (
-        <TeamDetail team={teamList[selectedIndex]} onClose={() => setIsOpenDialog(false)} />
+        <TeamDetail team={teamDetail} onClose={() => setIsOpenDialog(false)} />
       )}
     </div>
   );
