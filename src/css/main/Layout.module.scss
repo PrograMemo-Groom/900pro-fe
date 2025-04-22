@@ -258,7 +258,8 @@
   color: white;
   border-radius: 30px;
   padding: 3rem 2rem;
-  width: 420px;
+  min-width: 420px;
+  width: fit-content;
   max-width: 90%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   position: relative;
