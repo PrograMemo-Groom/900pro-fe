@@ -7,6 +7,9 @@
   align-items: center;
   box-sizing: border-box;
   gap: 100px;
+  width: 100vw;
+  max-width: 1280px;
+  margin: 0 auto;
 
   .description {
     display: flex;
@@ -33,59 +36,83 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    width: 100%;
+    max-width: 479px;
+    padding: 0 1rem;
 
+    & > h2 {
+      font-size: 3rem;
+      text-align: center;
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
+    // ---------------------  form 설정 공통 css 만 사용하는 코드
     .inputForm {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      max-width: 479px;
+      width: 100%;
 
       & > label {
         font-size: 38px;
         margin-left: 1rem;
       }
-      .gradientBorder {
-        background: linear-gradient(45deg, #3674B5 43%, #D1E8FE 64%, #1AE3F9 100%);
-        padding: 3px;
+      .auth__input {
+        @include gradientMixin;
         border-radius: 50px;
-        display: inline-block;
+        padding: 1rem 20px 1rem 30px;
+        background-color: transparent;
+        height: 80px;
+        display: flex;
+        align-items: center;
 
-        & > input {
-          background-color: #0f172a;
-          width: 467px;
-          height: 91px;
-          padding: 0 2rem;
-          font-size: 1.5rem;
-          border-radius: 50px;
+        & input {
+          flex: 1;
+          background: transparent;
+          border: none;
+          outline: none;
           color: white;
+          font-size: 20px;
+        }
+        & button {
+          height: 100%;
+          padding: 0 1.5rem;
+          border: none;
+          border-radius: 40px;
+          background: #A1E3F9;
+          font-size: 16px;
+          font-weight: 600;
+          color: #000;
+          white-space: nowrap;
           cursor: pointer;
-          border: 1px solid #D1F8EF;
+          transition: background 0.3s;
 
-          &::placeholder {
-            font-size: 1.5rem;
-            color: #aaa;
-            font-weight: 300;
-            //font-style: italic;
+          &:hover {
+            background: rgba(161, 227, 249, 0.6);
           }
         }
       }
     }
 
-    & > button[type="submit"] {
-      width: 479px;
-      height: 101px;
+    .auth__submit[type="submit"] {
+      @include gradientMixin;
+      height: 80px;
       border-radius: 50px;
-      margin: 1rem 0;
-      border: 1px solid #D1F8EF;
+      margin-top: 1rem;
       background: #94C1F0;
       color: black;
       font-size: 2rem;
     }
+    // 공통 부분 -------------------------------------
+
     .checkAuth {
       display: flex;
       flex-direction: column;
       gap: 1rem;
 
-      & > p {
+      & p {
         font-size: 1.5rem;
         font-weight: lighter;
         margin-left: 1rem;
@@ -101,9 +128,10 @@
           }
         }
       }
-      & > p:nth-child(even) {
+      & p:nth-child(even) {
         text-decoration: underline;
         text-underline-color: white;
+        text-decoration-color: transparent;
         cursor: pointer;
 
         &:hover {
