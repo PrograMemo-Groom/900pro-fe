@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle, ImperativePanelHandle } from 'react-resizable-panels';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
@@ -141,9 +141,17 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
 
   // 사이드바 접힘 상태 관리
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-  const [sidebarSize, setSidebarSize] = useState(20);
+  const [sidebarSize, setSidebarSize] = useState(15);
+
+  // 컴포넌트 마운트 시 사이드바 초기 상태 설정
+  useEffect(() => {
+    const panel = sidebarPanelRef.current;
+    if (panel && isSidebarCollapsed) {
+      panel.collapse();
+    }
+  }, []);
 
   // 사이드바 토글 함수
   const toggleSidebar = () => {
@@ -309,8 +317,8 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
         <Panel
           ref={sidebarPanelRef}
           defaultSize={sidebarSize}
-          minSize={15}
-          maxSize={30}
+          minSize={10}
+          maxSize={50}
           collapsible={true}
           onCollapse={() => setIsSidebarCollapsed(true)}
           onExpand={() => setIsSidebarCollapsed(false)}
@@ -385,7 +393,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
             </div>
 
             <PanelGroup direction="vertical" autoSaveId="editor-output-layout">
-              <Panel defaultSize={70} minSize={30}>
+              <Panel defaultSize={70} minSize={10}>
                 <div className="editor-container" onClick={handleEditorContainerClick}>
                   <CodeMirror
                     ref={codeMirrorRef}
