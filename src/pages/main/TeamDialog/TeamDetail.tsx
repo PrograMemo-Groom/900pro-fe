@@ -1,11 +1,24 @@
 import React, { useEffect } from 'react';
 import styles from "@/css/main/Layout.module.scss";
+import API from '@/store/api/ApiConfig.ts';
+import { jwtDecode } from 'jwt-decode';
 
 const TeamDetail = ({team, onClose}) => {
+
 
   useEffect(() => {
     console.log("team detail 출력 : ",team);
   }, [team]);
+
+  const handleJoinTeam = async () => {
+    const user = jwtDecode(sessionStorage.getItem('token'));
+    const response = await API.post(`/teams/${team.id}/members?userId=${user.userId}`);
+    if (response.data.success) {
+      alert(response.data.message);
+      onClose();
+    // TODO : 여기서 사용자가 팀 가입 후 팀 화면으로 이동해야 함
+    }
+  }
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
@@ -20,7 +33,7 @@ const TeamDetail = ({team, onClose}) => {
         <p>인원 {team.currentMembers} / 10</p>
         <hr />
         <p>{team.description}</p>
-        <button className={styles.joinButton}>팀 가입하기</button>
+        <button className={styles.joinButton} onClick={() => handleJoinTeam()}>팀 가입하기</button>
       </div>
     </div>
   );
