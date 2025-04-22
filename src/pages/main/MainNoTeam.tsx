@@ -52,7 +52,7 @@ const MainNoTeam = () => {
   return (
     <div className={styles.mainContainer}>
       <Header />
-      <TeamHeader />
+      <TeamHeader setTeamList={setTeamList} />
       <section>
         {teamList.length === 0 ? (
           <p> 가입 가능한 팀이 없습니다.</p>

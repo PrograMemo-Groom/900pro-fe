@@ -5,7 +5,7 @@ import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
 import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamCreate from '@/pages/main/TeamDialog/TeamCreate.tsx';
 
-const TeamHeader = () => {
+const TeamHeader = ({setTeamList}) => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
 
   const handleCreateTeam = () => {
@@ -13,7 +13,7 @@ const TeamHeader = () => {
   }
   return (
     <div className={styles.container}>
-      <SearchBox />
+      <SearchBox setTeamList={setTeamList} />
       <section>
         <FilterOrder />
         <FilterQuestion />
