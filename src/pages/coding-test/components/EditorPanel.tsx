@@ -11,6 +11,13 @@ import { Extension } from '@codemirror/state';
 import { availableLanguages, languageDisplayNames } from '@/pages/coding-test/constants/constants';
 import './EditorPanel.scss';
 
+// SVG 아이콘 임포트
+import pythonIcon from '@/assets/python.svg';
+import javascriptIcon from '@/assets/javascript.svg';
+import javaIcon from '@/assets/java.svg';
+import cppIcon from '@/assets/cpp.svg';
+import cIcon from '@/assets/c.svg';
+
 export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c';
 export type EditorTheme = 'light' | 'dark';
 
@@ -77,33 +84,33 @@ const sampleFileStructure: FileItem[] = [
     children: [
       {
         id: '2',
-        name: 'components',
+        name: 'main',
         type: 'folder',
         children: [
-          { id: '3', name: 'App.js', type: 'file', extension: 'js' },
-          { id: '4', name: 'Header.js', type: 'file', extension: 'js' },
+          { id: '3', name: 'main.java', type: 'file', extension: 'java' },
+          { id: '4', name: 'Untitled.txt', type: 'file', extension: 'txt' },
         ]
       },
       {
         id: '5',
-        name: 'styles',
+        name: 'test',
         type: 'folder',
         children: [
-          { id: '6', name: 'main.css', type: 'file', extension: 'css' },
+          { id: '6', name: 'input.txt', type: 'file', extension: 'txt' },
         ]
       },
-      { id: '7', name: 'index.js', type: 'file', extension: 'js' },
     ]
   },
   {
-    id: '8',
-    name: 'public',
+    id: '7',
+    name: 'etc',
     type: 'folder',
     children: [
-      { id: '9', name: 'index.html', type: 'file', extension: 'html' },
+      { id: '8', name: 'practice.js', type: 'file', extension: 'js' },
+      { id: '9', name: 'practice.cpp', type: 'file', extension: 'cpp' },
+      { id: '10', name: 'practice.py', type: 'file', extension: 'py' },
     ]
   },
-  { id: '10', name: 'package.json', type: 'file', extension: 'json' },
 ];
 
 const EditorPanel: React.FC<EditorPanelProps> = ({
@@ -207,9 +214,12 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
       const fileExtension = file.extension || '';
       let language: CodeLanguage = 'javascript';
 
+      // 확장자에 따라 언어 설정
       if (fileExtension === 'py') language = 'python';
       else if (fileExtension === 'java') language = 'java';
       else if (fileExtension === 'cpp' || fileExtension === 'c') language = fileExtension as CodeLanguage;
+      else if (fileExtension === 'js') language = 'javascript';
+      else language = 'javascript'; // 기본값 (txt 등 다른 파일)
 
       const newTab: Tab = {
         id: file.id,
@@ -260,10 +270,11 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                 onClick={() => handleFileClick(item)}
               >
                 <span className="file-icon">
-                  {item.extension === 'js' ? '📄' :
-                   item.extension === 'css' ? '🎨' :
-                   item.extension === 'html' ? '🌐' :
-                   item.extension === 'json' ? '📋' : '📄'}
+                  {item.extension === 'js' ? <img src={javascriptIcon} alt="JavaScript" width="16" height="16" /> :
+                   item.extension === 'py' ? <img src={pythonIcon} alt="Python" width="16" height="16" /> :
+                   item.extension === 'java' ? <img src={javaIcon} alt="Java" width="16" height="16" /> :
+                   item.extension === 'cpp' ? <img src={cppIcon} alt="C++" width="16" height="16" /> :
+                   item.extension === 'c' ? <img src={cIcon} alt="C" width="16" height="16" /> : '📄'}
                 </span>
                 <span>{item.name}</span>
               </div>
@@ -329,23 +340,35 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
         {/* 메인 에디터 영역 */}
         <Panel defaultSize={80} order={2}>
           <div className="main-editor-area">
-            {/* 탭바 */}
-            <div className="editor-tabs">
-              {tabs.map(tab => (
-                <div
-                  key={tab.id}
-                  className={`editor-tab ${activeTabId === tab.id ? 'active' : ''}`}
-                  onClick={() => setActiveTabId(tab.id)}
-                >
-                  <span className="tab-name">{tab.name}</span>
-                  <button
-                    className="close-tab"
-                    onClick={(e) => closeTab(tab.id, e)}
+            {/* 헤더 영역 - 탭바와 언어 선택기 */}
+            <div className="editor-header">
+              {/* 탭바 */}
+              <div className="editor-tabs">
+                {tabs.map(tab => (
+                  <div
+                    key={tab.id}
+                    className={`editor-tab ${activeTabId === tab.id ? 'active' : ''}`}
+                    onClick={() => setActiveTabId(tab.id)}
                   >
-                    ✕
-                  </button>
-                </div>
-              ))}
+                    <div className="file">
+                      <span className="file-icon">
+                        {tab.language === 'javascript' ? <img src={javascriptIcon} alt="JavaScript" width="16" height="16" /> :
+                         tab.language === 'python' ? <img src={pythonIcon} alt="Python" width="16" height="16" /> :
+                         tab.language === 'java' ? <img src={javaIcon} alt="Java" width="16" height="16" /> :
+                         tab.language === 'cpp' ? <img src={cppIcon} alt="C++" width="16" height="16" /> :
+                         tab.language === 'c' ? <img src={cIcon} alt="C" width="16" height="16" /> : '📄'}
+                      </span>
+                      <span className="tab-name">{tab.name}</span>
+                    </div>
+                    <button
+                      className="close-tab"
+                      onClick={(e) => closeTab(tab.id, e)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
               <div className="language-selector-container">
                 <select
                   className="language-selector"
