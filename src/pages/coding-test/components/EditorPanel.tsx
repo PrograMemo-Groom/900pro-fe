@@ -6,7 +6,7 @@ import { python } from '@codemirror/lang-python';
 import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-// import { EditorView } from '@codemirror/view';
+import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { availableLanguages, languageDisplayNames } from '@/pages/coding-test/constants/constants';
 import './EditorPanel.scss';
@@ -18,7 +18,7 @@ import javaIcon from '@/assets/java.svg';
 import cppIcon from '@/assets/cpp.svg';
 import cIcon from '@/assets/c.svg';
 
-export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c';
+export type CodeLanguage = 'python' | 'javascript' | 'java' | 'cpp' | 'c' | 'txt';
 export type EditorTheme = 'light' | 'dark';
 
 interface FileItem {
@@ -47,11 +47,12 @@ interface EditorPanelProps {
   output: string;
 }
 
-// const whiteTextExtension = EditorView.theme({
-//   '.cm-content': {
-//     color: '#ffffff'
-//   }
-// });
+// whiteTextExtension 주석 해제
+const whiteTextExtension = EditorView.theme({
+  '.cm-content': {
+    color: '#ffffff'
+  }
+});
 
 const getLanguageExtension = (lang: CodeLanguage) => {
   switch (lang) {
@@ -65,8 +66,9 @@ const getLanguageExtension = (lang: CodeLanguage) => {
       return cpp();
     case 'c':
       return cpp();
+    case 'txt':
     default:
-      return python();
+      return undefined;
   }
 };
 
@@ -125,14 +127,18 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 }) => {
   const langExtension = getLanguageExtension(selectedLanguage);
   const extensions: Extension[] = [];
-  if (langExtension) {
+
+  // txt 언어일 경우 whiteTextExtension 적용, 아닐 경우 기존 로직
+  if (selectedLanguage === 'txt') {
+    extensions.push(whiteTextExtension);
+  } else if (langExtension) {
     extensions.push(langExtension);
   }
 
   // 파일 구조 상태
   const [fileStructure, setFileStructure] = useState<FileItem[]>(sampleFileStructure);
 
-  // 탭 관리 상태
+  // 탭 관리 상태 - 초기 상태 로직은 유지 (localStorage 로딩 실패 시 사용)
   const [tabs, setTabs] = useState<Tab[]>(() => {
     // 초기 selectedLanguage에 맞는 기본 탭 이름 설정
     let initialTabName = 'main';
@@ -141,11 +147,54 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
     else if (selectedLanguage === 'java') initialTabName += '.java';
     else if (selectedLanguage === 'cpp') initialTabName += '.cpp';
     else if (selectedLanguage === 'c') initialTabName += '.c';
-    else initialTabName += '.txt'; // 예외 처리
+    else if (selectedLanguage === 'txt') initialTabName += '.txt';
+    else initialTabName += '.txt';
 
     return [{ id: 'initialTab', name: initialTabName, language: selectedLanguage }];
   });
   const [activeTabId, setActiveTabId] = useState<string>('initialTab');
+
+  // localStorage에서 탭 상태 로딩 useEffect
+  useEffect(() => {
+    const savedTabs = localStorage.getItem('editorTabs');
+    const savedActiveTabId = localStorage.getItem('activeEditorTabId');
+
+    if (savedTabs) {
+      try {
+        const parsedTabs = JSON.parse(savedTabs) as Tab[];
+        if (Array.isArray(parsedTabs) && parsedTabs.length > 0) {
+           // 저장된 탭이 유효한지 간단히 확인
+           // (더 엄격한 유효성 검사를 추가할 수 있음)
+           if (parsedTabs.every(tab => tab.id && tab.name && tab.language)) {
+             setTabs(parsedTabs);
+
+             // 활성 탭 ID 복원, 저장된 ID가 현재 탭 목록에 없으면 첫 번째 탭으로 설정
+             if (savedActiveTabId && parsedTabs.some(tab => tab.id === savedActiveTabId)) {
+               setActiveTabId(savedActiveTabId);
+             } else {
+               setActiveTabId(parsedTabs[0].id); // 첫 번째 탭 활성화
+             }
+           }
+        }
+      } catch (error) {
+        console.error("저장된 탭 상태를 불러오는 중 오류 발생:", error);
+        // 오류 발생 시 초기 상태 로직 유지 (위 useState에서 이미 처리됨)
+        // 추가적으로 localStorage의 잘못된 데이터 제거 가능
+        // localStorage.removeItem('editorTabs');
+        // localStorage.removeItem('activeEditorTabId');
+      }
+    }
+    // 마운트 시 한 번만 실행
+  }, []);
+
+  // localStorage에 탭 상태 저장 useEffect
+  useEffect(() => {
+    // tabs나 activeTabId가 초기화 중이 아닐 때만 저장 (선택적 최적화)
+    // if (tabs.length > 0 && activeTabId) {
+      localStorage.setItem('editorTabs', JSON.stringify(tabs));
+      localStorage.setItem('activeEditorTabId', activeTabId);
+    // }
+  }, [tabs, activeTabId]);
 
   // CodeMirror 인스턴스를 참조하기 위한 ref 추가
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
@@ -219,16 +268,18 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
     setFileStructure(toggleFolderItem(fileStructure));
   };
 
-  // 파일 클릭 함수
+  // 파일 클릭 함수 수정: 인식 불가 확장자는 'txt'로 처리
   const handleFileClick = (file: FileItem) => {
     const existingTab = tabs.find(tab => tab.id === file.id);
 
-    let fileLanguage: CodeLanguage = 'javascript'; // 기본값
+    let fileLanguage: CodeLanguage = 'txt'; // 기본값: 인식 불가 확장자는 txt로 처리
     const fileExtension = file.extension || '';
     if (fileExtension === 'py') fileLanguage = 'python';
     else if (fileExtension === 'java') fileLanguage = 'java';
-    else if (fileExtension === 'cpp' || fileExtension === 'c') fileLanguage = fileExtension as CodeLanguage;
+    else if (fileExtension === 'cpp') fileLanguage = 'cpp';
+    else if (fileExtension === 'c') fileLanguage = 'c';
     else if (fileExtension === 'js') fileLanguage = 'javascript';
+    // 다른 확장자는 fileLanguage가 'txt'로 유지됨
 
     if (existingTab) {
       // 이미 열려있는 탭이면 해당 탭을 활성화하고, 해당 탭의 언어로 전역 언어 변경
@@ -260,9 +311,9 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
     const filteredTabs = tabs.filter(tab => tab.id !== id);
 
     if (filteredTabs.length === 0) {
-      // 모든 탭이 닫힌 경우: 새 기본 탭 추가 (초기 상태와 유사하게 처리 필요 - 여기서는 간단히 js로)
-      const defaultLang = 'javascript';
-      const newTab: Tab = { id: 'newtab', name: 'untitled.js', language: defaultLang };
+      // 모든 탭이 닫힌 경우: 새 기본 'txt' 탭 추가
+      const defaultLang = 'txt';
+      const newTab: Tab = { id: 'newtab', name: 'untitled.txt', language: defaultLang };
       setTabs([newTab]);
       setActiveTabId('newtab');
       if (selectedLanguage !== defaultLang) {
@@ -319,7 +370,8 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                    item.extension === 'py' ? <img src={pythonIcon} alt="Python" width="16" height="16" /> :
                    item.extension === 'java' ? <img src={javaIcon} alt="Java" width="16" height="16" /> :
                    item.extension === 'cpp' ? <img src={cppIcon} alt="C++" width="16" height="16" /> :
-                   item.extension === 'c' ? <img src={cIcon} alt="C" width="16" height="16" /> : '📄'}
+                   item.extension === 'c' ? <img src={cIcon} alt="C" width="16" height="16" /> :
+                   item.extension === 'txt' ? '📄' : '📄'}
                 </span>
                 <span>{item.name}</span>
               </div>
@@ -397,11 +449,15 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                   >
                     <div className="file">
                       <span className="file-icon">
-                        {tab.language === 'javascript' ? <img src={javascriptIcon} alt="JavaScript" width="16" height="16" /> :
-                         tab.language === 'python' ? <img src={pythonIcon} alt="Python" width="16" height="16" /> :
+                        {/* 아이콘 로직 수정: JS는 .js 확장자 확인, 나머지는 language 확인, 그 외는 기본 아이콘 */}
+                        {tab.language === 'python' ? <img src={pythonIcon} alt="Python" width="16" height="16" /> :
+                         (tab.language === 'javascript' && tab.name.endsWith('.js')) ? <img src={javascriptIcon} alt="JavaScript" width="16" height="16" /> :
                          tab.language === 'java' ? <img src={javaIcon} alt="Java" width="16" height="16" /> :
                          tab.language === 'cpp' ? <img src={cppIcon} alt="C++" width="16" height="16" /> :
-                         tab.language === 'c' ? <img src={cIcon} alt="C" width="16" height="16" /> : '📄'}
+                         tab.language === 'c' ? <img src={cIcon} alt="C" width="16" height="16" /> :
+                         tab.language === 'txt' ? '📄' :
+                         '📄' /* 그 외 모든 경우 (txt 포함) */
+                        }
                       </span>
                       <span className="tab-name">{tab.name}</span>
                     </div>

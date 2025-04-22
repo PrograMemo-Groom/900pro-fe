@@ -13,7 +13,8 @@ export const useCodingTestLogic = () => {
     javascript: defaultCode.javascript,
     java: defaultCode.java,
     cpp: defaultCode.cpp,
-    c: defaultCode.c
+    c: defaultCode.c,
+    txt: defaultCode.txt
   });
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export const useCodingTestLogic = () => {
     if (savedCode) {
       try {
         const parsedCode = JSON.parse(savedCode) as Record<CodeLanguage, string>;
-        // 저장된 데이터에 없는 언어가 있을 경우 기본 코드로 채워넣기
+        // 저장된 데이터에 없는 언어가 있을 경우 기본 코드로 채워넣기 (txt 포함)
         const initialCode = { ...defaultCode, ...parsedCode };
         setCodeContent(initialCode);
       } catch (error) {
@@ -59,6 +60,17 @@ export const useCodingTestLogic = () => {
   const handleRunCode = () => {
     setIsRunning(true);
     setOutput('실행하는 중...');
+
+    // 실행 가능한 언어 목록 정의
+    const executableLanguages: CodeLanguage[] = ['python', 'javascript', 'java', 'cpp', 'c'];
+
+    // 지원하는 언어가 아니면 실행 불가 처리
+    if (!executableLanguages.includes(selectedLanguage)) {
+      setOutput(`// ${selectedLanguage}은/는 실행할 수 없습니다.`);
+      setIsRunning(false);
+      return;
+    }
+
     // 실제 구현에서는 백엔드로 코드를 보내 실행하고 결과를 받아오겠지만,
     // 여기서는 시뮬레이션만 합니다.
     setTimeout(() => {
