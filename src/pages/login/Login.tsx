@@ -1,18 +1,16 @@
 import React, {useState} from 'react';
-import styles from "@/css/login/Login.module.scss";
-import { LoginFormValues, LoginProps } from '@/pages/login/Login.interface.ts';
-// import axios from "axios";
-// import type { AxiosResponse } from 'axios';
+import styles from "@/css/login/Auth.module.scss";
+import { LoginFormValues, LoginProps, LoginResult } from '@/pages/login/Login.interface.ts';
+import Landing from '@/pages/common/Landing.tsx';
+import API from '@/store/api/ApiConfig.ts';
+import { AxiosResponse } from 'axios';
 
 const Login: React.FC<LoginProps> = ({initialValues}) => {
+    // TODO : 500 에러 발생해서, LOGIN 수정 되면 다시 하는걸로 => 전달 완료
     const [form, setForm] = useState<LoginFormValues>({
         email: initialValues?.email || "",
         password: initialValues?.password || ""
     })
-    const handleOnSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("form 실행", form);
-    }
     const handleOnChange = (e: React.FormEvent) => {
         const {id, value} = e.target;
         setForm((prevState) => ({
@@ -20,31 +18,25 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             [id]: value,
         }));
     }
+    const handleOnSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("form 실행", form);
+        try {
+            const response:AxiosResponse<LoginResult> = await API.post("/auth/login", form);
+            console.log("login 했을 때 response ; ", response);
+        } catch (e) {
+            console.log("error : ", e);
+        }
 
-    // const [data, setData] = useState("");
-    //
-    // useEffect(() => {
-    //     axios
-    //         .get('/api/data')
-    //         .then((res: AxiosResponse) => setData(res.data))
-    //         .catch((err: unknown) => console.log(err));
-    // }, []);
+    }
 
     return (
     <div className={styles.container}>
-        <section className={styles.description}>
-            <h2>9OOROMBACKPROGRAMO</h2>
-            <h1>9BACKPRO</h1>
-            <h2>실전처럼, 실력있게.</h2>
-            <p>혼자가 아닌 함께, <br/>
-                실시간 채팅으로 문제 풀이 방식을 <br/>
-                공유하며 함께 코딩 실력을 향상시켜<br/>
-                나가는 것을 목표로 합니다.</p>
-        </section>
+        <Landing />
         <form className={styles.loginForm} onSubmit={handleOnSubmit}>
             <div className={styles.inputForm}>
                 <label htmlFor="email">Email</label>
-                <div className={styles.gradientBorder}>
+                <div className={styles.auth__input}>
                     <input type="text" id="email"
                            onChange={(e) => handleOnChange(e)}
                            // placeholder="email 을 입력해주세요"
@@ -54,7 +46,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             </div>
             <div className={styles.inputForm}>
                 <label htmlFor="password">Password</label>
-                <div className={styles.gradientBorder}>
+                <div className={styles.auth__input}>
                     <input type="password" id="password"
                            onChange={(e) => handleOnChange(e)}
                            // placeholder="password 를 입력해주세요"
@@ -62,10 +54,10 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
                     />
                 </div>
             </div>
-            <button type="submit">Sign in</button>
+            <button className={styles.auth__submit} type="submit">Sign in</button>
             <div className={styles.checkAuth}>
-                <p><strong>Don’t have an account?</strong> <span>Sign up</span></p>
-                <p>Forgot Password</p>
+                <p><strong>Don’t have an account?</strong> <a href="/signup"><span>Sign up</span></a></p>
+                <a href="/find"><p>Forgot Password</p></a>
             </div>
         </form>
     </div>
