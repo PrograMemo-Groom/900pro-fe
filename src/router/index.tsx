@@ -1,11 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
-// import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
 import Chat from '@/pages/history/Chat.tsx';
 import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
-import Header from '@/pages/common/Header.tsx';
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 
 // 라우터 설정
