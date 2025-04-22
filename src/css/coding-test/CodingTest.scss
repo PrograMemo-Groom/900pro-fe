@@ -18,8 +18,13 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    border: 1px solid #666;
     border-radius: 30px;
+    padding: 3px;
+    @include gradientMixin(30px);
+
+    &::before {
+      padding: 3px;
+    }
 
     > div {
       width: 100%;
