@@ -5,10 +5,10 @@ const BaseUrl: string = 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaw
 
 const API: AxiosInstance = axios.create({
   baseURL: BaseUrl,
-  // headers: {
-  //   'Content-Type': 'application/json',
-  // },
-  // withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
 });
 
 export default API;
