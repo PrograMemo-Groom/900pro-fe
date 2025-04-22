@@ -15,8 +15,13 @@ const Header = ({
 }: HeaderProps) => {
   return (
     <div className="header">
-      <div className="header-timer">남은 시간 {remainingTime}</div>
-      <div className="header-title">9BACKPRO</div>
+      <div className="header-timer">
+        <span>남은 시간 </span>
+        <span>{remainingTime}</span>
+      </div>
+      <div className="header-title">
+        <h1>9BACKPRO</h1>
+      </div>
       <div className="header-actions">
         <button
           className="run-button header-button"
