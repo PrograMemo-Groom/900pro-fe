@@ -1,3 +1,5 @@
+import '@/css/coding-test/ProblemPanel.scss';
+
 const ProblemPanel = () => {
   return (
     <div className="problem-panel">

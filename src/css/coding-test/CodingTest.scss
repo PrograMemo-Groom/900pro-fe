@@ -1,6 +1,4 @@
-@use '@/pages/coding-test/components/EditorPanel.scss';
-@use '@/pages/coding-test/components/Header.scss';
-@use '@/pages/coding-test/components/ProblemPanel.scss';
+@use "@/css/common/_global" as *;
 
 .coding-test-container {
   width: 94vw;

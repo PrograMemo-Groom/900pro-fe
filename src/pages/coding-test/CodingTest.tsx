@@ -4,7 +4,7 @@ import EditorPanel, { CodeLanguage, EditorTheme } from '@/pages/coding-test/comp
 import ProblemPanel from '@/pages/coding-test/components/ProblemPanel';
 import Header from '@/pages/coding-test/components/Header';
 import { useCodingTestLogic } from '@/pages/coding-test/hooks/useCodingTestLogic';
-import '@/pages/coding-test/CodingTest.scss';
+import '@/css/coding-test/CodingTest.scss';
 
 const CodingTest= () => {
   const [theme] = useState<EditorTheme>('dark');

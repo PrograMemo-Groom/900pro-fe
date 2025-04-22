@@ -1,4 +1,4 @@
-import './Header.scss';
+import '@/css/coding-test/Header.scss';
 
 interface HeaderProps {
   remainingTime: string;

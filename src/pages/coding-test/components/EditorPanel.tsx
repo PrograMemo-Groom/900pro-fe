@@ -9,7 +9,7 @@ import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { availableLanguages, languageDisplayNames } from '@/pages/coding-test/constants/constants';
-import './EditorPanel.scss';
+import '@/css/coding-test/EditorPanel.scss';
 
 // SVG 아이콘 임포트
 import pythonIcon from '@/assets/python.svg';
