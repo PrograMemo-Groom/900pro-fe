@@ -104,6 +104,20 @@
       background: #94C1F0;
       color: black;
       font-size: 2rem;
+      transition: background 0.3s;
+
+      &:hover {
+        background: rgba(161, 227, 249, 0.6);;
+      }
+    }
+    .disabled__submit[type="submit"] {
+      @include gradientMixin;
+      height: 80px;
+      border-radius: 50px;
+      margin-top: 1rem;
+      background: #8f8f8f;
+      color: black;
+      font-size: 2rem;
     }
     // 공통 부분 -------------------------------------
 
@@ -139,8 +153,14 @@
         }
       }
     }
-
   }
+}
 
-
+.success {
+  padding-left: 2rem;
+  color: #00a900;
+}
+.failed {
+  padding-left: 2rem;
+  color: red;
 }

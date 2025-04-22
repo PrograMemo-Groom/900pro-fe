@@ -5,17 +5,31 @@ import { SignUpReq, SignUpRes } from '@/pages/signUp/SignUp.interfase.ts';
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { SampleResponse } from '@/store/auth/thunks.ts';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const navigator = useNavigate();
   const [form, setForm] = useState<SignUpReq>({ username: '', email: '', password: '' });
+  const [emailCheck, setEmailCheck] = useState<boolean | null>(null);
+
+  const isFormInvalid = (
+    !form.username.trim() ||
+    !form.email.trim() ||
+    !form.password.trim() ||
+    emailCheck !== true
+  );
+
   const handleOnSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('form 실행', form);
     try {
-      const response :AxiosResponse<SignUpRes> = await API.post("/auth/join", form);
-      console.log("회원가입 요청 : ", response.data);
+      const response: AxiosResponse<SignUpRes> = await API.post('/auth/join', form);
+      console.log('회원가입 요청 : ', response.data);
+      // sessionStorage.setItem("token", response.data);
+      alert('회원가입 성공!');
+      navigator('/main');
     } catch (e) {
-      console.log("error : ", e.response.data?.message);
+      console.log('error : ', e.response.data?.message);
     }
 
   };
@@ -26,19 +40,21 @@ const SignUp = () => {
       [id]: value,
     }));
   };
-  const handleVerifyEmail = async (email:string) => {
+  const handleVerifyEmail = async (email: string) => {
     try {
-      const {data} :AxiosResponse<SampleResponse> = await API.post("/auth/dupCheck", { email });
-      console.log("[이메일 중복 확인] ; ",data);
+      const { data }: AxiosResponse<SampleResponse> = await API.post('/auth/dupCheck', { email });
+      console.log('[이메일 중복 확인] ; ', data);
       if (data?.success) {
-        console.log("중복 확인 완료 : ", data?.message);
+        console.log('중복 확인 완료 : ', data?.message);
+        setEmailCheck(true);
       }
     } catch (e) {
-      console.log("error : ", e.response.data?.message);
+      console.log('error : ', e.response.data?.message);
+      setEmailCheck(false);
     }
 
 
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -66,6 +82,7 @@ const SignUp = () => {
             />
             <button type="button" onClick={() => handleVerifyEmail(form.email)}>중복 확인</button>
           </div>
+          {(emailCheck === true ? <p className={styles.success}>사용 가능한 이메일 입니다.</p> : emailCheck === false && <p className={styles.failed}>이미 사용 중 인 이메일 입니다.</p>)}
         </div>
         <div className={styles.inputForm}>
           <label htmlFor="password">Password</label>
@@ -77,7 +94,10 @@ const SignUp = () => {
             />
           </div>
         </div>
-        <button className={styles.auth__submit} type="submit">Sign Up</button>
+        <button className={!isFormInvalid ? styles.auth__submit : styles.disabled__submit} type="submit"
+                disabled={isFormInvalid}>
+          Sign Up
+        </button>
         <div className={styles.checkAuth}>
           <p><strong>이미 회원이신가요?</strong> <a href="/"><span>로그인</span></a></p>
         </div>
