@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FileItem, CodeLanguage } from '@/pages/coding-test/types/types';
 import { sampleFileStructure } from '@/pages/coding-test/data/fileStructure';
 import { getLanguageByExtension } from '../utils/languageUtils';
@@ -18,6 +18,35 @@ interface UseFileExplorerReturn {
   renameItem: (id: string, newName: string) => void;
   deleteItem: (id: string) => void;
 }
+
+// localStorage 관련 상수 및 유틸 함수
+const FILE_STRUCTURE_KEY = 'file-explorer-structure';
+
+// 파일 계층구조를 localStorage에 저장
+const saveFileStructure = (fileStructure: FileItem[]): void => {
+  try {
+    const serializedData = JSON.stringify(fileStructure);
+    localStorage.setItem(FILE_STRUCTURE_KEY, serializedData);
+  } catch (error) {
+    console.error('파일 구조 저장 중 오류 발생:', error);
+  }
+};
+
+// localStorage에서 파일 계층구조 불러오기
+const loadFileStructure = (defaultStructure: FileItem[] = []): FileItem[] => {
+  try {
+    const serializedData = localStorage.getItem(FILE_STRUCTURE_KEY);
+    if (!serializedData) {
+      return defaultStructure;
+    }
+
+    const fileStructure = JSON.parse(serializedData) as FileItem[];
+    return fileStructure;
+  } catch (error) {
+    console.error('파일 구조 로드 중 오류 발생:', error);
+    return defaultStructure;
+  }
+};
 
 // 간단한 UUID 생성 함수
 const generateUUID = () => {
@@ -84,8 +113,16 @@ const isDuplicateName = (items: FileItem[], name: string, type: 'file' | 'folder
 };
 
 const useFileExplorer = ({ onFileSelect, onDeleteItem }: UseFileExplorerProps): UseFileExplorerReturn => {
-  const [fileStructure, setFileStructure] = useState<FileItem[]>(sortFileStructure(sampleFileStructure));
+  // localStorage에서 파일 구조를 불러와 초기화, 없으면 샘플 구조 사용
+  const [fileStructure, setFileStructure] = useState<FileItem[]>(() => {
+    return loadFileStructure(sortFileStructure(sampleFileStructure));
+  });
   const [lastInteractedItemId, setLastInteractedItemId] = useState<string | null>(null);
+
+  // 파일 구조가 변경될 때마다 localStorage에 저장
+  useEffect(() => {
+    saveFileStructure(fileStructure);
+  }, [fileStructure]);
 
   // 폴더 토글 함수
   const toggleFolder = (id: string) => {
