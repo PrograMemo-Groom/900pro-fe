@@ -20,7 +20,6 @@
     span {
         font-weight: 700;
     }
-
 }
 
 // 코드 들어가는곳 내용입니다
@@ -33,4 +32,11 @@
     //-----이 아래부터는 자유롭게 수정하시면 됩니다.
     padding: 1vw; // 패딩 임의로 넣은건데 지워도됩니다.
     background-color: #000;
+
+    // 코드 에디터 컨테이너
+    .code_editor_container {
+        height: 100%;
+        border-radius: 4px;
+        overflow: hidden;
+    }
 }

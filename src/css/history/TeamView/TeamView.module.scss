@@ -105,3 +105,42 @@
 .team_viewer{
     transition: all 0.3s ease-in-out;
 }
+
+.nav_button_prev,
+.nav_button_next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: rgba(87, 143, 202, 0.7);
+    color: white;
+    border: none;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        background-color: rgba(87, 143, 202, 1);
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    &:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+}
+
+.nav_button_prev {
+    left: -22px;
+}
+
+.nav_button_next {
+    right: -22px;
+}

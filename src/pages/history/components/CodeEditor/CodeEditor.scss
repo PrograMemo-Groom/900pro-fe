@@ -1,0 +1,236 @@
+.code-editor-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+
+  .code-editor-container {
+    height: 100%;
+    width: 100%;
+    font-family: monospace;
+    line-height: 1.5;
+
+    .cm-editor {
+      height: 100%;
+
+      .cm-scroller {
+        overflow: auto;
+        font-size: 0.9rem;
+      }
+
+      .cm-content {
+        padding: 8px;
+      }
+    }
+  }
+
+  .code-mini-menu {
+    position: absolute;
+    z-index: 9999;
+    background-color: #2b2b2b;
+    border: 1px solid #4c4c4c;
+    border-radius: 4px;
+    padding: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+
+    .title {
+      font-size: 12px;
+      color: #ddd;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .color-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 5px;
+
+      .color-option {
+        width: 22px;
+        height: 22px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: transform 0.1s;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    .option-buttons {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        background-color: #3a3a3a;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 8px;
+        color: #ddd;
+        font-size: 12px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #4a4a4a;
+        }
+      }
+    }
+  }
+
+  .memo-popup {
+    background-color: #fff7a5;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    max-width: 250px;
+
+    .memo-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+
+      .close-button {
+        background: transparent;
+        border: none;
+        color: #5a5a5a;
+        cursor: pointer;
+        padding: 0;
+        font-size: 16px;
+
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      border: 1px solid #e0e0e0;
+      border-radius: 2px;
+      padding: 4px;
+      font-size: 12px;
+      resize: vertical;
+    }
+
+    .memo-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 5px;
+
+      button {
+        background-color: #4d8df7;
+        color: white;
+        border: none;
+        border-radius: 2px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #3579e8;
+        }
+      }
+    }
+  }
+}
+
+// 하이라이트된 코드 스타일 (CodeMirror 마크)
+.cm-highlight {
+  position: relative;
+  border-radius: 2px;
+
+  &.memo {
+    padding-right: 15px;
+  }
+}
+
+// 활성 하이라이트 메뉴 스타일
+.active-mini-menu {
+  background-color: #2b2b2b;
+  border: 1px solid #4c4c4c;
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  pointer-events: auto;
+
+  .menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .menu-title {
+      font-size: 12px;
+      color: #ddd;
+      font-weight: 500;
+    }
+
+    .close-button {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      padding: 0;
+      font-size: 14px;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+
+  .menu-content {
+    .color-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+
+      .color-option {
+        width: 22px;
+        height: 22px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: transform 0.1s;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+
+        &.active {
+          border: 2px solid white;
+        }
+      }
+    }
+
+    .menu-actions {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        background-color: #3a3a3a;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 8px;
+        color: #ddd;
+        font-size: 12px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #4a4a4a;
+        }
+
+        &.delete-button {
+          background-color: #c43e3e;
+
+          &:hover {
+            background-color: #d44848;
+          }
+        }
+      }
+    }
+  }
+}

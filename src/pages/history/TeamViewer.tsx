@@ -3,10 +3,22 @@ import {useState} from 'react';
 import styles from '@/css/history/TeamView/TeamView.module.scss';
 import TeamCode from '@/pages/history/TeamCode';
 import TeamProb from '@/pages/history/TeamProb';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
 export default function TeamViewer() {
   // nav 선택
   const [whatActiveNav, setWhatActiveNav] = useState<'prob' | 'code'>('prob');
+
+  // API 호출을 통해 이전/다음 사용자로 이동하는 함수
+  const goToPreviousMember = () => {
+    // API 호출 예정
+    console.log('이전 멤버 조회 API 호출 예정');
+  };
+
+  const goToNextMember = () => {
+    // API 호출 예정
+    console.log('다음 멤버 조회 API 호출 예정');
+  };
 
   return (
     <main>
@@ -36,9 +48,27 @@ export default function TeamViewer() {
       <section className={styles.code_container}>
         {whatActiveNav === 'prob' && <TeamProb />}
 
-        {/* 👇 건영님 코드 들어갈 부분. 
+        {/* 👇 건영님 코드 들어갈 부분.
             👇 TeamCode.tsx에 작성하시면 돼요. */}
         {whatActiveNav === 'code' && <TeamCode />}
+
+        {/* 이전/다음 버튼 */}
+        {whatActiveNav === 'code' && (
+          <>
+            <button
+              className={styles.nav_button_prev}
+              onClick={goToPreviousMember}
+            >
+              <MdChevronLeft size={24} />
+            </button>
+            <button
+              className={styles.nav_button_next}
+              onClick={goToNextMember}
+            >
+              <MdChevronRight size={24} />
+            </button>
+          </>
+        )}
       </section>
     </main>
   )
