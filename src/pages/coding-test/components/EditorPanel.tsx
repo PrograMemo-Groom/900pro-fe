@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { EditorPanelProps } from '@/pages/coding-test/types/types';
@@ -24,9 +24,9 @@ const EditorPanel = ({
 
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const sidebarPanelRef = useRef<any>(null);
-  const [sidebarSize, setSidebarSize] = useState(0);
+  const [sidebarSize, setSidebarSize] = useState(18);
 
   // 탭 관리 훅
   const {
@@ -39,14 +39,6 @@ const EditorPanel = ({
     defaultLanguage: selectedLanguage,
     onLanguageChange: onTabLanguageChange
   });
-
-  // 컴포넌트 마운트 시 사이드바 초기 상태 설정
-  useEffect(() => {
-    const panel = sidebarPanelRef.current;
-    if (panel && isSidebarCollapsed) {
-      panel.collapse();
-    }
-  }, []);
 
   // 사이드바 토글 함수
   const toggleSidebar = () => {
@@ -130,7 +122,7 @@ const EditorPanel = ({
         />
 
         {/* 메인 에디터 영역 */}
-        <Panel defaultSize={100} order={2}>
+        <Panel defaultSize={82} order={2}>
           <div className="main-editor-area">
             {/* 헤더 영역 - 탭바와 언어 선택기 */}
             <TabBar
