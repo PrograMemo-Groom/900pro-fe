@@ -12,19 +12,43 @@ export default function WaitingRoom() {
     ];
 
   return (
-    <main className={styles.container}>
+    <div className={styles.waitingroom}>
         대기실
-        <h3>시작까지 남은 시간</h3>
-        <p className={styles.timer}>25:30</p>
+        <main className={styles.container}>
+            <section className={styles.time_section}>
+                <h3>시작까지 남은 시간</h3>
+                <p className={styles.timer}>25:30</p>
+                <hr></hr>
+            </section>
 
-        {/*  멤버들 이리오너라!!~ */}
+            {/*  멤버들 이리오너라!!~ */}
+            <section className={styles.member_container}>
+                <div className={styles.grid}>
+                    {members.map((member) => (
+                        <div key={member.name} className={styles.member_item}>
+                            <span className={styles.member_name}>{member.name}</span>
+                            <span
+                                className={
+                                member.status === "준비완료"
+                                    ? styles.ready
+                                    : styles.waiting
+                                }
+                            >
+                                {member.status}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-
-        <p className={styles.notice} >
-            *시험 시간이 되면 자동으로 화면이 이동되므로 5분 전까지 대기실에서 대기해주세요.</p>
-        <button className={styles.readyButton}>
-            준비하기
-        </button>
-    </main>
+            <footer className={styles.ready_container}>
+                <p className={styles.notice} >
+                    *시험 시간이 되면 자동으로 화면이 이동되므로 5분 전까지 대기실에서 대기해주세요.</p>
+                <button className={styles.ready_button}>
+                    준비하기
+                </button>
+            </footer>
+        </main>
+    </div>
   )
 }

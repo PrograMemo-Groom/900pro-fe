@@ -1,3 +1,9 @@
+.waitingroom{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
 .container{
     position: relative;
     padding: 15px 25px;
@@ -8,10 +14,11 @@
     display: inline-block;
     z-index: 0;
 
+    text-align: center;
+
     width: 51.82vw;
     height: 67.78vh;
-
-    text-align: center;
+    overflow: hidden;
 
     &::before {
         content: "";
@@ -29,8 +36,25 @@
     }
 }
 
+.time_section{
+    margin-top: 2vh;
+
+    hr{
+        opacity: 0.6;
+    }
+}
 .timer{
     font-size: 1.2rem;
+    margin-bottom: 1vh;
+}
+
+.ready_container{
+    position: absolute;
+    bottom: 0;
+    padding-bottom: 3vh;
+    margin-left: -2vw;
+    padding-right: 1vw;
+    width: 100%;
 }
 
 .notice{
@@ -40,8 +64,7 @@
     font-weight: 500;
 }
 
-
-.readyButton {
+.ready_button {
     background-color: rgba(161,227,249,0.7);
     width: 70%;
     padding: 0.8rem 1.5rem;
@@ -57,3 +80,54 @@
       cursor: pointer;
     }
   }
+
+//   그리드 
+.member_container {
+    height: 40vh;
+    overflow: hidden;
+    overflow-y: scroll;
+    margin-top: 0.5vh;
+}
+
+.grid{
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    margin-bottom: 5vh;
+    margin-top: 2vh;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.member_item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.member_name{
+    font-weight: 600;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.ready {
+    margin-top: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 800;
+    border: 1px solid rgba(255,255,255,0.6);
+    background-color: rgba(148,193,240,0.8);
+    color: #1D3043;
+  }
+  
+.waiting {
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 800;
+    background-color: rgba(240,148,179,0.8);
+    border: 1px solid rgba(255,255,255,0.6);
+    color: #1D3043;
+}
