@@ -32,7 +32,9 @@ const clearConnectionTimeout = (): void => {
 };
 
 const getConnectHeaders = (): Record<string, string> => {
-  const token = store.getState().auth.token;
+  // const token = store.getState().auth.token;
+  // 테스트용
+  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVoZGduc3RsYUBuYXZlci5jb20iLCJleHAiOjE3NDUxODM2NTB9.IeFxDpzou-u1MtSawvVI2mFl5VZYhpuzsKN0AiirnMM'
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
@@ -64,7 +66,7 @@ export const initStompClient = (): Client => {
   reconnectAttempts = 0;
 
   stompClient = new Client({
-    webSocketFactory: () => new SockJS('/api/ws-chat'),
+    webSocketFactory: () => new SockJS('/ws-chat'),
     beforeConnect: () => {
       connectionTimeoutId = setTimeout(() => {
         if (connectionStatus === ConnectionStatus.CONNECTING) {
@@ -80,19 +82,23 @@ export const initStompClient = (): Client => {
       }
     },
     debug: (_str: string) => {
+      console.log('[STOMP DEBUG]', _str);
     },
     reconnectDelay: 5000,
     heartbeatIncoming: 4000,
     heartbeatOutgoing: 4000,
     onConnect: (_frame: Frame) => {
+      console.log('📡 STOMP 연결 완료');
       setConnectionStatus(ConnectionStatus.CONNECTED);
       clearConnectionTimeout();
       sendQueuedMessages();
     },
     onStompError: (_frame: Frame) => {
+      console.log('❌ STOMP 에러', _frame);
       setConnectionStatus(ConnectionStatus.ERROR);
     },
     onWebSocketError: (_event: Event) => {
+      console.error('❌ WebSocket 연결 실패', _event);
       setConnectionStatus(ConnectionStatus.ERROR);
 
       reconnectAttempts++;
@@ -138,7 +144,7 @@ export const closeStompConnection = (): void => {
   }
 };
 
-// 메시지 발행
+// 메시지 보내기
 export const publishMessage = (destination: string, body: string, headers: Record<string, string> = {}): Promise<boolean> => {
   return new Promise((resolve) => {
     const client = getStompClient();
@@ -148,15 +154,27 @@ export const publishMessage = (destination: string, body: string, headers: Recor
       headers: { 'content-type': 'application/json', ...headers },
     };
 
+    // 상태 확인을 위한 로그 추가
+    console.log('🧪 [publishMessage] 상태 확인:', {
+      clientExists: !!client,
+      clientActive: client?.active,
+      connectionStatus,
+      destination,
+      body,
+    });
+
     if (client && client.active && connectionStatus === ConnectionStatus.CONNECTED) {
       try {
         client.publish(messageObject);
+        console.log('✅ 메시지 publish 성공:', messageObject);
         resolve(true);
       } catch (error) {
+        console.error('❌ publish 중 에러:', error);
         messageQueue.push(messageObject);
         resolve(false);
       }
     } else {
+      console.warn('⚠️ STOMP 연결되지 않음. 메시지 큐에 저장됨:', messageObject);
       messageQueue.push(messageObject);
       resolve(false);
     }

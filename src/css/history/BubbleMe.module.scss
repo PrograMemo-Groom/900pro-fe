@@ -1,0 +1,40 @@
+.bubble_container_right{
+    text-align: right;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: flex-end;
+    margin-bottom: 1.5vh;
+    gap: 0.5vw;
+
+    .time{
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+}
+.bubble_right {
+    position: relative;
+    padding: 8px 25px;
+    border-radius: 40px 0 40px 40px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.9rem;
+    display: inline-block;
+    z-index: 0;
+    text-align: start;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 40px 0 70px 40px;
+        padding: 1px; //테두리 두께
+        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: -1;
+    }
+}

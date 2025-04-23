@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
+import ChatPage from '@/pages/history/ChatPage.tsx';
+import ChatTest from "@/pages/history/ChatTest.tsx";
+import CodingTest from '@/pages/coding-test/CodingTest.tsx';
 import MyTestPage from '@/pages/my-test/MyTest';
-// import CodingTestPage from '@/pages/coding-test/CodingTest';
-import Chat from '@/pages/history/Chat.tsx';
 import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
-import Header from '@/pages/common/Header.tsx';
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 
 // 라우터 설정
@@ -31,13 +31,17 @@ const router = createBrowserRouter([
         path: '/main',
         element: <MainNoTeam />,
       },
-      // {
-      //   path: 'coding-test',
-      //   element: <CodingTestPage />,
-      // },
+      {
+        path: 'coding-test',
+        element: <CodingTest />,
+      },
       {
         path: 'history',
-        element: <Chat />
+        element: <ChatPage />
+      },
+      {
+        path: 'history/test',
+        element: <ChatTest />,
       },
       {
         path: 'my-test',

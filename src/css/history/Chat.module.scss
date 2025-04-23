@@ -1,18 +1,25 @@
 // 채팅 css
+.container_with_code {
+    height: 71.67vh;
+    width: 35.89vw;
+  }
+
+.container_with_normal {
+    height: 71.67vh;
+    width: 60.63vw;
+}
 
 .container {
     background-color: rgba(255, 255, 255, 0.03);
     border-radius: 50px;
     color: #E1E1E1;
     padding: 30px 50px 10px 50px;
-
-    // (774 / 1080) = (약 72)
-    height: 71.67vh;
-    width: 60.63vw;
     text-align: center;
 
     display: flex;
     flex-direction: column;
+
+    transition: all 0.3s ease-in-out;
 
     .chat_container{
         overflow: hidden;
@@ -31,47 +38,6 @@
             font-size: 0.9rem;
             color: #94B4D5;
         }
-    }
-}
-
-.bubble_container_right{
-    text-align: right;
-    display: flex;
-    flex-direction: row;
-    align-items: end;
-    justify-content: flex-end;
-    margin-bottom: 1.5vh;
-    gap: 0.5vw;
-
-    .time{
-        font-size: 0.7rem;
-        white-space: nowrap;
-    }
-}
-.bubble_right {
-    position: relative;
-    padding: 8px 25px;
-    border-radius: 40px 0 40px 40px;
-    background-color: transparent;
-    color: white;
-    font-size: 0.9rem;
-    display: inline-block;
-    z-index: 0;
-    text-align: start;
-
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 40px 0 70px 40px;
-        padding: 1px; //테두리 두께
-        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
-        -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        z-index: -1;
     }
 }
 
@@ -162,55 +128,5 @@
     button:hover{
         cursor: pointer;
         background-color: rgba(102, 149, 200, 0.7);
-    }
-}
-
-// 입력창
-.input_container {
-    position: relative;
-    padding: 8px 10px;
-    border-radius: 50px 50px 50px 50px;
-    background-color: transparent;
-    color: white;
-    font-size: 0.9rem;
-    display: flex;
-    justify-content: space-between;
-    z-index: 0;
-    margin-top: 1.5vh;
-    margin-bottom: 0.8vh;
-
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 50px 50px 50px 50px;
-        padding: 1px; //테두리 두께
-        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
-        -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        z-index: -1;
-    }
-
-    input{
-        color: #fff;
-        width: 100%;
-        padding-left: 10px;
-    }
-
-    button{
-        background-color: rgba(255, 255, 255, 0.5);
-        border: 0.5px solid rgb(255, 255, 255, 0.7);
-        border-radius: 50px;
-        padding: 4px 8px;
-        color: #fff;
-        cursor: pointer;
-        margin-left: 1vh;
-    }
-
-    button:hover{
-        background-color: rgba(255, 255, 255, 0.7);
     }
 }

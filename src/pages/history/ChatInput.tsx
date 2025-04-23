@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import styles from '@/css/history/Chat.module.scss'
+import styles from '@/css/history/ChatInput.module.scss'
 
 type Content = {
   onSubmit: (msg: string) => void;

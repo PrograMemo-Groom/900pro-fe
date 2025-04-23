@@ -1,4 +1,4 @@
-import styles from '@/css/history/Chat.module.scss'
+import styles from '@/css/history/BubbleMe.module.scss'
 import { formatTime } from '@/pages/history/chatbubble/formatTime'
 
 type Props = {
