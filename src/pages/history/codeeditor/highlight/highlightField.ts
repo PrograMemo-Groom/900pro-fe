@@ -1,7 +1,7 @@
 import { StateField, RangeSet } from '@codemirror/state';
 import { Decoration, DecorationSet, EditorView, WidgetType } from '@codemirror/view';
-import { filterByClientId, createMemoIconWidget } from '@/pages/history/codeeditor/codemirror/highlightWidgets.ts';
-import { addHighlightEffect, clearHighlightsEffect, removeHighlightEffect, updateHighlightColorEffect } from '@/pages/history/codeeditor/codemirror/highlightEffects.ts';
+import { filterByClientId, createMemoIconWidget } from '@/pages/history/codeeditor/highlight/highlightWidgets.ts';
+import { addHighlightEffect, clearHighlightsEffect, removeHighlightEffect, updateHighlightColorEffect } from '@/pages/history/codeeditor/highlight/highlightEffects.ts';
 import { hexToRgba, rgbaToHex } from '@/pages/history/codeeditor/utils/colorUtils.ts';
 import { createIconDOM } from '@/pages/history/codeeditor/utils/domUtils.ts';
 

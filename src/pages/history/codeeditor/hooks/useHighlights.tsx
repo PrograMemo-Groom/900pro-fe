@@ -21,9 +21,9 @@ import {
   removeHighlightEffect,
   updateHighlightColorEffect,
   highlightTheme
-} from '@/pages/history/codeeditor/codemirror/highlightEffects.ts';
-import { highlightField } from '@/pages/history/codeeditor/codemirror/highlightField.ts';
-import { highlightPlugin } from '@/pages/history/codeeditor/codemirror/highlightPlugins.ts';
+} from '@/pages/history/codeeditor/highlight/highlightEffects.ts';
+import { highlightField } from '@/pages/history/codeeditor/highlight/highlightField.ts';
+import { highlightPlugin } from '@/pages/history/codeeditor/highlight/highlightPlugins.ts';
 
 /**
  * 하이라이트 관리를 위한 커스텀 훅
