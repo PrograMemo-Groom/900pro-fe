@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
-// import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
+import CodingTest from '@/pages/coding-test/CodingTest.tsx';
 import Chat from '@/pages/history/Chat.tsx';
 import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
@@ -30,10 +30,10 @@ const router = createBrowserRouter([
         path: '/main',
         element: <MainNoTeam />,
       },
-      // {
-      //   path: '/coding-test',
-      //   element: <CodingTestPage />,
-      // },
+      {
+        path: '/coding-test',
+        element: <CodingTest />,
+      },
       {
         path: 'history',
         element: <Chat />

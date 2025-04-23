@@ -1,0 +1,114 @@
+@use "@/css/common/_global" as *;
+
+.problem-panel {
+  width: 100%;
+  height: 100%;
+  border-radius: 30px 0 0 30px;
+  background-color: #102133;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .problem-header {
+    padding: 1.2rem 1.8rem 1.2rem 1.8rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 0;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      height: 1px;
+      background-color: #ccc;
+    }
+
+    .problem-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      padding-bottom: 5px;
+
+      &::-webkit-scrollbar { display: none; }
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+
+      .problem-tab {
+        padding: 0.6rem 1.4rem;
+        background-color: #102133;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: #89B3E0;
+        white-space: nowrap;
+        @include gradientMixin;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+        text-align: center;
+
+        &::before {
+          padding: 2px;
+        }
+
+        &.active {
+          background-color: #344252;
+          color: #fff;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .problem-title {
+      font-size: 1.5rem;
+      text-align: left;
+      margin: 0;
+      padding-left: 0.2rem;
+      color: #eee;
+    }
+  }
+
+  .problem-details {
+    padding: 1.2rem 1.8rem 1.2rem 1.8rem;
+    text-align: justify;
+    background-color: #102133;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    scrollbar-color: #3A5F8A #0B1724; // 막대색상 트랙배경색상
+
+    h3 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.5rem;
+      color: #eee;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    p {
+      margin: 0 0 1rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: keep-all;
+    }
+
+    pre {
+      background-color: #1C2A3A;
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-family: 'Fira Code', monospace, 'Courier New';
+      font-size: 0.9rem;
+      color: #eee;
+      white-space: pre;
+      overflow-x: auto;
+    }
+  }
+}
