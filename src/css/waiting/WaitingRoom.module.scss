@@ -35,4 +35,25 @@
 
 .notice{
     opacity: 0.8;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+    font-weight: 500;
 }
+
+
+.readyButton {
+    background-color: rgba(161,227,249,0.7);
+    width: 70%;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.8);
+    font-size: 1.1rem;
+
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: rgba(161,227,249,0.5);
+      cursor: pointer;
+    }
+  }

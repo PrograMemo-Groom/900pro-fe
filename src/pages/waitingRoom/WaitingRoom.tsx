@@ -16,6 +16,10 @@ export default function WaitingRoom() {
         대기실
         <h3>시작까지 남은 시간</h3>
         <p className={styles.timer}>25:30</p>
+
+        {/*  멤버들 이리오너라!!~ */}
+
+
         <p className={styles.notice} >
             *시험 시간이 되면 자동으로 화면이 이동되므로 5분 전까지 대기실에서 대기해주세요.</p>
         <button className={styles.readyButton}>
