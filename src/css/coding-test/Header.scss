@@ -1,0 +1,103 @@
+@use "@/css/common/_global" as *;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem 0.7rem 1rem;
+  height: 90px;
+  min-height: 50px;
+  flex-shrink: 0;
+  position: relative;
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .header-timer {
+    display: flex;
+    align-items: center;
+    height: 55px;
+    padding: 0.6rem 2.0rem;
+    background-color: #657382;
+    color: #fff;
+    border: 1px solid #ffffff;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 1.6rem;
+    white-space: nowrap;
+
+    span:first-child {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .header-title {
+    font-size: 2.6rem;
+    color: #ffffff;
+    font-weight: bold;
+    white-space: nowrap;
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -50%);
+    padding: 0 1rem;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.01em;
+      & > h1 {
+        font-size: 70px;
+        font-family: "League Spartan", "inter";
+      }
+  }
+
+  .header-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    margin-left: 0.6rem;
+    padding: 0.6rem 2.0rem;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+
+    &.run-button {
+      background-color: #5d8ca5;
+      &:hover:not(:disabled) {
+        background-color: #4a7089;
+      }
+      &:disabled {
+        background-color: #3a3a3a;
+        color: #888;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    &.submit-button {
+      background-color: #5d8ca5;
+      &:hover {
+        background-color: #4a7089;
+      }
+    }
+  }
+}
+
+// 1150px 이하 화면에서 제목 숨기기
+@media (max-width: 1150px) {
+  .header {
+    .header-title {
+      display: none;
+    }
+  }
+}
