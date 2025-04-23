@@ -466,4 +466,4 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
     closeMemoPopup,
     setActiveMemo
   };
-} 
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { MiniMenuProps } from '@/pages/history/codeeditor/types/types.ts';
 import { HIGHLIGHT_COLORS } from '@/pages/history/codeeditor/constants/constants.ts';
-import '@/pages/history/codeeditor/components/MiniMenu.scss';
+import '@/css/history/TeamView/MiniMenu.module.scss';
 
 /**
  * 미니 메뉴 컴포넌트

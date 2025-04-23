@@ -8,7 +8,7 @@ import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { highlightSelectionMatches } from '@codemirror/search';
-import '@/pages/history/codeeditor/CodeEditor.scss';
+import '@/css/history/TeamView/CodeEditor.module.scss';
 import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';

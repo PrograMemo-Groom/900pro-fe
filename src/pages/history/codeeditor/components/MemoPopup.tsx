@@ -3,7 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 import { throttle } from 'lodash';
 import { MemoPopupProps } from '@/pages/history/codeeditor/types/types.ts';
 import { DEFAULT_MEMO_BACKGROUND_COLOR } from '@/pages/history/codeeditor/constants/constants.ts';
-import '@/pages/history/codeeditor/components/MemoPopup.scss';
+import '@/css/history/TeamView/MemoPopup.module.scss';
 
 /**
  * 포스트잇 형태의 메모 팝업 컴포넌트
