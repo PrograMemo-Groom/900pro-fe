@@ -1,18 +1,14 @@
 import styles from '@/css/history/TeamView/TeamProb.module.scss'
-import { questionDummy } from '@/pages/history/data/ProbDummy';
+import { questionDummy, Question } from '@/pages/history/data/ProbDummy';
 
 type Props = {
-  questionId: number;
+  question: Question;
 };
 
-export default function TeamProb( { questionId }: Props ) {
-  const question = questionDummy.find((q) => q.baekNum === questionId);
-
-  if (!question) return <p>해당 문제를 찾을 수 없습니다.</p>;
-
+export default function TeamProb( { question }: Props ) {
   return (
     <main className={styles.main_container}>
-      <h1><span>#{questionId}</span> {question.title}</h1>
+      <h1><span>#{question.baekNum}</span> {question.title}</h1>
       <hr/>
       <p>{question.description}</p> {/* 문제 설명 */}
         <h2 >입력</h2>
