@@ -2,6 +2,7 @@
     display: flex;
     gap: 0.8rem;
     flex-wrap: wrap;
+    margin-bottom: 0.2vh;
 }
 
 .q_button {
@@ -35,9 +36,20 @@
 
 .nav_container{
     display: flex;
-    gap: 0.8rem;
+    gap: 11vw;
     align-items: center;
-    justify-content: row;
+    justify-content: center;
+    height: 6vh;
+    font-size: 1.0rem;
+    text-align: center;
+    color: #B2EAFF;
+    opacity: 0.8;
+
+    div{
+        width: 2px;
+        height: 28px;
+        background-color: #B2EAFF;
+    }
 }
 
 .code_container{
