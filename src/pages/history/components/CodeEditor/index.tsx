@@ -12,7 +12,13 @@ import '@/pages/history/components/CodeEditor/CodeEditor.scss';
 import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
-import { CodeLanguage, EditorTheme, CodeEditorProps } from '@/pages/history/components/CodeEditor/types/types';
+import MiniMenu from '@/pages/history/components/CodeEditor/components/MiniMenu';
+import { useHighlights } from '@/pages/history/components/CodeEditor/hooks/useHighlights';
+import { useTextSelection } from '@/pages/history/components/CodeEditor/hooks/useTextSelection';
+import MemoPopup from '@/pages/history/components/CodeEditor/components/MemoPopup';
+import ActiveMiniMenu from '@/pages/history/components/CodeEditor/components/ActiveMiniMenu';
+import ReactDOM from 'react-dom/client';
+import { CodeLanguage, EditorTheme, CodeEditorProps, HighlightMenuState } from '@/pages/history/components/CodeEditor/types/types';
 import { MEMO_CONTAINER_STYLE, HIGHLIGHT_MENU_CONTAINER_STYLE } from '@/pages/history/components/CodeEditor/constants/constants';
 
 /**
@@ -47,6 +53,95 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const ydocRef = useRef<Y.Doc | null>(null);
   const persistenceRef = useRef<IndexeddbPersistence | null>(null);
   const editorRef = useRef<EditorView | null>(null);
+
+  // 메모 팝업 관련 참조
+  const memoPopupRootRef = useRef<ReactDOM.Root | null>(null);
+  const memoPopupContainerRef = useRef<HTMLDivElement | null>(null);
+  const isMemoPopupInitializedRef = useRef<boolean>(false);
+
+  // 하이라이트 메뉴 관련 참조
+  const highlightMenuRootRef = useRef<ReactDOM.Root | null>(null);
+  const highlightMenuContainerRef = useRef<HTMLDivElement | null>(null);
+  const isHighlightMenuInitializedRef = useRef<boolean>(false);
+
+  // 각종 상태 정의
+  const [memoContents, setMemoContents] = useState<Record<string, string>>({}); // 메모 내용 저장 상태
+  const [highlightMenuState, setHighlightMenuState] = useState<HighlightMenuState | null>(null); // 하이라이트 메뉴 상태
+
+  // useHighlights 커스텀 훅 사용 (하이라이트 처리)
+  const {
+    highlightExtensions,
+    addHighlight,
+    removeHighlight,
+    updateHighlightColor,
+    highlightTheme,
+    activeMemo,
+    closeMemoPopup
+  } = useHighlights({
+    documentId,
+    editorRef,
+    onHighlightClick: (state: HighlightMenuState) => {
+      console.log('[디버깅] 하이라이트 클릭됨:', state.clientId);
+
+      // 활성화된 메모 팝업이 있다면 닫기
+      if (activeMemo) {
+        closeMemoPopup();
+      }
+
+      // 하이라이트 메뉴 표시
+      setHighlightMenuState(state);
+    }
+  });
+
+  // useTextSelection 커스텀 훅 사용 (텍스트 선택 처리)
+  const {
+    menuPosition,
+    setMenuPosition,
+    selectedRange,
+    editorEventHandlers
+  } = useTextSelection({
+    editorRef
+  });
+
+  /**
+   * 하이라이트 버튼 클릭 핸들러
+   */
+  const handleHighlight = (color: string) => {
+    console.log('하이라이트 버튼 클릭됨');
+    if (selectedRange) {
+      const { from, to } = selectedRange;
+      const success = addHighlight(from, to, color, false);
+      if (success) {
+        setMenuPosition(null);
+      }
+    }
+  };
+
+  /**
+   * 메모 버튼 클릭 핸들러
+   */
+  const handleAddMemo = (color: string) => {
+    console.log('메모 추가 버튼 클릭됨');
+    if (selectedRange) {
+      const { from, to } = selectedRange;
+      const success = addHighlight(from, to, color, true);
+      if (success) {
+        setMenuPosition(null);
+      }
+    }
+  };
+
+  /**
+   * 메모 저장 핸들러
+   */
+  const handleSaveMemo = (clientId: string, content: string) => {
+    setMemoContents(prev => ({
+      ...prev,
+      [clientId]: content
+    }));
+
+    console.log('메모 저장:', clientId, content);
+  };
 
   /**
    * 언어별 확장 생성 함수
@@ -131,6 +226,199 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   }, [documentId, readOnly, value]); // value 의존성 추가
 
+  // 메모 팝업 초기화를 위한 useEffect
+  useEffect(() => {
+    // 이미 초기화되었으면 건너뜀
+    if (isMemoPopupInitializedRef.current) return;
+
+    // 에디터가 준비되었는지 확인
+    if (!editorRef.current) return;
+
+    console.log('[디버깅] 메모 팝업 컨테이너 초기화');
+
+    // cm-scroller 요소 찾기 (실제 스크롤이 발생하는 요소)
+    const cmScroller = editorRef.current.dom.querySelector('.cm-scroller');
+    if (!cmScroller) {
+      console.error('.cm-scroller 요소를 찾을 수 없습니다.');
+      return;
+    }
+
+    // 메모 팝업 컨테이너 생성 (한 번만)
+    const container = document.createElement('div');
+    container.className = 'memo-popup-container';
+
+    // 컨테이너 스타일 설정
+    Object.assign(container.style, MEMO_CONTAINER_STYLE);
+
+    // DOM에 추가
+    cmScroller.appendChild(container);
+    memoPopupContainerRef.current = container;
+
+    // React 루트 생성 (한 번만)
+    const root = ReactDOM.createRoot(container);
+    memoPopupRootRef.current = root;
+
+    // 초기화 완료 표시
+    isMemoPopupInitializedRef.current = true;
+
+    console.log('[디버깅] 메모 팝업 컨테이너 및 루트 초기화 완료');
+
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      console.log('[디버깅] 메모 팝업 정리');
+      if (memoPopupRootRef.current) {
+        try {
+          memoPopupRootRef.current.unmount();
+          memoPopupRootRef.current = null;
+        } catch (e) {
+          console.error('메모 팝업 루트 정리 중 오류:', e);
+        }
+      }
+
+      if (memoPopupContainerRef.current && memoPopupContainerRef.current.parentNode) {
+        memoPopupContainerRef.current.parentNode.removeChild(memoPopupContainerRef.current);
+        memoPopupContainerRef.current = null;
+      }
+
+      isMemoPopupInitializedRef.current = false;
+    };
+  }, [editorRef.current]); // editorRef.current가 설정되면 실행
+
+  // 메모 팝업 내용 업데이트를 위한 useEffect
+  useEffect(() => {
+    console.log('[디버깅] 메모 팝업 내용 업데이트 useEffect 실행됨, activeMemo:', activeMemo ? activeMemo.clientId : 'null');
+
+    // 컨테이너와 루트가 초기화되지 않았으면 무시
+    if (!memoPopupContainerRef.current || !memoPopupRootRef.current || !isMemoPopupInitializedRef.current) {
+      return;
+    }
+
+    // 활성화된 메모가 있는 경우
+    if (activeMemo) {
+      console.log('[디버깅] 메모 팝업 표시:', activeMemo.position);
+
+      // 컨테이너를 표시하고 내용 렌더링
+      memoPopupContainerRef.current.style.opacity = '1'; // 불투명하게
+      memoPopupContainerRef.current.style.pointerEvents = 'auto'; // 상호작용 가능하게
+
+      // 내용 업데이트
+      memoPopupRootRef.current.render(
+        <MemoPopup
+          position={{
+            top: activeMemo.position.top,
+            left: activeMemo.position.left
+          }}
+          clientId={activeMemo.clientId}
+          content={memoContents[activeMemo.clientId] || ''}
+          backgroundColor={activeMemo.highlight.color}
+          onClose={closeMemoPopup}
+          onSave={handleSaveMemo}
+        />
+      );
+    } else {
+      // 활성화된 메모가 없으면 컨테이너만 숨김
+      if (memoPopupContainerRef.current) {
+        console.log('[디버깅] 메모 팝업 숨김');
+        memoPopupContainerRef.current.style.opacity = '0'; // 투명하게
+        memoPopupContainerRef.current.style.pointerEvents = 'none'; // 상호작용 불가하게
+      }
+    }
+  }, [activeMemo, closeMemoPopup, memoContents]);
+
+  // 하이라이트 메뉴 초기화를 위한 useEffect
+  useEffect(() => {
+    // 이미 초기화되었으면 건너뜀
+    if (isHighlightMenuInitializedRef.current) return;
+
+    // 에디터가 준비되었는지 확인
+    if (!editorRef.current) return;
+
+    console.log('[디버깅] 하이라이트 메뉴 컨테이너 초기화');
+
+    // cm-scroller 요소 찾기 (실제 스크롤이 발생하는 요소)
+    const cmScroller = editorRef.current.dom.querySelector('.cm-scroller');
+    if (!cmScroller) {
+      console.error('.cm-scroller 요소를 찾을 수 없습니다.');
+      return;
+    }
+
+    // 하이라이트 메뉴 컨테이너 생성 (한 번만)
+    const container = document.createElement('div');
+    container.className = 'highlight-menu-container';
+    container.style.display = 'none'; // 초기에는 숨김 상태
+
+    // 컨테이너 스타일 설정
+    Object.assign(container.style, HIGHLIGHT_MENU_CONTAINER_STYLE);
+
+    // DOM에 추가
+    cmScroller.appendChild(container);
+    highlightMenuContainerRef.current = container;
+
+    // React 루트 생성 (한 번만)
+    const root = ReactDOM.createRoot(container);
+    highlightMenuRootRef.current = root;
+
+    // 초기화 완료 표시
+    isHighlightMenuInitializedRef.current = true;
+
+    console.log('[디버깅] 하이라이트 메뉴 컨테이너 및 루트 초기화 완료');
+
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      console.log('[디버깅] 하이라이트 메뉴 정리');
+      if (highlightMenuRootRef.current) {
+        try {
+          highlightMenuRootRef.current.unmount();
+          highlightMenuRootRef.current = null;
+        } catch (e) {
+          console.error('하이라이트 메뉴 루트 정리 중 오류:', e);
+        }
+      }
+
+      if (highlightMenuContainerRef.current && highlightMenuContainerRef.current.parentNode) {
+        highlightMenuContainerRef.current.parentNode.removeChild(highlightMenuContainerRef.current);
+        highlightMenuContainerRef.current = null;
+      }
+
+      isHighlightMenuInitializedRef.current = false;
+    };
+  }, [editorRef.current]); // editorRef.current가 설정되면 실행
+
+  // 하이라이트 메뉴 내용 업데이트를 위한 useEffect
+  useEffect(() => {
+    console.log('[디버깅] 하이라이트 메뉴 업데이트 useEffect 실행됨, highlightMenuState:', highlightMenuState ? highlightMenuState.clientId : 'null');
+
+    // 컨테이너와 루트가 초기화되지 않았으면 무시
+    if (!highlightMenuContainerRef.current || !highlightMenuRootRef.current || !isHighlightMenuInitializedRef.current) {
+      return;
+    }
+
+    // 하이라이트 메뉴 상태가 있는 경우
+    if (highlightMenuState) {
+      console.log('[디버깅] 하이라이트 메뉴 표시:', highlightMenuState.position);
+
+      // 컨테이너를 표시하고 내용 렌더링
+      highlightMenuContainerRef.current.style.display = 'block';
+
+      // 내용 업데이트
+      highlightMenuRootRef.current.render(
+        <ActiveMiniMenu
+          position={highlightMenuState.position}
+          highlight={highlightMenuState.highlight}
+          onClose={() => setHighlightMenuState(null)}
+          onDelete={removeHighlight}
+          onColorChange={updateHighlightColor}
+        />
+      );
+    } else {
+      // 하이라이트 메뉴 상태가 없으면 컨테이너만 숨김
+      if (highlightMenuContainerRef.current) {
+        console.log('[디버깅] 하이라이트 메뉴 숨김');
+        highlightMenuContainerRef.current.style.display = 'none';
+      }
+    }
+  }, [highlightMenuState, removeHighlight, updateHighlightColor]);
+
   // 확장 설정
   const langExtension = getLanguageExtension(language);
   const extensions: Extension[] = [];
@@ -147,8 +435,36 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     extensions.push(whiteTextExtension);
   }
 
+  // 미니메뉴가 나타날 때 메모 팝업과 하이라이트 메뉴 닫기
+  useEffect(() => {
+    if (menuPosition) {
+      if (activeMemo) {
+        closeMemoPopup();
+      }
+
+      if (highlightMenuState) {
+        setHighlightMenuState(null);
+      }
+    }
+  }, [menuPosition, activeMemo, closeMemoPopup, highlightMenuState]);
+
+  // 하이라이트 메뉴나 메모 팝업이 변경될 때 상호작용 관리
+  useEffect(() => {
+    if (highlightMenuState && activeMemo) {
+      // 둘 다 열려있을 수 없음
+      setHighlightMenuState(null);
+    }
+  }, [highlightMenuState, activeMemo]);
+
+  // 하이라이트 테마 추가
+  extensions.push(highlightTheme);
+
+  // 하이라이트 확장 추가
+  extensions.push(...highlightExtensions);
+
   // 마우스 이벤트 핸들러 추가
   extensions.push(
+    EditorView.domEventHandlers(editorEventHandlers),
     EditorView.updateListener.of(update => {
       if (update.view) {
         editorRef.current = update.view;
@@ -156,7 +472,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     })
   );
 
-  // Yjs 협업 기능 추가 (readOnly가 아닐 경우만)
+  // Yjs 협업 기능 추가
   if (!readOnly && ydocRef.current) {
     const ytext = ydocRef.current.getText('codemirror');
 
@@ -172,6 +488,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
   return (
     <div className="code-editor-wrapper">
+      <MiniMenu
+        position={menuPosition}
+        onHighlight={handleHighlight}
+        onAddMemo={handleAddMemo}
+      />
       <div className="code-editor-container">
         <CodeMirror
           value={!readOnly && ydocRef.current ? '' : value}
