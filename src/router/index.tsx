@@ -4,6 +4,10 @@ import Login from '@/pages/login/Login.tsx';
 // import CodingTestPage from '@/pages/CodingTest/CodingTestPage';
 import ChatPage from '@/pages/history/ChatPage.tsx';
 import ChatTest from "@/pages/history/ChatTest.tsx";
+import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
+import SignUp from '@/pages/signUp/SignUp.tsx';
+import Header from '@/pages/common/Header.tsx';
+import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -14,6 +18,18 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Login />,
+      },
+      {
+        path: '/find',
+        element: <ResetPassword />,
+      },
+      {
+        path: '/signup',
+        element: <SignUp />,
+      },
+      {
+        path: '/main',
+        element: <MainNoTeam />,
       },
       // {
       //   path: '/coding-test',
