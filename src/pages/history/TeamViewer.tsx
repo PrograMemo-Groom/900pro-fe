@@ -17,7 +17,7 @@ export default function TeamViewer() {
       {['1012', '9372', '1253'].map((num) => (
         <button
           key={num}
-          className={styles.q_button}
+          className={`${styles.q_button} ${selectedQuestion === num ? styles.active : ''}`}
           onClick={() => setSelectedQuestion(num)}
         >
           #{num}
