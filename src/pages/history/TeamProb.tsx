@@ -1,9 +1,9 @@
-import React from 'react'
+import styles from '@/css/history/TeamView/TeamProb.module.scss'
 
 export default function TeamProb() {
   return (
-    <div>
-      팀문제
-    </div>
+    <main className={styles.main_container}>
+      팀 문제
+    </main>
   )
 }
