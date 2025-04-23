@@ -15,6 +15,13 @@ export default function TeamViewer() {
           #1253
         </button>
       </section>
+      <nav className={styles.nav_container}>
+        <p>문제 보기</p>
+        <p>팀원 코드</p>
+      </nav>
+      <section className={styles.code_container}>
+        {/* 코드  화면*/}
+      </section>
     </main>
   )
 }

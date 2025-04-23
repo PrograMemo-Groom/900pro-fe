@@ -1,3 +1,9 @@
+.button_container{
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
 .q_button {
     position: relative;
     padding: 12px 35px;
@@ -25,4 +31,14 @@
         mask-composite: exclude;
         z-index: -1;
     }
+}
+
+.nav_container{
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: row;
+}
+
+.code_container{
 }
