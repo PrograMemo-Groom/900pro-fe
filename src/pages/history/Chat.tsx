@@ -1,27 +1,26 @@
 // import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
+import { ChatType} from '@/pages/history/types/Chat.ts';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-type Chat = {
-  id: number;
-  chatRoomId: number;
-  userId: number;
-  userName: string; //유저네임 추가
-  content: string;
-  send_at: string;
-};
-
+// 소켓 연결 import
+import { initStompClient, publishMessage, subscribe, unsubscribe } from '@/api/stompClient';
 
 const myId = 2;
 
 function Chat() {
-  const [messages, setMessages] = useState<Chat[]>(ChatDummy);
+
+  const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
+  // 코드 관리 - 내가 채팅 보내기
+  const [messages, setMessages] = useState<ChatType[]>(ChatDummy);
 
   const handleSubmit = (msg: string) => {
-    const newMessage: Chat = {
+    const newMessage: ChatType = {
       id: Date.now(),
       chatRoomId: 1,
       userId: myId,
@@ -34,12 +33,10 @@ function Chat() {
 
 
   return (
-    <div>
-      <main className={styles.container}>
-        <ChatLog messages={messages} />
-        <ChatInput onSubmit={handleSubmit} />
-      </main>
-    </div>
+    <main className={`${styles.container} ${isTeamViewerOpen ? styles.container_with_code : styles.container_with_normal}`}>
+      <ChatLog messages={messages} />
+      <ChatInput onSubmit={handleSubmit} />
+    </main>
   )
 }
 

@@ -1,0 +1,107 @@
+.button_container{
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.2vh;
+}
+
+.q_button {
+    position: relative;
+    padding: 12px 35px;
+    border-radius: 50px;
+    background-color: transparent;
+    color: #89B3E0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: inline-block;
+    z-index: 0;
+    text-align: start;
+    border: none;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px;
+        padding: 2px; //테두리 두께
+        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: -1;
+    }
+}
+
+.nav_container{
+    display: flex;
+    gap: 11vw;
+    align-items: center;
+    justify-content: center;
+    height: 6vh;
+    font-size: 1.0rem;
+    text-align: center;
+    color: #B2EAFF;
+    opacity: 0.8;
+
+    div{
+        width: 2px;
+        height: 28px;
+        background-color: #B2EAFF;
+    }
+
+    p {
+        transition: all 0.3s;
+
+        &:hover{
+        cursor: pointer;
+        text-decoration: underline;
+        font-weight: 700;
+        opacity: 1;
+        }
+
+        &.active {
+            text-decoration: underline;
+            font-weight: 700;
+            opacity: 1;
+        }
+    }
+}
+
+.code_container{
+    width: 57.7vw;
+    height: 59.4vh;
+    background-color: rgba(255, 255, 255, 0.03);
+    margin-right: 2vw;
+    padding: 3px;
+    position: relative;
+    border-radius: 50px;
+    background-color: transparent;
+    color: #89B3E0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: inline-block;
+    z-index: 0;
+    text-align: start;
+    border: none;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 40px;
+        padding: 3px; //테두리 두께
+        background: linear-gradient(230deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: -1;
+    }
+}
+
+.team_viewer{
+    transition: all 0.3s ease-in-out;
+}

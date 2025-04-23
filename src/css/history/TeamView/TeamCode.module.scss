@@ -1,0 +1,36 @@
+.team_code_container{
+    position: relative;
+}
+
+.code_name{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 7vh;
+    background-color: rgba(87, 143, 202, 0.2);
+    padding: 18px 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    border-radius: 39px 39px 0 0;
+    z-index: 1;
+    backdrop-filter: blur(1px);
+
+    span {
+        font-weight: 700;
+    }
+
+}
+
+// 코드 들어가는곳 내용입니다
+.code_body{
+    height: 58.5vh;
+    overflow: hidden;
+    overflow-y: scroll;
+    border-radius: 39px;
+    //------ 여기까지는 컴포넌트 기본 설정이에요
+    //-----이 아래부터는 자유롭게 수정하시면 됩니다.
+    padding: 1vw; // 패딩 임의로 넣은건데 지워도됩니다.
+    background-color: #000;
+}

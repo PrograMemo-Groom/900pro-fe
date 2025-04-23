@@ -10,6 +10,9 @@ const config = {
       '@': path.resolve(__dirname, 'src'), // 절대 경로 alias 설정
     },
   },
+  define: {
+    global: {},
+  },
   server: {
     host: true,
     port: 5173,
@@ -23,6 +26,11 @@ const config = {
         ws: true,
         // 필요하다면 경로 재작성 활성화
         // rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/ws-chat': {
+      target: 'http://3.39.135.118:8080',
+      changeOrigin: true,
+      ws: true
       },
     },
   },
