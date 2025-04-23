@@ -1,7 +1,7 @@
 export default function TeamCode() {
   return (
-    <div>
+    <main>
       팀코드
-    </div>
+    </main>
   )
 }
