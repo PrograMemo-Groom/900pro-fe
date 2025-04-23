@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styles from '@/css/waiting/waitingroom.module.scss'
 
 export default function WaitingRoom() {
@@ -11,9 +12,13 @@ export default function WaitingRoom() {
         { name: "김건영", status: "준비완료" },
     ];
 
+
+    const [isReady, setIsReady] = useState(false);
+
   return (
     <div className={styles.waitingroom}>
-        대기실
+        <h1 className={styles.header}>9BACKPRO</h1>
+        <p>대기실</p>
         <main className={styles.container}>
             <section className={styles.time_section}>
                 <h3>시작까지 남은 시간</h3>
@@ -44,8 +49,10 @@ export default function WaitingRoom() {
             <footer className={styles.ready_container}>
                 <p className={styles.notice} >
                     *시험 시간이 되면 자동으로 화면이 이동되므로 5분 전까지 대기실에서 대기해주세요.</p>
-                <button className={styles.ready_button}>
-                    준비하기
+                <button className={`${styles.ready_button} ${isReady ? styles.ready_done : ''}`}
+                        onClick={() => setIsReady(true)}
+                        >
+                    {isReady ? '준비완료' : '준비하기'}
                 </button>
             </footer>
         </main>

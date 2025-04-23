@@ -19,6 +19,7 @@
     width: 51.82vw;
     height: 67.78vh;
     overflow: hidden;
+    margin-top: 4vh;
 
     &::before {
         content: "";
@@ -76,10 +77,12 @@
     transition: background-color 0.2s ease-in-out;
 
     &:hover {
-      background-color: rgba(161,227,249,0.5);
-      cursor: pointer;
+        cursor: pointer;
     }
   }
+.ready_done{
+    background-color: rgba(126,126,126,70);
+}
 
 //   그리드 
 .member_container {
