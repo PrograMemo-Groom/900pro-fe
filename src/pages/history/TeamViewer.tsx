@@ -9,12 +9,12 @@ export default function TeamViewer() {
   const [whatActiveNav, setWhatActiveNav] = useState<'prob' | 'code'>('prob');
 
   // 문제 번호 선택
-  const [selectedQuestion, setSelectedQuestion] = useState('1012');
+  const [selectedQuestion, setSelectedQuestion] = useState(1012);
 
   return (
     <main>
       <section className={styles.button_container}>
-      {['1012', '9372', '1253'].map((num) => (
+      {[1012, 9372, 2720].map((num) => (
         <button
           key={num}
           className={`${styles.q_button} ${selectedQuestion === num ? styles.active : ''}`}
