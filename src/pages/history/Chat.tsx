@@ -5,14 +5,17 @@ import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import { ChatType} from '@/pages/history/types/Chat.ts';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 // 소켓 연결 import
 import { initStompClient, publishMessage, subscribe, unsubscribe } from '@/api/stompClient';
 
 const myId = 2;
 
-function Chat( { isTeamViewerOpen, onShowTeamViewer }: { isTeamViewerOpen: boolean; onShowTeamViewer: () => void } ) {
+function Chat() {
 
+  const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
   // 코드 관리 - 내가 채팅 보내기
   const [messages, setMessages] = useState<ChatType[]>(ChatDummy);
 
@@ -31,7 +34,7 @@ function Chat( { isTeamViewerOpen, onShowTeamViewer }: { isTeamViewerOpen: boole
 
   return (
     <main className={`${styles.container} ${isTeamViewerOpen ? styles.container_with_code : styles.container_with_normal}`}>
-      <ChatLog messages={messages} onShowTeamViewer={onShowTeamViewer} />
+      <ChatLog messages={messages} />
       <ChatInput onSubmit={handleSubmit} />
     </main>
   )

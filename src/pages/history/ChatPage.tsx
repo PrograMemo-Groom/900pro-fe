@@ -1,11 +1,13 @@
-import { useState } from 'react'
 import styles from '@/css/history/ChatPage.module.scss'
 import TeamViewer from '@/pages/history/TeamViewer.tsx';
 import Chat from '@/pages/history/Chat.tsx';
+// 리덕스 코드
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 function ChatPage() {
   // 왼쪽 컴포넌트 상태 관리
-  const [isTeamViewerOpen, setIsTeamViewerOpen] = useState(false);
+  const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
 
   return (
     <div className={styles.chat_container}>
@@ -16,9 +18,7 @@ function ChatPage() {
         )}
 
         <div className={styles.chat}>
-            <Chat 
-            isTeamViewerOpen={isTeamViewerOpen}
-            onShowTeamViewer={() => setIsTeamViewerOpen(true)} />
+          <Chat />
         </div>
     </div>
   )

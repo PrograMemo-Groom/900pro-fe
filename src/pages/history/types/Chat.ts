@@ -6,11 +6,3 @@ export type ChatType = {
     content: string;
     send_at: string;
   };
-
-export type TeamVieweBoolean = {
-  isTeamViewerOpen: boolean;
-};
-
-export type TeamViewerProps = {
-  onShowTeamViewer: () => void;
-};
