@@ -1,5 +1,5 @@
 import styles from '@/css/history/TeamView/TeamProb.module.scss'
-import { questionDummy, Question } from '@/pages/history/data/ProbDummy';
+import { Question } from '@/pages/history/data/ProbDummy';
 
 type Props = {
   question: Question;
