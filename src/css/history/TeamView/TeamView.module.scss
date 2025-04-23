@@ -73,8 +73,8 @@
     width: 57.7vw;
     height: 59.4vh;
     background-color: rgba(255, 255, 255, 0.03);
-    padding: 2px;
     margin-right: 2vw;
+    padding: 3px;
     position: relative;
     border-radius: 50px;
     background-color: transparent;
@@ -91,8 +91,8 @@
         position: absolute;
         inset: 0;
         border-radius: 40px;
-        padding: 2px; //테두리 두께
-        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+        padding: 3px; //테두리 두께
+        background: linear-gradient(230deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
         -webkit-mask:
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
