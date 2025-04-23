@@ -52,7 +52,7 @@
 .ready_container{
     position: absolute;
     bottom: 0;
-    padding-bottom: 3vh;
+    padding-bottom: 4vh;
     margin-left: -2vw;
     padding-right: 1vw;
     width: 100%;
@@ -60,7 +60,7 @@
 
 .notice{
     opacity: 0.8;
-    margin-top: 1vh;
+    margin-top: 2vh;
     margin-bottom: 2vh;
     font-weight: 500;
 }
@@ -86,7 +86,7 @@
 
 //   그리드 
 .member_container {
-    height: 40vh;
+    height: 38vh;
     overflow: hidden;
     overflow-y: scroll;
     margin-top: 0.5vh;
