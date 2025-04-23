@@ -24,13 +24,13 @@
 
 // 코드 들어가는곳 내용입니다
 .code_body{
-    height: 58.5vh;
+    height: 58.8vh;
     overflow: hidden;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     border-radius: 39px;
     //------ 여기까지는 컴포넌트 기본 설정이에요
     //-----이 아래부터는 자유롭게 수정하시면 됩니다.
-    padding: 1vw; // 패딩 임의로 넣은건데 지워도됩니다.
+    padding: 0; // 패딩 임의로 넣은건데 지워도됩니다.
     background-color: #000;
 
     // 코드 에디터 컨테이너

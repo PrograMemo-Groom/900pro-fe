@@ -8,7 +8,7 @@ import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { highlightSelectionMatches } from '@codemirror/search';
-import '@/css/history/TeamView/CodeEditor.module.scss';
+import styles from '@/css/history/TeamView/CodeEditor.module.scss';
 import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
@@ -487,13 +487,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }
 
   return (
-    <div className="code-editor-wrapper">
+    <div className={styles['review-editor-wrapper']}>
       <MiniMenu
         position={menuPosition}
         onHighlight={handleHighlight}
         onAddMemo={handleAddMemo}
       />
-      <div className="code-editor-container">
+      <div className={styles['review-editor-container']}>
         <CodeMirror
           value={!readOnly && ydocRef.current ? '' : value}
           height="100%"

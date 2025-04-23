@@ -3,7 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 import { throttle } from 'lodash';
 import { MemoPopupProps } from '@/pages/history/codeeditor/types/types.ts';
 import { DEFAULT_MEMO_BACKGROUND_COLOR } from '@/pages/history/codeeditor/constants/constants.ts';
-import '@/css/history/TeamView/MemoPopup.module.scss';
+import styles from '@/css/history/TeamView/MemoPopup.module.scss';
 
 /**
  * 포스트잇 형태의 메모 팝업 컴포넌트
@@ -135,21 +135,21 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
   return (
     <div
       ref={popupRef}
-      className="memo-popup"
+      className={styles['memo-popup']}
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`
       }}
     >
-      <div className="memo-popup-content" style={{ backgroundColor: opaqueBackgroundColor }}>
-        <div className="memo-popup-header" style={{ backgroundColor: opaqueBackgroundColor }}>
-          <span className="memo-id">
+      <div className={styles['memo-popup-content']} style={{ backgroundColor: opaqueBackgroundColor }}>
+        <div className={styles['memo-popup-header']} style={{ backgroundColor: opaqueBackgroundColor }}>
+          <span className={styles['memo-id']}>
             #{clientId.split('-').pop()?.substring(0, 4)}
             {isEditing && ' (편집중)'}
           </span>
-          <div className="memo-popup-actions">
+          <div className={styles['memo-popup-actions']}>
             <button
-              className="memo-button"
+              className={styles['memo-button']}
               onClick={handleClose}
               title="닫기"
             >
@@ -158,10 +158,10 @@ const MemoPopup: React.FC<MemoPopupProps> = ({
           </div>
         </div>
 
-        <div className="memo-popup-body">
+        <div className={styles['memo-popup-body']}>
           <textarea
             ref={textareaRef}
-            className="memo-textarea"
+            className={styles['memo-textarea']}
             value={content}
             onChange={handleContentChange}
             placeholder="programmer's memo..."

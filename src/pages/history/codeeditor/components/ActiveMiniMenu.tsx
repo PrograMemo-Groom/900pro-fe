@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActiveMiniMenuProps } from '@/pages/history/codeeditor/types/types.ts';
 import { HIGHLIGHT_COLORS } from '@/pages/history/codeeditor/constants/constants.ts';
-import '@/css/history/TeamView/ActiveMiniMenu.module.scss';
+import styles from '@/css/history/TeamView/ActiveMiniMenu.module.scss';
 
 /**
  * 하이라이트 클릭 시 표시되는 액션 메뉴 컴포넌트
@@ -84,7 +84,7 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
   return (
     <div
       ref={menuRef}
-      className="active-mini-menu"
+      className={styles['active-mini-menu']}
       style={{
         top: position.top,
         left: position.left
@@ -92,11 +92,11 @@ const ActiveMiniMenu: React.FC<ActiveMiniMenuProps> = ({
       onClick={preventPropagation}
       onMouseDown={preventPropagation}
     >
-      <div className="active-color-palette">
+      <div className={styles['active-color-palette']}>
         {HIGHLIGHT_COLORS.map((color) => (
           <div
             key={color}
-            className={`active-color-option ${selectedColor === color ? 'selected' : ''}`}
+            className={`${styles['active-color-option']} ${selectedColor === color ? styles['selected'] : ''}`}
             style={{ backgroundColor: color }}
             onClick={(e) => handleColorSelect(color, e)}
             onMouseDown={preventPropagation}

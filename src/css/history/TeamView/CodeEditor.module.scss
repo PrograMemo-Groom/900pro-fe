@@ -1,25 +1,45 @@
-.code-editor-wrapper {
+.review-editor-wrapper {
   position: relative;
   height: 100%;
   width: 100%;
 
-  .code-editor-container {
+  .review-editor-container {
     height: 100%;
     width: 100%;
     font-family: monospace;
     line-height: 1.5;
+    overflow: hidden;
+    background-color: #0C2131;
+    display: flex;
+    flex-direction: column;
 
-    .cm-editor {
+    :global(.cm-theme) {
+      flex: 1;
+      overflow: auto;
+      height: 100%;
+      width: 100%;
+      background-color: #0C2131;
+      scrollbar-color: #3A5F8A #0B1724;
+    }
+
+    :global(.cm-editor) {
+      background-color: #0C2131;
       height: 100%;
 
-      .cm-scroller {
+      :global(.cm-scroller) {
         overflow: auto;
         font-size: 0.9rem;
       }
 
-      .cm-content {
-        padding: 8px;
+      :global(.cm-content) {
+        padding: 75px 0 50px 0;
       }
+    }
+
+    :global(.cm-gutters) {
+      background-color: #0C2131;
+      border-right: none;
+      position: relative;
     }
   }
 
@@ -137,7 +157,7 @@
 }
 
 // 하이라이트된 코드 스타일 (CodeMirror 마크)
-.cm-highlight {
+:global(.cm-highlight) {
   position: relative;
   border-radius: 2px;
 

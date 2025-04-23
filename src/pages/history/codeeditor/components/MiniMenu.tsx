@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { MiniMenuProps } from '@/pages/history/codeeditor/types/types.ts';
 import { HIGHLIGHT_COLORS } from '@/pages/history/codeeditor/constants/constants.ts';
-import '@/css/history/TeamView/MiniMenu.module.scss';
+import styles from '@/css/history/TeamView/MiniMenu.module.scss';
 
 /**
  * 미니 메뉴 컴포넌트
@@ -76,7 +76,7 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
    */
   const menuContent = (
     <div
-      className="mini-menu"
+      className={styles['mini-menu']}
       style={{
         top: position.y,
         left: position.x,
@@ -87,11 +87,11 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
       onMouseDown={preventPropagation}
       onMouseUp={preventPropagation}
     >
-      <div className="color-palette">
+      <div className={styles['color-palette']}>
         {HIGHLIGHT_COLORS.map((color) => (
           <div
             key={color}
-            className={`color-dot ${selectedColor === color ? 'selected' : ''}`}
+            className={`${styles['color-dot']} ${selectedColor === color ? styles['selected'] : ''}`}
             style={{ backgroundColor: color }}
             onClick={(e) => handleColorSelect(color, e)}
             onMouseDown={preventPropagation}
@@ -100,14 +100,14 @@ const MiniMenu: React.FC<MiniMenuProps> = ({ position, onHighlight, onAddMemo })
       </div>
 
       <button
-        className="mini-menu__button"
+        className={styles['mini-menu__button']}
         onClick={handleHighlightClick}
         onMouseDown={preventPropagation}
       >
         하이라이트
       </button>
       <button
-        className="mini-menu__button"
+        className={styles['mini-menu__button']}
         onClick={handleMemoClick}
         onMouseDown={preventPropagation}
       >
