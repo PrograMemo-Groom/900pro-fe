@@ -8,18 +8,21 @@ export default function TeamViewer() {
   // nav 선택
   const [whatActiveNav, setWhatActiveNav] = useState<'prob' | 'code'>('prob');
 
+  // 문제 번호 선택
+  const [selectedQuestion, setSelectedQuestion] = useState('1012');
+
   return (
     <main>
       <section className={styles.button_container}>
-        <button className={styles.q_button}>
-          #1253
+      {['1012', '9372', '1253'].map((num) => (
+        <button
+          key={num}
+          className={styles.q_button}
+          onClick={() => setSelectedQuestion(num)}
+        >
+          #{num}
         </button>
-        <button className={styles.q_button}>
-          #1253
-        </button>
-        <button className={styles.q_button}>
-          #1253
-        </button>
+      ))}
       </section>
 
       <nav className={styles.nav_container}>
@@ -34,7 +37,7 @@ export default function TeamViewer() {
 
       {/* 여기부터 컴포넌트입니다 */}
       <section className={styles.code_container}>
-        {whatActiveNav === 'prob' && <TeamProb />}
+        {whatActiveNav === 'prob' && <TeamProb questionId={selectedQuestion} />}
 
         {/* 👇 건영님 코드 들어갈 부분. 
             👇 TeamCode.tsx에 작성하시면 돼요. */}

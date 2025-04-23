@@ -23,14 +23,19 @@
         position: absolute;
         inset: 0;
         border-radius: 50px;
-        padding: 2px; //테두리 두께
-        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+        padding: 3px; //테두리 두께
+        background: linear-gradient(200deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
         -webkit-mask:
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
         z-index: -1;
+    }
+
+    &:hover {
+        background-color: rgba(87, 143, 202, 0.4);
+        color: #fff;
     }
 }
 
@@ -80,7 +85,6 @@
     background-color: transparent;
     color: #89B3E0;
     font-size: 0.9rem;
-    font-weight: 700;
     display: inline-block;
     z-index: 0;
     text-align: start;
