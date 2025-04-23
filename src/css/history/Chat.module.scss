@@ -1,17 +1,25 @@
 // 채팅 css
+.container_with_code {
+    height: 71.67vh;
+    width: 35.89vw;
+  }
+
+.container_with_normal {
+    height: 71.67vh;
+    width: 60.63vw;
+}
+
 .container {
     background-color: rgba(255, 255, 255, 0.03);
     border-radius: 50px;
     color: #E1E1E1;
     padding: 30px 50px 10px 50px;
-
-    // (774 / 1080) = (약 72)
-    height: 71.67vh;
-    width: 60.63vw;
     text-align: center;
 
     display: flex;
     flex-direction: column;
+
+    transition: all 0.3s ease-in-out;
 
     .chat_container{
         overflow: hidden;

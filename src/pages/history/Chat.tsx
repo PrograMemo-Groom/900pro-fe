@@ -21,6 +21,10 @@ type Chat = {
 const myId = 2;
 
 function Chat() {
+  // 왼쪽 컴포넌트 상태 관리
+  const [isTeamViewerOpen, setIsTeamViewerOpen] = useState(true);
+
+  // 코드 관리
   const [messages, setMessages] = useState<Chat[]>(ChatDummy);
 
   const handleSubmit = (msg: string) => {
@@ -37,7 +41,7 @@ function Chat() {
 
 
   return (
-    <main className={styles.container}>
+    <main className={`${styles.container} ${isTeamViewerOpen ? styles.container_with_code : styles.container_with_normal}`}>
       <ChatLog messages={messages} />
       <ChatInput onSubmit={handleSubmit} />
     </main>
