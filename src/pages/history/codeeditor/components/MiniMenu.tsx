@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { MiniMenuProps } from '@/pages/history/components/CodeEditor/types/types';
-import { HIGHLIGHT_COLORS } from '@/pages/history/components/CodeEditor/constants/constants';
-import '@/pages/history/components/CodeEditor/components/MiniMenu.scss';
+import { MiniMenuProps } from '@/pages/history/codeeditor/types/types.ts';
+import { HIGHLIGHT_COLORS } from '@/pages/history/codeeditor/constants/constants.ts';
+import '@/pages/history/codeeditor/components/MiniMenu.scss';
 
 /**
  * 미니 메뉴 컴포넌트

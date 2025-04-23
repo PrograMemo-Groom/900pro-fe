@@ -8,18 +8,18 @@ import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { highlightSelectionMatches } from '@codemirror/search';
-import '@/pages/history/components/CodeEditor/CodeEditor.scss';
+import '@/pages/history/codeeditor/CodeEditor.scss';
 import * as Y from 'yjs';
 import { yCollab } from 'y-codemirror.next';
 import { IndexeddbPersistence } from 'y-indexeddb';
-import MiniMenu from '@/pages/history/components/CodeEditor/components/MiniMenu';
-import { useHighlights } from '@/pages/history/components/CodeEditor/hooks/useHighlights';
-import { useTextSelection } from '@/pages/history/components/CodeEditor/hooks/useTextSelection';
-import MemoPopup from '@/pages/history/components/CodeEditor/components/MemoPopup';
-import ActiveMiniMenu from '@/pages/history/components/CodeEditor/components/ActiveMiniMenu';
+import MiniMenu from '@/pages/history/codeeditor/components/MiniMenu.tsx';
+import { useHighlights } from '@/pages/history/codeeditor/hooks/useHighlights.tsx';
+import { useTextSelection } from '@/pages/history/codeeditor/hooks/useTextSelection.tsx';
+import MemoPopup from '@/pages/history/codeeditor/components/MemoPopup.tsx';
+import ActiveMiniMenu from '@/pages/history/codeeditor/components/ActiveMiniMenu.tsx';
 import ReactDOM from 'react-dom/client';
-import { CodeLanguage, EditorTheme, CodeEditorProps, HighlightMenuState } from '@/pages/history/components/CodeEditor/types/types';
-import { MEMO_CONTAINER_STYLE, HIGHLIGHT_MENU_CONTAINER_STYLE } from '@/pages/history/components/CodeEditor/constants/constants';
+import { CodeLanguage, EditorTheme, CodeEditorProps, HighlightMenuState } from '@/pages/history/codeeditor/types/types.ts';
+import { MEMO_CONTAINER_STYLE, HIGHLIGHT_MENU_CONTAINER_STYLE } from '@/pages/history/codeeditor/constants/constants.ts';
 
 /**
  * 렌더링 카운트 디버깅용 변수

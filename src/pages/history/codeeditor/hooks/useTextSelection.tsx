@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { UseTextSelectionProps } from '@/pages/history/components/CodeEditor/types/types';
+import { UseTextSelectionProps } from '@/pages/history/codeeditor/types/types.ts';
 
 /**
  * 텍스트 선택 처리를 위한 커스텀 훅

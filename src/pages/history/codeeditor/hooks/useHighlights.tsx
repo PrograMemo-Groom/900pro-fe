@@ -8,11 +8,11 @@ import {
   ActiveMemoState,
   UseHighlightsProps,
   HighlightMenuState
-} from '@/pages/history/components/CodeEditor/types/types';
+} from '@/pages/history/codeeditor/types/types.ts';
 
 // 유틸리티 임포트
-import { hexToRgba, rgbaToHex } from '@/pages/history/components/CodeEditor/utils/colorUtils';
-import { calculateMemoPosition } from '@/pages/history/components/CodeEditor/utils/domUtils';
+import { hexToRgba, rgbaToHex } from '@/pages/history/codeeditor/utils/colorUtils.ts';
+import { calculateMemoPosition } from '@/pages/history/codeeditor/utils/domUtils.ts';
 
 // CodeMirror 확장 임포트
 import {
@@ -21,9 +21,9 @@ import {
   removeHighlightEffect,
   updateHighlightColorEffect,
   highlightTheme
-} from '@/pages/history/components/CodeEditor/codemirror/highlightEffects';
-import { highlightField } from '@/pages/history/components/CodeEditor/codemirror/highlightField';
-import { highlightPlugin } from '@/pages/history/components/CodeEditor/codemirror/highlightPlugins';
+} from '@/pages/history/codeeditor/codemirror/highlightEffects.ts';
+import { highlightField } from '@/pages/history/codeeditor/codemirror/highlightField.ts';
+import { highlightPlugin } from '@/pages/history/codeeditor/codemirror/highlightPlugins.ts';
 
 /**
  * 하이라이트 관리를 위한 커스텀 훅

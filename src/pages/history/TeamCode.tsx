@@ -1,5 +1,5 @@
 import styles from '@/css/history/TeamView/TeamCode.module.scss'
-import CodeEditor from '@/pages/history/components/CodeEditor';
+import CodeEditor from '@/pages/history/codeeditor';
 
 export default function TeamCode() {
   // 단일 사용자 샘플 데이터

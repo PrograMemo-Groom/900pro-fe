@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActiveMiniMenuProps } from '@/pages/history/components/CodeEditor/types/types';
-import { HIGHLIGHT_COLORS } from '@/pages/history/components/CodeEditor/constants/constants';
-import '@/pages/history/components/CodeEditor/components/ActiveMiniMenu.scss';
+import { ActiveMiniMenuProps } from '@/pages/history/codeeditor/types/types.ts';
+import { HIGHLIGHT_COLORS } from '@/pages/history/codeeditor/constants/constants.ts';
+import '@/pages/history/codeeditor/components/ActiveMiniMenu.scss';
 
 /**
  * 하이라이트 클릭 시 표시되는 액션 메뉴 컴포넌트

@@ -1,9 +1,9 @@
 import { StateField, RangeSet } from '@codemirror/state';
 import { Decoration, DecorationSet, EditorView, WidgetType } from '@codemirror/view';
-import { filterByClientId, createMemoIconWidget } from '@/pages/history/components/CodeEditor/codemirror/highlightWidgets';
-import { addHighlightEffect, clearHighlightsEffect, removeHighlightEffect, updateHighlightColorEffect } from '@/pages/history/components/CodeEditor/codemirror/highlightEffects';
-import { hexToRgba, rgbaToHex } from '@/pages/history/components/CodeEditor/utils/colorUtils';
-import { createIconDOM } from '@/pages/history/components/CodeEditor/utils/domUtils';
+import { filterByClientId, createMemoIconWidget } from '@/pages/history/codeeditor/codemirror/highlightWidgets.ts';
+import { addHighlightEffect, clearHighlightsEffect, removeHighlightEffect, updateHighlightColorEffect } from '@/pages/history/codeeditor/codemirror/highlightEffects.ts';
+import { hexToRgba, rgbaToHex } from '@/pages/history/codeeditor/utils/colorUtils.ts';
+import { createIconDOM } from '@/pages/history/codeeditor/utils/domUtils.ts';
 
 /**
  * 하이라이트 필드 - CodeMirror 상태에 하이라이트 정보를 저장

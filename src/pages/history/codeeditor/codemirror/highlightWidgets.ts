@@ -1,6 +1,6 @@
 import { WidgetType, EditorView } from '@codemirror/view';
-import { Highlight, ActiveMemoState, HighlightMenuState } from '@/pages/history/components/CodeEditor/types/types';
-import { createIconDOM, calculateMemoPosition } from '@/pages/history/components/CodeEditor/utils/domUtils';
+import { Highlight, ActiveMemoState, HighlightMenuState } from '@/pages/history/codeeditor/types/types.ts';
+import { createIconDOM, calculateMemoPosition } from '@/pages/history/codeeditor/utils/domUtils.ts';
 import React from 'react';
 
 /**
