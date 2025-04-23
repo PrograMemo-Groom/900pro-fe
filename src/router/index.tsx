@@ -4,7 +4,6 @@ import Login from '@/pages/login/Login.tsx';
 import ChatPage from '@/pages/history/ChatPage.tsx';
 import ChatTest from "@/pages/history/ChatTest.tsx";
 import CodingTest from '@/pages/coding-test/CodingTest.tsx';
-import MyTestPage from '@/pages/my-test/MyTest';
 import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
@@ -43,10 +42,6 @@ const router = createBrowserRouter([
         path: 'history/test',
         element: <ChatTest />,
       },
-      {
-        path: 'my-test',
-        element: <MyTestPage />,
-      }
     ],
   },
 ]);
