@@ -16,7 +16,7 @@ interface UseTabManagementReturn {
   addTab: (id: string, name: string, language: CodeLanguage) => void;
 }
 
-export const useTabManagement = ({
+const useTabManagement = ({
   defaultLanguage,
   onLanguageChange
 }: UseTabManagementProps): UseTabManagementReturn => {
@@ -142,3 +142,5 @@ export const useTabManagement = ({
     addTab
   };
 };
+
+export default useTabManagement;

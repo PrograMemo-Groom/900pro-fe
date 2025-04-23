@@ -6,7 +6,7 @@ import '@/css/coding-test/EditorPanel.scss';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 // 분리된 컴포넌트 및 훅 임포트
-import { useTabManagement } from './EditorPanel/hooks/useTabManagement';
+import useTabManagement from './EditorPanel/hooks/useTabManagement';
 import Sidebar from './EditorPanel/sidebar/Sidebar';
 import TabBar from './EditorPanel/editor/TabBar';
 import CodeEditor from './EditorPanel/editor/CodeEditor';
@@ -21,15 +21,14 @@ const EditorPanel = ({
   isRunning,
   output
 }: EditorPanelProps) => {
-  // 에디터 ref
+
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null);
 
-  // 사이드바 상태 관리
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const sidebarPanelRef = useRef<any>(null);
   const [sidebarSize, setSidebarSize] = useState(0);
 
-  // 탭 관리 훅 사용
+  // 탭 관리 훅
   const {
     tabs,
     activeTabId,
@@ -85,6 +84,19 @@ const EditorPanel = ({
     addTab(id, name, language);
   };
 
+  // 파일 삭제 시 해당 탭을 닫는 핸들러
+  const handleDeleteItem = (id: string) => {
+    // 해당 ID의 탭이 열려있는지 확인
+    const tabToClose = tabs.find(tab => tab.id === id);
+    if (tabToClose) {
+      // 실제 탭 닫기를 위한 가짜 이벤트 객체 생성
+      const mockEvent = {
+        stopPropagation: () => {}
+      } as React.MouseEvent;
+      closeTab(id, mockEvent);
+    }
+  };
+
   return (
     <div className="editor-panel">
       <button
@@ -109,14 +121,16 @@ const EditorPanel = ({
           onExpand={() => setIsSidebarCollapsed(false)}
           onResize={setSidebarSize}
           defaultSize={sidebarSize}
+          onDeleteItem={handleDeleteItem}
         />
 
-        {!isSidebarCollapsed && (
-          <PanelResizeHandle className="resize-handle-horizontal" />
-        )}
+        {/* resize handle은 항상 렌더링하되, 사이드바가 접혀있을 때는 숨김 */}
+        <PanelResizeHandle
+          className={`resize-handle-horizontal ${isSidebarCollapsed ? 'hidden-resize-handle' : ''}`}
+        />
 
         {/* 메인 에디터 영역 */}
-        <Panel defaultSize={80} order={2}>
+        <Panel defaultSize={100} order={2}>
           <div className="main-editor-area">
             {/* 헤더 영역 - 탭바와 언어 선택기 */}
             <TabBar

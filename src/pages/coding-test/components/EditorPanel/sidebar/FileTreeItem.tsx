@@ -13,13 +13,15 @@ interface FileTreeItemProps {
   activeItemId?: string;
   onFolderToggle: (id: string) => void;
   onFileClick: (file: FileItem) => void;
+  onContextMenu: (event: React.MouseEvent, item: FileItem) => void;
 }
 
 const FileTreeItem: React.FC<FileTreeItemProps> = ({
   item,
   activeItemId,
   onFolderToggle,
-  onFileClick
+  onFileClick,
+  onContextMenu
 }) => {
   // 파일 타입에 따라 아이콘 렌더링
   const renderIcon = () => {
@@ -52,20 +54,28 @@ const FileTreeItem: React.FC<FileTreeItemProps> = ({
           activeItemId={activeItemId}
           onFolderToggle={onFolderToggle}
           onFileClick={onFileClick}
+          onContextMenu={onContextMenu}
         />
       </div>
     );
   };
 
+  // 컨텍스트 메뉴 이벤트 처리 함수
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault(); // 기본 메뉴 방지
+    onContextMenu(event, item); // 상위 컴포넌트로 이벤트와 아이템 전달
+  };
+
   return (
     <li className="file-tree-item">
       <div
-        className={`${item.type} ${item.type === 'folder' && item.isOpen ? 'active' : ''} ${activeItemId === item.id ? 'active' : ''}`}
+        className={`${item.type} ${item.type === 'folder' && item.isOpen ? 'open' : ''} ${activeItemId === item.id ? 'active' : ''}`}
         onClick={() =>
           item.type === 'folder'
             ? onFolderToggle(item.id)
             : onFileClick(item)
         }
+        onContextMenu={handleContextMenu}
       >
         {renderIcon()}
         <span>{item.name}</span>
@@ -81,13 +91,15 @@ interface FileTreeProps {
   activeItemId?: string;
   onFolderToggle: (id: string) => void;
   onFileClick: (file: FileItem) => void;
+  onContextMenu: (event: React.MouseEvent, item: FileItem) => void;
 }
 
 export const FileTree: React.FC<FileTreeProps> = ({
   items,
   activeItemId,
   onFolderToggle,
-  onFileClick
+  onFileClick,
+  onContextMenu
 }) => {
   return (
     <ul className="file-tree">
@@ -98,6 +110,7 @@ export const FileTree: React.FC<FileTreeProps> = ({
           activeItemId={activeItemId}
           onFolderToggle={onFolderToggle}
           onFileClick={onFileClick}
+          onContextMenu={onContextMenu}
         />
       ))}
     </ul>

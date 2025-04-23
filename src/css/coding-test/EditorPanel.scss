@@ -21,20 +21,41 @@
 
 .sidebar-header {
   height: 40px;
-  padding: 0px 8px;
+  padding: 0px 12px;
   font-size: 12px;
   font-weight: bold;
   color: #E7E7E7;
   // border-bottom: 1px solid #1E1E1E;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  cursor: pointer;
+  user-select: none;
+
+  .root-directory {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+
+    svg {
+      margin-right: 3px;
+      font-size: 12px;
+    }
+
+    .root-directory-name {
+      margin-left: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+    }
+  }
 }
 
 .file-explorer {
   flex: 1;
   overflow: auto;
-  padding: 2px 0;
+  padding: 0 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -50,13 +71,13 @@
   }
 
   .file-tree-item {
-    padding: 2px 0;
+    padding: 0 0;
   }
 
   .folder {
     display: flex;
     align-items: center;
-    padding: 0 12px;
+    padding: 2px 12px;
     cursor: pointer;
     user-select: none;
   }
@@ -64,7 +85,7 @@
   .file {
     display: flex;
     align-items: center;
-    padding: 0 12px;
+    padding: 2px 12px;
     cursor: pointer;
     user-select: none;
     // width: fit-content;
@@ -314,12 +335,12 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
-  width: 20px;
+  width: 16px;
   height: 40px;
   background-color: #2A4B6D;
   color: #CCCCCC;
   border: none;
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -343,4 +364,41 @@
 .editor-panel:has(.resize-handle-horizontal:active) [data-panel-group] > div,
 .editor-panel:has(.resize-handle-horizontal:active) .sidebar-toggle-button {
   transition: none !important;
+}
+
+.hidden-resize-handle {
+  pointer-events: none;
+  opacity: 0;
+  width: 0;
+}
+
+.context-menu {
+  position: absolute;
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 5px 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1000;
+  min-width: 150px;
+  color: #eee;
+
+  li {
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 15px;
+
+    &:hover {
+      background-color: #444;
+    }
+
+    &.delete {
+      color: #ff6b6b;
+      &:hover {
+        background-color: #5d3a3a;
+      }
+    }
+  }
 }
