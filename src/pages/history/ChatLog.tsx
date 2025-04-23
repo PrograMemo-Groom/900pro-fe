@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/history/chatbubble';
+import { TeamViewerProps } from './types/Chat';
 
 const myId = 2;
 let prevDate = '';
@@ -15,8 +16,13 @@ type Chat = {
   send_at: string;
 };
 
+type Messagetype = {
+  messages: Chat[] 
+}
 
-function ChatLog({ messages }: { messages: Chat[] }) {
+type mixtype = Messagetype & TeamViewerProps
+
+function ChatLog({ messages, onShowTeamViewer }: mixtype ) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -34,7 +40,9 @@ function ChatLog({ messages }: { messages: Chat[] }) {
         return(
             <div key={chat.id}>
                 {showLine && ( <DateDivider date={dateStr} />)}
-                {chat.userId === 1 ? (<BubbleChatbot content={chat.content} send_at={chat.send_at} />)
+                {chat.userId === 1 ? (<BubbleChatbot 
+                                      content={chat.content} send_at={chat.send_at}
+                                      onShowTeamViewer={onShowTeamViewer} />)
                 // 나
                 :chat.userId === myId ? (<BubbleMe content={chat.content} send_at={chat.send_at} />)
                 // 다른 사람
