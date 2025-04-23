@@ -6,6 +6,7 @@ import ChatTest from "@/pages/history/ChatTest.tsx";
 import CodingTest from '@/pages/coding-test/CodingTest.tsx';
 import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
+import WaitingRoom from "@/pages/waitingRoom/WaitingRoom";
 import Header from '@/pages/common/Header.tsx';
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/main',
         element: <MainNoTeam />,
+      },
+      {
+        path: '/waitingroom',
+        element: <WaitingRoom />,
       },
       {
         path: '/coding-test',
