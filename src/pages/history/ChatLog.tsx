@@ -29,7 +29,7 @@ function ChatLog({ messages }: Messagetype ) {
         return(
             <div key={chat.id}>
                 {showLine && ( <DateDivider date={dateStr} />)}
-                {chat.userId === null ? (<BubbleChatbot content={chat.content} send_at={chat.sendAt}/>)
+                {chat.chatbot === true ? (<BubbleChatbot content={chat.content} send_at={chat.sendAt}/>)
                 // 나
                 :chat.userId === myId ? (<BubbleMe content={chat.content} send_at={chat.sendAt} />)
                 // 다른 사람
