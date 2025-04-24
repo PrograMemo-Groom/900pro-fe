@@ -1,3 +1,4 @@
 export const Auth = {
-  LOGIN: "/user/login",
+  LOGIN: "/auth/login",
+  GET_USER_INFO: "/user/",
 }
