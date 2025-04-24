@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from '@/App';
 import Login from '@/pages/login/Login.tsx';
 import ChatPage from '@/pages/history/ChatPage.tsx';
@@ -7,7 +7,6 @@ import CodingTest from '@/pages/coding-test/CodingTest.tsx';
 import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
 import WaitingRoom from "@/pages/waitingRoom/WaitingRoom";
-import Header from '@/pages/common/Header.tsx';
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 
 // 라우터 설정
@@ -37,7 +36,7 @@ const router = createBrowserRouter([
         element: <WaitingRoom />,
       },
       {
-        path: '/coding-test',
+        path: 'coding-test',
         element: <CodingTest />,
       },
       {
@@ -47,7 +46,7 @@ const router = createBrowserRouter([
       {
         path: 'history/test',
         element: <ChatTest />,
-      }
+      },
     ],
   },
 ]);
