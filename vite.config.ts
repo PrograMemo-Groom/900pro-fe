@@ -27,11 +27,6 @@ const config = {
         // 필요하다면 경로 재작성 활성화
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
-      '/ws-chat': {
-      target: 'http://3.39.135.118:8080',
-      changeOrigin: true,
-      ws: true
-      },
     },
   },
 };
