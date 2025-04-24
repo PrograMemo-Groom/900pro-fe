@@ -8,6 +8,7 @@ import { ChatType} from '@/pages/history/types/Chat.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
+// 소켓 연결해보자구
 // 소켓 연결 import
 import { initStompClient, publishMessage, subscribe, unsubscribe } from '@/api/stompClient';
 
