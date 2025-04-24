@@ -1,67 +1,175 @@
-import React, { useEffect, useState } from 'react';
-import { initStompClient, sendMessage, disconnectStomp } from '@/api/stompClient';
+// import React, { useEffect, useState } from 'react';
+// import { initStompClient, sendMessage, disconnectStomp } from '@/api/stompClient';
 
-const WebSocketTestPage: React.FC = () => {
+// const WebSocketTestPage: React.FC = () => {
+//   const [connected, setConnected] = useState(false);
+//   const [message, setMessage] = useState('');
+//   const [messages, setMessages] = useState<string[]>([]);
+
+//   const token = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxhbGFsYWxhQGV4YW1wbGUuY29tIiwidXNlcklkIjo1LCJleHAiOjE3NDU1OTI5MzN9.sQinBJfx_IdrccuWWwC6Kc_yYs9I0DMEWNNjeF_U1M8'; // localStorage.getItem("token") 같은 걸로 처리 가능
+//   const SUBSCRIBE_PATH = '/sub/chat/room/1';
+//   const SEND_PATH = '/pub/chat/1/send-message';
+
+//   useEffect(() => {
+//     initStompClient(token, (msg) => {
+//       setConnected(true);
+//       setMessages((prev) => [...prev, msg.content || msg]);
+//     }, SUBSCRIBE_PATH,
+//     () => setConnected(true)
+//   );
+
+//     return () => {
+//       disconnectStomp();
+//       setConnected(false);
+//     };
+//   }, []);
+
+//   const handleSendMessage = () => {
+//     const payload = {
+//       chatRoomId: 1,
+//       userId: 5,
+//       content: message,
+//     };
+
+//     sendMessage(payload, SEND_PATH);
+//     setMessage('');
+//   };
+
+//   return (
+//     <div style={{ padding: '2rem' }}>
+//       <h2>🧪 WebSocket 채팅 테스트</h2>
+//       <p style={{ color: connected ? 'green' : 'red' }}>
+//         {connected ? '✅ 서버에 연결됨' : '⛔ 서버에 연결되지 않음'}
+//       </p>
+
+//       <div>
+//         <input
+//           value={message}
+//           onChange={(e) => setMessage(e.target.value)}
+//           placeholder="메시지를 입력하세요"
+//         />
+//         <button onClick={handleSendMessage}>보내기</button>
+//       </div>
+
+//       <ul>
+//         {messages.map((msg, idx) => (
+//           <li key={idx}>🗨 {msg}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// };
+
+// export default WebSocketTestPage;
+
+import { useEffect, useState, useRef } from 'react';
+import { Client, IMessage } from '@stomp/stompjs';
+
+const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
+const SUBSCRIBE_PATH = '/sub/waiting-room/1';
+const SEND_PATH = '/pub/waiting-room/ready';
+
+const WebsocketTest = () => {
   const [connected, setConnected] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [status, setStatus] = useState<'READY' | 'WAITING'>('WAITING');
+  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
+  const clientRef = useRef<Client | null>(null);
+  const subscribedRef = useRef(false);
 
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxhbGFsYWxhQGV4YW1wbGUuY29tIiwidXNlcklkIjo1LCJleHAiOjE3NDU1OTI5MzN9.sQinBJfx_IdrccuWWwC6Kc_yYs9I0DMEWNNjeF_U1M8'; // localStorage.getItem("token") 같은 걸로 처리 가능
-  const SUBSCRIBE_PATH = '/sub/chat/room/1';
-  const SEND_PATH = '/pub/chat/1/send-message';
+  const TOKEN =
+    'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxhbGFsYWxhQGV4YW1wbGUuY29tIiwidXNlcklkIjo1LCJleHAiOjE3NDU1OTI5MzN9.sQinBJfx_IdrccuWWwC6Kc_yYs9I0DMEWNNjeF_U1M8';
 
   useEffect(() => {
-    initStompClient(token, (msg) => {
-      setConnected(true);
-      setMessages((prev) => [...prev, msg.content || msg]);
-    }, SUBSCRIBE_PATH,
-    () => setConnected(true)
-  );
+    const client = new Client({
+      brokerURL: `${SOCKET_URL}?token=${TOKEN}`,
+      reconnectDelay: 5000,
+
+      onConnect: () => {
+        console.log('✅ 연결 성공!');
+        setConnected(true);
+
+        if (!subscribedRef.current) {
+          client.subscribe(SUBSCRIBE_PATH, (msg: IMessage) => {
+            try {
+              const payload = JSON.parse(msg.body);
+              console.log('📥 실시간 수신 메시지:', payload);
+
+              const messageStr = `${payload.userName} 상태: ${payload.status}`;
+              setReceivedMessages(prev => [...prev, messageStr]);
+            } catch (e) {
+              console.warn('❗ 메시지 파싱 실패:', msg.body);
+              setReceivedMessages(prev => [...prev, msg.body]);
+            }
+          });
+          subscribedRef.current = true;
+        }
+      },
+
+      onStompError: (frame) => {
+        console.error('❌ STOMP 에러:', frame);
+      },
+
+      onWebSocketError: (err) => {
+        console.error('❌ WebSocket 연결 실패:', err);
+      },
+    });
+
+    client.activate();
+    clientRef.current = client;
 
     return () => {
-      disconnectStomp();
+      client.deactivate();
       setConnected(false);
+      subscribedRef.current = false;
     };
   }, []);
 
-  const handleSendMessage = () => {
-    const payload = {
-      chatRoomId: 1,
-      userId: 5,
-      content: message,
+  const sendStatus = () => {
+    if (!clientRef.current || !connected) {
+      console.warn('❗ 연결되지 않았습니다');
+      return;
+    }
+
+    const newStatus = status === 'READY' ? 'WAITING' : 'READY';
+    setStatus(newStatus);
+
+    const msg = {
+      teamId: 1,
+      userId: 7,
+      userName: '세진',
+      status: newStatus,
     };
 
-    sendMessage(payload, SEND_PATH);
-    setMessage('');
+    clientRef.current.publish({
+      destination: SEND_PATH,
+      body: JSON.stringify(msg),
+      headers: { 'content-type': 'application/json' },
+    });
+
+    console.log('🚀 상태 전송됨:', msg);
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>🧪 WebSocket 채팅 테스트</h2>
-      <p style={{ color: connected ? 'green' : 'red' }}>
-        {connected ? '✅ 서버에 연결됨' : '⛔ 서버에 연결되지 않음'}
-      </p>
+    <div>
+      <h2>🧷 WebSocket 상호작용 테스트</h2>
+      <p>현재 상태: {status}</p>
+      <button onClick={sendStatus}>
+        상태 전환 ({status === 'READY' ? 'WAITING' : 'READY'} 으로 전환)
+      </button>
 
-      <div>
-        <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="메시지를 입력하세요"
-        />
-        <button onClick={handleSendMessage}>보내기</button>
+      <div style={{ marginTop: '2rem' }}>
+        <h4>📨 실시간 수신 메시지 목록</h4>
+        <ul>
+          {receivedMessages.map((msg, idx) => (
+            <li key={idx}>🟢 {msg}</li>
+          ))}
+        </ul>
       </div>
-
-      <ul>
-        {messages.map((msg, idx) => (
-          <li key={idx}>🗨 {msg}</li>
-        ))}
-      </ul>
     </div>
   );
 };
 
-export default WebSocketTestPage;
-
+export default WebsocketTest;
 
 // import React, { useEffect, useState, useRef } from 'react';
 // import { Client, IMessage } from '@stomp/stompjs';
