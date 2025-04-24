@@ -8,9 +8,12 @@ export interface LoginProps {
   initialValues?: LoginFormValues;
 }
 export interface LoginDataResponse {
-  "status": number,
-  "message": string,
-  "path": string,
-  "error": string
+  success: boolean;
+  data: {
+    user_id: number;
+    team_id: number | null;
+    token: string;
+  };
+  message: string;
 }
 export type LoginResult = LoginDataResponse | SampleResponse;
