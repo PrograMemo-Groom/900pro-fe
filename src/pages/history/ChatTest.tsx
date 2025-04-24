@@ -25,11 +25,12 @@ const WebSocketTestPage: React.FC = () => {
     }
 
     // stomp 클라이언트 생성
+    // CLIENT : 웹소켓 위에서 동작하는 메시징 프로토콜인 STOMP를 다루기위한 객체
     const client = new Client({
       webSocketFactory: () => new WebSocket(`${SOCKET_URL}?token=${token}`),
-      reconnectDelay: 5000,
+      reconnectDelay: 5000, // 연결 끊겼을 때 자동으로 다시 연결하는 간격
 
-      // 구독 처리
+      // 구독 처리 - 웹소켓이 성공적으로 연결되었을 때 실행되는 함수
       onConnect: () => {
         console.log('✅ WebSocket 연결 성공');
         setConnected(true); // connected 상태 true로 변경
@@ -60,9 +61,11 @@ const WebSocketTestPage: React.FC = () => {
         //   }
         // });
       },
+      // stomp 상의 에러 발생시 실행 콜백 - 서버가 에러 응답, 브로커가 비정상
       onStompError: (frame) => {
         console.error('❌ STOMP 에러:', frame);
       },
+      // 브라우저 수준에서 문제 발생 - 서버 꺼짐, 포트 닫힘, 핸드셰이크 실패
       onWebSocketError: (error) => {
         console.error('❌ WebSocket 연결 실패:', error);
       },
