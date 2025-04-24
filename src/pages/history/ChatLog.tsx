@@ -1,21 +1,13 @@
 import { useEffect, useRef } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/history/chatbubble';
+import { ChatType } from '@/pages/history/types/Chat.ts';
 
 const myId = 2;
 let prevDate = '';
 
-type Chat = {
-  id: number;
-  chatRoomId: number;
-  userId: number;
-  userName: string; //유저네임 추가
-  content: string;
-  send_at: string;
-};
-
 type Messagetype = {
-  messages: Chat[] 
+  messages: ChatType[] 
 }
 
 function ChatLog({ messages }: Messagetype ) {
