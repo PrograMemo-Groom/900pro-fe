@@ -1,5 +1,19 @@
 import styles from '@/css/history/TeamView/TeamProb.module.scss'
-import { Question } from '@/pages/history/data/ProbDummy';
+// import { Question } from '@/pages/history/data/ProbDummy';
+
+export type Question = {
+    id: number;
+    baekNum: number;
+    title: string;
+    description: string;
+    level: string;
+    exInput: string;
+    exOutput: string;
+    inputDes: string | null;
+    outputDes: string | null;
+    timeLimit: number;
+    memoryLimit: number;
+};
 
 type Props = {
   question: Question;
