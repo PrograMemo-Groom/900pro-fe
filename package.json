@@ -31,6 +31,7 @@
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^2.1.8",
     "react-router-dom": "^6.11.2",
+    "redux-persist": "^6.0.0",
     "sockjs-client": "^1.6.1",
     "y-codemirror.next": "^0.3.5",
     "y-indexeddb": "^9.0.12",
