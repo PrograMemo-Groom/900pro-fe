@@ -11,7 +11,7 @@ import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 export default function TeamViewer() {
   // nav 선택
   const [whatActiveNav, setWhatActiveNav] = useState<'prob' | 'code'>('prob');
-  // 리덕스에서 끄내오기
+  // 리덕스에서 문제 꺼내오기
   const problemList = useSelector((state: RootState) => state.historyProblem.problems);
 
   // 문제 번호 선택
