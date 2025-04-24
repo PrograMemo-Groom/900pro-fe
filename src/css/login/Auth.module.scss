@@ -39,12 +39,25 @@
     width: 100%;
     max-width: 479px;
     padding: 0 1rem;
+    position: relative;
 
     & > h2 {
       font-size: 3rem;
       text-align: center;
       font-weight: normal;
       margin-bottom: 20px;
+    }
+
+    // 에러 메시지를 위한 컨테이너 (고정 높이)
+    .errorContainer {
+      height: 120px; // 완전 고정 높이로 설정
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto; // 내용이 많을 경우 스크롤
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+      position: relative; // 포지셔닝 컨텍스트 설정
     }
 
     // ---------------------  form 설정 공통 css 만 사용하는 코드
@@ -54,6 +67,7 @@
       gap: 0.5rem;
       max-width: 479px;
       width: 100%;
+      position: relative;
 
       & > label {
         font-size: 38px;
@@ -89,10 +103,39 @@
           cursor: pointer;
           transition: background 0.3s;
 
-          &:hover {
+          &:hover:not(:disabled) {
             background: rgba(161, 227, 249, 0.6);
           }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+
+          &.verifiedBtn {
+            background: #4CAF50;
+            color: white;
+          }
         }
+      }
+
+      // 힌트 메시지 컨테이너 (고정 높이)
+      .messageContainer {
+        min-height: 40px;
+        margin-top: 0.5rem;
+      }
+
+      .passwordHint {
+        color: #ccc;
+        font-size: 14px;
+        margin-left: 1rem;
+      }
+
+      // 필드별 에러 메시지 (패스워드 에러 등)
+      .fieldError {
+        height: 40px;
+        display: flex;
+        align-items: center;
       }
     }
 
@@ -104,8 +147,42 @@
       background: #94C1F0;
       color: black;
       font-size: 2rem;
+      cursor: pointer;
+      transition: opacity 0.3s;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
     // 공통 부분 -------------------------------------
+
+    .errorMessage {
+      color: #ff5252;
+      font-size: 16px;
+      padding: 0.5rem 1rem;
+      background-color: rgba(255, 82, 82, 0.1);
+      border-radius: 8px;
+      width: calc(100% - 2rem); // 패딩을 고려한 너비 조정
+      box-sizing: border-box;
+      margin: 0;
+      opacity: 1;
+      transition: opacity 1s ease;
+
+      &.fade-out {
+        opacity: 0;
+      }
+
+      &.successMessage {
+        color: #4CAF50;
+        background-color: rgba(76, 175, 80, 0.1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
     .checkAuth {
       display: flex;
@@ -130,7 +207,7 @@
       }
       & p:nth-child(even) {
         text-decoration: underline;
-        text-underline-color: white;
+        // text-underline-color: white;
         text-decoration-color: transparent;
         cursor: pointer;
 
@@ -139,8 +216,5 @@
         }
       }
     }
-
   }
-
-
 }
