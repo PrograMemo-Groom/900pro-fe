@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from "@/store/auth/slices";
 import uiReducer from '@/store/history/uiSlice';
+import problemReducer from './history/problemSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -17,6 +18,7 @@ export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
     ui: uiReducer,
+    historyProblem: problemReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
