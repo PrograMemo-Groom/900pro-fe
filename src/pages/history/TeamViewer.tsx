@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 import styles from '@/css/history/TeamView/TeamView.module.scss';
 import TeamCode from '@/pages/history/TeamCode';
 import TeamProb from '@/pages/history/TeamProb';
-import { questionDummy } from '@/pages/history/data/ProbDummy';
-
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
@@ -17,8 +15,6 @@ export default function TeamViewer() {
   const problemList = useSelector((state: RootState) => state.historyProblem.problems);
 
   // 문제 번호 선택
-  // const [selectedQuestion, setSelectedQuestion] = useState<number>(questionDummy[0].baekNum);
-  // const selected = questionDummy.find((q) => q.baekNum === selectedQuestion);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
   const selected = problemList.find((q) => q.baekNum === selectedQuestion);
 
