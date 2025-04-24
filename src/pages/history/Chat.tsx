@@ -11,7 +11,6 @@ import { RootState } from '@/store';
 import { initStompClient, sendMessage, disconnectStomp } from '@/api/stompClient';
 
 const myId = 2;
-// const chatRoomId = 1;
 
 function Chat() {
   // 팀 뷰어 리덕스
@@ -44,7 +43,6 @@ function Chat() {
     }
 
     const subscribePath = `/sub/chat/room/${roomId}`;
-    const sendPath = `/pub/chat/${roomId}/send-message`;
 
     initStompClient(token, (msg) => {
       setConnected(true);
