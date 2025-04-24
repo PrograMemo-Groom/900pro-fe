@@ -8,6 +8,7 @@ import ResetPassword from '@/pages/resetPassword/ResetPassword.tsx';
 import SignUp from '@/pages/signUp/SignUp.tsx';
 import WaitingRoom from "@/pages/waitingRoom/WaitingRoom";
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
+import MainTeam from '@/pages/teamain/TeamMain.tsx';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/main',
         element: <MainNoTeam />,
+      },
+      {
+        path: '/myteam',
+        element: <MainTeam />,
       },
       {
         path: '/waitingroom',
