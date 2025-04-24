@@ -6,8 +6,51 @@
 }
 
 .left_container{
-    width: 34vw;
+    width: 35vw;
     height: 59vh;
+}
+
+.team_info{
+    position: relative;
+    padding: 15px 25px;
+    border-radius: 30px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.85rem;
+    display: inline-block;
+    z-index: 0;
+    width: 100%;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px 30px 0 0;
+        padding: 2px; //테두리 두께
+        background: linear-gradient(194deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: -1;
+    }
+
+    h2{
+        font-size: 1.52rem;
+    }
+    p{
+        font-size: 1.2rem;
+    }
+}
+
+.team_des{
+    padding: 20px 25px 25px 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    height: 48vh;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 aside{
@@ -15,9 +58,21 @@ aside{
     height: 70vh;
 }
 
+.start_button{
+    margin-top: 2vh;
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    color: #ffffff;
+    background: linear-gradient(to right, #666666, #555555);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px; // pill형태
+    text-align: center;
+    cursor: not-allowed;
+}
+
 .container{
     position: relative;
-    padding: 15px 25px;
     border-radius: 30px;
     background-color: transparent;
     color: white;
@@ -27,6 +82,7 @@ aside{
 
     text-align: center;
     margin-top: 4vh;
+    max-height: 70vh;
 
     &::before {
         content: "";
