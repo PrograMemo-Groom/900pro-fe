@@ -1,5 +1,5 @@
 import { Client, Frame, StompSubscription } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+// import SockJS from 'sockjs-client';
 import { store } from '@/store';
 
 export enum ConnectionStatus {
@@ -11,6 +11,7 @@ export enum ConnectionStatus {
 }
 
 let stompClient: Client | null = null;
+
 let connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
 const subscriptions: Map<string, StompSubscription> = new Map();
 const MAX_RECONNECT_ATTEMPTS = 5;
@@ -58,6 +59,9 @@ const handleSubscriptionError = (_action: string, _destination: string): void =>
 
 // STOMP 클라이언트 시작
 export const initStompClient = (): Client => {
+
+  const token = localStorage.getItem('token');
+
   if (stompClient?.active) {
     stompClient.deactivate();
   }
@@ -66,7 +70,11 @@ export const initStompClient = (): Client => {
   reconnectAttempts = 0;
 
   stompClient = new Client({
-    webSocketFactory: () => new SockJS('/ws-chat'),
+
+    //SockJS 대신 웹소켓 사용
+    webSocketFactory: () => 
+      new WebSocket(`ws://3.39.135.118:8080/ws-chat?token=${token}`),
+
     beforeConnect: () => {
       connectionTimeoutId = setTimeout(() => {
         if (connectionStatus === ConnectionStatus.CONNECTING) {
@@ -84,9 +92,11 @@ export const initStompClient = (): Client => {
     debug: (_str: string) => {
       console.log('[STOMP DEBUG]', _str);
     },
+
     reconnectDelay: 5000,
     heartbeatIncoming: 4000,
     heartbeatOutgoing: 4000,
+
     onConnect: (_frame: Frame) => {
       console.log('📡 STOMP 연결 완료');
       setConnectionStatus(ConnectionStatus.CONNECTED);

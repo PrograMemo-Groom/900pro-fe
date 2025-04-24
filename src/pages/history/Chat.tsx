@@ -13,8 +13,9 @@ const myId = 2;
 const chatRoomId = 1;
 
 function Chat() {
-
+  // 팀 뷰어 리덕스
   const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
+  
   // 코드 관리 - 내가 채팅 보내기
   const [messages, setMessages] = useState<ChatType[]>(ChatDummy);
 
