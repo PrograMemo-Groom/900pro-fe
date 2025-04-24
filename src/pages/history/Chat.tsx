@@ -10,6 +10,9 @@ import { RootState } from '@/store';
 // 소켓 연결해보자구
 import { initStompClient, sendMessage, disconnectStomp } from '@/api/stompClient';
 
+// 여기는 과거 채팅내역 불러오는곳
+import { fetchChatHistory } from '@/api/chatApi';
+
 const myId = 2;
 
 function Chat() {
@@ -43,6 +46,15 @@ function Chat() {
     }
 
     const subscribePath = `/sub/chat/room/${roomId}`;
+
+    // 이전 채팅내역 먼저 불러와야함.
+    fetchChatHistory(roomId)
+    .then((history: ChatType[]) => {
+      setMessages(history);
+    })
+    .catch((err) => {
+      console.error('❌ 이전 메시지 불러오기 실패:', err);
+    });
 
     initStompClient(token, (msg) => {
       setConnected(true);
