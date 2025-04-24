@@ -10,6 +10,7 @@ import { RootState } from '@/store';
 // 소켓 연결해보자구
 
 const myId = 2;
+const chatRoomId = 1;
 
 function Chat() {
 
