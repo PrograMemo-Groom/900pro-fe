@@ -15,8 +15,8 @@ const TeamHeader = () => {
     <div className={styles.container}>
       {/* <SearchBox /> */}
       <section>
-        {/* <FilterOrder /> */}
-        {/* <FilterQuestion /> */}
+        {/* <FilterOrder />
+        <FilterQuestion /> */}
         <button className={styles.teamCreateButton} 
         onClick={() => handleCreateTeam()}>
           팀 생성</button>

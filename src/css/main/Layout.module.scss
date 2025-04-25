@@ -29,7 +29,7 @@ header{
   .container {
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: end;  // 여기가 헤더 버튼 정렬
     align-items: center;
     max-width: 850px;
     width: 100%;
