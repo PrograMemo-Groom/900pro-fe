@@ -9,12 +9,11 @@ const TeamDetail = ({team, onClose} : any) => {
         onClick={(e) => e.stopPropagation()} // 배경 누를 때만 닫히게
       >
         <h2>{team.teamName}</h2>
-        <p>{team.time}</p>
+        <p>⏰ 매일 {team.startTime}</p>
         <p>난이도 {team.level} / {team.problemCount}문제 / 3시간</p>
         <p>인원 {team.currentMembers} / 10</p>
         <hr />
-        <p>소요시간은 3시간이며 ... (설명 등)</p>
-        <p>난이도는 하~최상 / 토론 위주 진행 ...</p>
+        <p>설명이 들어가야하는데 없다</p>
         <button className={styles.joinButton}>팀 가입하기</button>
       </div>
     </div>

@@ -28,6 +28,7 @@ const MainNoTeam = () => {
     setIsOpenDialog(true);
     setSelectedIndex(index);
   }
+  
   useEffect(() => {
     const fetchTeamData = async () => {
       try {
@@ -70,7 +71,8 @@ const MainNoTeam = () => {
         </section>
 
         {isOpenDialog && (
-          <TeamDetail team={teamList[selectedIndex]} onClose={() => setIsOpenDialog(false)} />
+          <TeamDetail team={teamList[selectedIndex]} 
+          onClose={() => setIsOpenDialog(false)} />
         )}
       </div>
     </main>

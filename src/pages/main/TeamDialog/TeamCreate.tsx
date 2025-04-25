@@ -3,7 +3,7 @@ import { useState } from 'react';
 import styles from '@/css/main/CreateModal.module.scss';
 
 const TeamCreate = ({ onClose }: any) => {
-  const userId = 2; // TODO: 실제 로그인된 사용자 ID로 변경
+  const userId = 5; // TODO: 실제 로그인된 사용자 ID로 변경
 
   const [teamName, setTeamName] = useState('');
   const [description, setDescription] = useState('');
@@ -12,6 +12,8 @@ const TeamCreate = ({ onClose }: any) => {
   const [startHour, setStartHour] = useState('');
   const [startMinute, setStartMinute] = useState('');
   const [durationTime, setDurationTime] = useState(2);
+
+  const isTeamNameValid = teamName.length >= 2;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +34,8 @@ const TeamCreate = ({ onClose }: any) => {
       );
       console.log('팀 생성 성공', response.data);
       onClose();
-    } catch (error) {
-      console.error('팀 생성 실패', error);
+    } catch (error: any) {
+      console.error('팀 생성 실패', error.response?.data || error.message);
     }
   };
 
@@ -48,6 +50,11 @@ const TeamCreate = ({ onClose }: any) => {
             onChange={(e) => setTeamName(e.target.value)}
             placeholder="생성할 팀 이름을 자유롭게 입력해주세요."
           />
+          {!isTeamNameValid && (
+            <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '-15px' }}>
+              *팀 이름은 2자 이상 10자 이하로 입력해주세요
+            </p>
+          )}
 
           <label>팀 설명</label>
           <textarea
