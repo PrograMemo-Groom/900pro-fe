@@ -24,7 +24,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             if (user.teamId === null) {
                 navigate('/main');
             } else {
-                navigate('/waitingroom');
+                navigate('/myteam');
             }
         }
     }, [isLoggedIn, user.teamId, navigate]);
