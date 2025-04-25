@@ -3,7 +3,9 @@ import styles from '@/css/history/Chat.module.scss'
 import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/history/chatbubble';
 import { ChatType } from '@/pages/history/types/Chat.ts';
 
-const myId = 2;
+const raw = localStorage.getItem('persist:auth');
+const myId = raw ? Number(JSON.parse(raw).userId) : null;
+
 let prevDate = '';
 
 type Messagetype = {
@@ -20,8 +22,7 @@ function ChatLog({ messages }: Messagetype ) {
   return (
     <section className={styles.chat_container}>
       {messages.map((chat) => {
-
-        // const dateStr = new Date(chat.send_at).toISOString().split('T')[0];
+        
         const dateStr = new Date(chat.sendAt?.split('.')[0]).toISOString().split('T')[0];
         const showLine = prevDate !== dateStr; // 이전 날짜와 현재 날짜 비교 - 다르면 선 보이게
         prevDate = dateStr;

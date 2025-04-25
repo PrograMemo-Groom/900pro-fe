@@ -1,3 +1,5 @@
+// 더 개선할 수 있는건 리액트 훅으로 빼는거
+
 import { Client, IMessage } from '@stomp/stompjs';
 
 let stompClient: Client | null = null;
