@@ -13,12 +13,11 @@ export interface Member {
     id: number;
     teamName: string;
     description: string;
-    level: 'EASY' | 'MEDIUM' | 'HARD'; // 서버 명세에 맞게
+    level: string; 
     problemCount: number;
     startTime: string;
     durationTime: number;
     currentMembers: number;
-    maxMembers: number;
     leader: Leader;
     members: Member[];
   }
@@ -33,7 +32,6 @@ export const teamDummy: TeamData = {
     startTime: "2025-04-22T10:00",
     durationTime: 3,
     currentMembers: 6,
-    maxMembers: 10,
     leader: {
       userId: 3,
       userName: "거녕거녕"
