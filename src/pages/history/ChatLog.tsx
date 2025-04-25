@@ -22,7 +22,7 @@ function ChatLog({ messages }: Messagetype ) {
   return (
     <section className={styles.chat_container}>
       {messages.map((chat) => {
-        
+
         const dateStr = new Date(chat.sendAt?.split('.')[0]).toISOString().split('T')[0];
         const showLine = prevDate !== dateStr; // 이전 날짜와 현재 날짜 비교 - 다르면 선 보이게
         prevDate = dateStr;

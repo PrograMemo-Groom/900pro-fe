@@ -3,6 +3,7 @@ export default function TeamMain() {
   return (
     <div className={styles.teamroom}>
         <h1 className={styles.header}>9BACKPRO</h1>
+
         <main className={styles.teamroom_main}>
             <section className={styles.left_container}>
                 <section className={styles.container}>
@@ -30,28 +31,30 @@ export default function TeamMain() {
                 </footer>
             </section>
             <aside className={styles.container}>
-                <div>
-                    <p>참여멤버</p>
-                    <p>6 / 10명</p>
-                    <button>히스토리</button>
+                <div className={styles.right_container}>
+                    <h2>참여멤버</h2>
+                    <h3> <span>6</span> / 10명</h3>
 
-                    <div>
+                    <button className={styles.history_button}>
+                        히스토리
+                    </button>
+
+                    <p>
                         <span>팀장</span> 
-                        김재홍 <span role="img" aria-label="왕관">👑</span>
-                    </div>
+                        김재홍
+                        <span role="img" aria-label="왕관">👑</span>
+                    </p>
 
-                    <div>
-                        <p>팀원</p>
-                        <ul>
-                            <li>강세진</li>
-                            <li>김건영</li>
-                            <li>김유림</li>
-                            <li>이보미</li>
-                            <li>심동훈</li>
-                        </ul>
+                    <p className={styles.teamtext}>팀원</p>
+                    <div className={styles.member_list}>
+                        <p>강세진</p>
+                        <p>김건영</p>
+                        <p>김유림</p>
+                        <p>이보미</p>
+                        <p>심동훈</p>
                     </div>
                 </div>
-                <button className="exit-btn">팀 탈퇴하기</button>
+                <button className={styles.exitbtn}>팀 탈퇴하기</button>
             </aside>
         </main>
     </div>
