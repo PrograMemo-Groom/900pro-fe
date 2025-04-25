@@ -30,8 +30,13 @@ function Chat() {
   // 채팅룸 id
   const roomId = useSelector((state: RootState) => state.teamain.teamId);
 
+  // 팀 가입하면 아래로 수정하면 됨
+  // const roomId = useSelector((state: RootState) => state.auth.user.teamId);
+
+  console.log(roomId)
+
   useEffect(() => {
-    if (!token || roomId === null) {
+    if (!token || typeof roomId !== 'number') {
       console.warn('No token available , roomId is null');
       return;
     }
