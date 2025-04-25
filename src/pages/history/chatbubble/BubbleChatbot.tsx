@@ -21,8 +21,11 @@ export default function BubbleChatbot({ content, send_at, test_date }: Props) {
   const lines = content.split('\n');
   const teamId = useSelector((state: RootState) => state.teamain.teamId);
 
+  // 팀 가입하면 아래로 수정
+  // const teamId = useSelector((state: RootState) => state.auth.user.teamId);
+
   const handleClickShowProblems = async () => {
-    if (!test_date || teamId === null) {
+    if (!test_date || typeof teamId !== 'number') {
       console.warn('⚠️ 잘못된 요청경로로 인해 문제를 조회할 수 없습니다. (test_date가 null)');
       return;
     }
