@@ -1,42 +1,20 @@
 @use "@/css/common/_global" as *;
 
-.header {
-  width: 100vw;
+header{
   display: flex;
+  flex-direction: row;
   align-items: center;
-  position: relative;
-  justify-content: center;
-  height: 120px;
-  text-align: center;
-  gap: 2rem;
+  position: relative; 
 
-  @media (max-width: 536px) {
-    flex-direction: column;
+  img{
+      width: 35px;
+      height: 30px;
+      cursor: pointer;
   }
 
-
-  h1 {
-    @include projectTitle(80px);
-  }
-
-  .menuIcon {
-    position: absolute;
-    left: 13rem;
-    width: 72px;
-    height: 60px;
-    cursor: pointer;
-    margin-bottom: 4rem;
-
-    @media (max-width: 1000px) {
-      position: static;
-      margin-bottom: 2rem;
-      align-self: flex-start;
-    }
-    @media (max-width: 536px) {
-      position: static;
-      margin: 2rem;
-      align-self: flex-start;
-    }
+  h1{
+      @include projectTitle(3rem);
+      margin: 6px auto 0 auto;
   }
 }
 
@@ -46,7 +24,7 @@
   justify-content: center;
   align-items: center;
   flex: 1;
-  width: 100vw;
+  width: 80vw;
 
   .container {
     display: flex;
@@ -54,7 +32,7 @@
     justify-content: space-between;
     align-items: center;
     max-width: 850px;
-    width: 100%;
+    // width: 100%;
 
     & > section {
       display: flex;
