@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { setTeamId, setMembers } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
-import StartButton from '@/pages/teamain/StartButton';
 import styles from '@/css/teamain/TeamMain.module.scss'
 
 export default function TeamMain() {
@@ -118,11 +117,15 @@ export default function TeamMain() {
                 </section>
 
                 <footer>
-                <StartButton
-                    isActive={isActive}
-                    timeLeft={timeLeft}
-                    onClick={handleStartClick}
-                />
+                    <button className={styles.start_button}
+                        disabled={!isActive}
+                        onClick={handleStartClick}
+                        >
+                        {isActive 
+                            ? `시험 시작까지 ${formatTime(timeLeft)} 남음`
+                            : '시험에 입장할 수 없습니다.'
+                        }
+                    </button>
                 </footer>
 
             </section>
