@@ -13,14 +13,21 @@ const authPersistConfig = {
   whitelist: ['token', 'user', 'isLoggedIn', 'userId'],
 };
 
+const teamainPersistConfig = {
+  key: 'teamain',
+  storage,
+  whitelist: ['teamId'],
+};
+
 const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
+const persistedTeamainReducer = persistReducer(teamainPersistConfig, teamainReducer);
 
 export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
     ui: uiReducer,
     historyProblem: problemReducer,
-    teamain: teamainReducer,
+    teamain: persistedTeamainReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
