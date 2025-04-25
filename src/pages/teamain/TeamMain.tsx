@@ -5,8 +5,11 @@ import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import styles from '@/css/teamain/TeamMain.module.scss'
 import hamburgerIcon from '@/assets/hamb.svg';
 
-export default function TeamMain() {
+import { useNavigate } from 'react-router-dom';
 
+export default function TeamMain() {
+    const navigate = useNavigate();
+    
     // 일단 1로 하드코딩
     const teamId = 1;
 
@@ -24,6 +27,10 @@ export default function TeamMain() {
     if (!teamData) {
         return <div>재접속 plz 네트워크가 느려요잉~</div>;
     }
+
+    const handleHistoryButtonClick = () => {
+        navigate('/history');
+    };
 
     const leader = teamData.members.find((member) => member.userId === teamData.leaderId);
 
@@ -60,7 +67,8 @@ export default function TeamMain() {
                         / 10명
                     </h3>
 
-                    <button className={styles.history_button}>
+                    <button className={styles.history_button}
+                        onClick={handleHistoryButtonClick}>
                         히스토리
                     </button>
 
