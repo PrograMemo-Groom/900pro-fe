@@ -36,3 +36,35 @@ export const fetchProblemList = async (teamId: number, date: string): Promise<Pr
     throw error;
   }
 };
+
+export interface ExecuteCodeResponse {
+  success: boolean;
+  data: {
+    status: string;
+    stdout: string;
+    exitCode: number;
+    error?: {
+      code: string;
+      message: string;
+      detail: string;
+      source: string;
+    };
+  };
+  message: string | null;
+}
+
+export const executeCode = async (language: string, code: string): Promise<ExecuteCodeResponse> => {
+  try {
+    // 백엔드 서버에 직접 요청 - language를 URL 경로에 포함
+    const response = await axios.post<ExecuteCodeResponse>(
+      `http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090/execute/${language}`,
+      {
+        code: code
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('코드 실행 중 오류가 발생했습니다:', error);
+    throw error;
+  }
+};

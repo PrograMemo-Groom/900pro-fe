@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CodeLanguage } from '@/pages/coding-test/types/types';
 import { defaultCode } from '@/pages/coding-test/constants/constants';
+import { executeCode } from '@/api/codingTestApi';
 
 export const useCodingTestLogic = () => {
   const [output, setOutput] = useState<string>('');
@@ -71,19 +72,95 @@ export const useCodingTestLogic = () => {
       return;
     }
 
-    // 실제 구현에서는 백엔드로 코드를 보내 실행하고 결과를 받아오겠지만,
-    // 여기서는 시뮬레이션만 합니다.
-    setTimeout(() => {
-      const resultHeader = `--- ${selectedLanguage} 실행 결과 ---`;
-      // codeContent[selectedLanguage]가 존재하는지 확인 후 접근
-      const currentCode = codeContent[selectedLanguage] || '';
-      const resultContent = currentCode.includes('\n')
-        ? currentCode.substring(currentCode.indexOf('\n') + 1)
-        : '// 코드가 없습니다.';
-      const resultFooter = '--------------------------';
-      setOutput(`${resultHeader}\n${resultContent.trim() || '실행 완료.'}\n${resultFooter}`);
-      setIsRunning(false);
-    }, 1500);
+    // 각 언어별로 적절한 처리 후 백엔드 API 호출
+    const processCode = async () => {
+      try {
+        let codeToRun = codeContent[selectedLanguage];
+
+        // 언어별 특수 처리 (필요시)
+        switch (selectedLanguage) {
+          case 'javascript':
+            // JS 코드에 console.log가 없는 경우 기본 출력 추가 (예시)
+            if (!codeToRun.includes('console.log')) {
+              codeToRun = `// 결과가 출력되지 않는 경우를 대비해 기본 실행 결과를 출력합니다
+try {
+  const result = (() => {
+    ${codeToRun}
+  })();
+  if (result !== undefined) console.log(result);
+} catch (e) {
+  console.error(e);
+}`;
+            }
+            break;
+          case 'java':
+            // Java 코드에 클래스 및 main 메소드가 없는 경우 추가 (예시)
+            if (!codeToRun.includes('public class') && !codeToRun.includes('public static void main')) {
+              codeToRun = `
+public class Main {
+  public static void main(String[] args) {
+    ${codeToRun}
+  }
+}`;
+            }
+            break;
+          case 'cpp':
+            // C++ 코드에 기본 include 및 main 함수가 없는 경우 추가 (예시)
+            if (!codeToRun.includes('#include') || !codeToRun.includes('int main')) {
+              if (!codeToRun.includes('#include')) {
+                codeToRun = `#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\n${codeToRun}`;
+              }
+              if (!codeToRun.includes('int main')) {
+                codeToRun = `${codeToRun}\n\nint main() {\n  // 기본 실행 코드\n  return 0;\n}`;
+              }
+            }
+            break;
+          case 'c':
+            // C 코드에 기본 include 및 main 함수가 없는 경우 추가 (예시)
+            if (!codeToRun.includes('#include') || !codeToRun.includes('int main')) {
+              if (!codeToRun.includes('#include')) {
+                codeToRun = `#include <stdio.h>\n#include <stdlib.h>\n\n${codeToRun}`;
+              }
+              if (!codeToRun.includes('int main')) {
+                codeToRun = `${codeToRun}\n\nint main() {\n  // 기본 실행 코드\n  return 0;\n}`;
+              }
+            }
+            break;
+          default:
+            // Python 등 다른 언어는 특별한 처리 없이 그대로 실행
+            break;
+        }
+
+        // codingTestApi의 executeCode 함수 사용
+        const response = await executeCode(selectedLanguage, codeToRun);
+
+        const resultHeader = `--- ${selectedLanguage} 실행 결과 ---`;
+        let resultContent = '';
+
+        if (response.success) {
+          if (response.data.status === 'success') {
+            resultContent = response.data.stdout || '실행 완료 (출력 없음)';
+          } else {
+            // 오류 상태일 경우
+            resultContent = response.data.error ?
+              `오류: ${response.data.error.message}\n${response.data.error.detail}` :
+              '실행 중 오류가 발생했습니다.';
+          }
+        } else {
+          resultContent = '서버 응답 오류';
+        }
+
+        const resultFooter = '--------------------------';
+        setOutput(`${resultHeader}\n${resultContent}\n${resultFooter}`);
+      } catch (error) {
+        console.error('코드 실행 중 오류가 발생했습니다:', error);
+        setOutput(`--- 오류 발생 ---\n${error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}\n--------------------------`);
+      } finally {
+        setIsRunning(false);
+      }
+    };
+
+    processCode();
   };
 
   const handleSubmit = () => {
