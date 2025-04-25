@@ -8,7 +8,7 @@
 @mixin projectTitle($fontSize: $font-h1) {
   font-family: "League Spartan", "inter", sans-serif;
   font-size: $fontSize;
-  margin-top: -50px;
+  // margin-top: -50px;
 }
 
 @mixin gradientMixin($radius: 50px) {

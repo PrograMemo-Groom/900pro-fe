@@ -1,8 +1,13 @@
 import styles from '@/css/teamain/TeamMain.module.scss'
+import hamburgerIcon from '@/assets/hamb.svg';
+
 export default function TeamMain() {
   return (
     <div className={styles.teamroom}>
-        <h1 className={styles.header}>9BACKPRO</h1>
+        <header>
+            <img src={hamburgerIcon} alt='햄버거바'/>
+            <h1 className={styles.header}>9BACKPRO</h1>
+        </header>
 
         <main className={styles.teamroom_main}>
             <section className={styles.left_container}>

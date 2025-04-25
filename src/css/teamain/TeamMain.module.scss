@@ -1,8 +1,31 @@
+@use '@/css/common/_global.scss' as *;
+
+.teamroom{
+    width: 80vw;
+}
 .teamroom_main{
     display: flex;
     flex-direction: row;
+    justify-content: center;
     text-align: center;
     gap: 2vw;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative; 
+
+    img{
+        width: 35px;
+        height: 30px;
+    }
+
+    h1{
+        @include projectTitle(3rem);
+        margin: 6px auto 0 auto;
+    }
 }
 
 .left_container{
