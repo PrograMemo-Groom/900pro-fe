@@ -29,7 +29,7 @@ header{
   .container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     max-width: 850px;
     width: 100%;
@@ -82,7 +82,7 @@ header{
 }
 
 .common__select {
-  position: relative;
+  // position: relative;
   height: 80px;
   width: 80px;
 
@@ -149,13 +149,13 @@ header{
   font-size: 1.2rem;
   border: none;
   cursor: pointer;
-  border-radius: 50%;
+  // border-radius: 40%;
   transition: background 0.3s;
   text-align: center;
 
   &:hover {
     background: rgba(161, 227, 249, 0.6);
-    border-radius: 50%;
+    border-radius: 30px;
   }
 }
 
