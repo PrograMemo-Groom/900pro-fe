@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
             if (authResult.teamId === null) {
                 navigate('/main');
             } else {
-                navigate('/waitingroom');
+                navigate('/myteam');
             }
         } catch (e: any) {
             console.log("로그인 오류:", e);
