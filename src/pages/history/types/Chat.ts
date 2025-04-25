@@ -14,7 +14,7 @@ export type ChatType = {
   userName: string | null;
   content: string;
   sendAt: string;
-  testDate: string | null;
+  testDateTime: string | null;
   chatbotMessage: string | null;
   chatbot: boolean;
 };

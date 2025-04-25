@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch } from 'react-redux';
-import { setTeamId, setMembers, setStartTime } from '@/store/team/teamainSlice';
+import { setTeamId, setMembers } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
-import StartButton from '@/pages/teamain/StartButton';
 import styles from '@/css/teamain/TeamMain.module.scss'
 
 export default function TeamMain() {
@@ -18,6 +17,12 @@ export default function TeamMain() {
     // 팀 데이터 냅다 가져와서 상태관리해~ 레츠기릭
     const [teamData, setTeamData] = useState<TeamData | null>(null);
 
+    // 타이머 관련한 변수들
+    const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [isActive, setIsActive] = useState(false);
+    
+    // const timerRef = useRef<NodeJS.Timeout | null>(null);
+
     useEffect(() => {
         if (teamId) {
             console.log('[FETCH] fetchTeam 호출됨');
@@ -26,18 +31,66 @@ export default function TeamMain() {
                 setTeamData(data)
                 dispatch(setTeamId(data.id));
                 dispatch(setMembers(data.members));
-                dispatch(setStartTime(data.startTime));
             })
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }
     },[])
+
+    // 테스트용 startTime 고정
+    // const startTimeString = "04:33"; 
+
+    const startTimeString = teamData?.startTime ?? "00:00";
+    useEffect(() => {
+        if (!teamData || !teamData.startTime) return;
+
+        console.log(startTimeString)
+        const [startHour, startMinute] = startTimeString.split(':').map(Number);
+
+        const today = new Date();
+        const startTime = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        startHour,
+        startMinute,
+        0
+        ).getTime();
+
+        const now = Date.now();
+        const diffSeconds = Math.floor((startTime - now) / 1000);
+
+        setTimeLeft(diffSeconds);
+
+        const timer = setInterval(() => {
+            const now = Date.now();
+            const diff = Math.floor((startTime - now) / 1000);
+      
+            setTimeLeft(diff);
+      
+            if (diff <= 1800 && diff > 0) { // 30분 이내
+              setIsActive(true);
+            } else if (diff <= 0) {
+              clearInterval(timer);
+            }
+        }, 1000);
+      
+        return () => clearInterval(timer);
+    }, [teamData]);
 
     const handleHistoryButtonClick = () => {
         navigate('/history');
     };
 
     const handleStartClick = () => {
-        navigate('/waitingroom');
+        if (isActive) {
+          navigate('/waitingroom');
+        }
+    };
+
+    const formatTime = (seconds: number) => {
+        const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const sec = (seconds % 60).toString().padStart(2, '0');
+        return `${min}:${sec}`;
     };
 
     if (!teamData) {
@@ -64,10 +117,15 @@ export default function TeamMain() {
                 </section>
 
                 <footer>
-                    <StartButton
-                        startTime={teamData.startTime}
+                    <button className={styles.start_button}
+                        disabled={!isActive}
                         onClick={handleStartClick}
-                    />
+                        >
+                        {isActive 
+                            ? `시험 시작까지 ${formatTime(timeLeft)} 남음`
+                            : '시험에 입장할 수 없습니다.'
+                        }
+                    </button>
                 </footer>
 
             </section>

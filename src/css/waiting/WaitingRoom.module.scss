@@ -1,3 +1,5 @@
+@use '@/css/common/_global.scss' as *;
+
 .waitingroom{
     display: flex;
     flex-direction: column;
@@ -35,6 +37,10 @@
         mask-composite: exclude;
         z-index: -1;
     }
+}
+.header{
+    @include projectTitle(3rem);
+        margin: 6px auto 0 auto;
 }
 
 .time_section{
