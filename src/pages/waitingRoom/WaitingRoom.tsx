@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
 import { useAppSelector } from '@/store';
 import { useNavigate } from 'react-router-dom';
+import Timer from '@/pages/waitingRoom/Timer';
 import styles from '@/css/waiting/waitingroom.module.scss';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
@@ -23,49 +24,9 @@ export default function WaitingRoom() {
   const [localMembers, setLocalMembers] = useState<{ userId: number; userName: string; status: string }[]>([]);
   const clientRef = useRef<Client | null>(null);
   const subscribedRef = useRef(false);
-
-  const timerId = useRef<NodeJS.Timeout | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isActive, setIsActive] = useState(false);
-  
+ 
   const me = localMembers.find((m) => m.userId === myId);
   const isReady = me?.status === '준비완료';
-
-  // ✅ 타이머 관리
-  useEffect(() => {
-    if (!startTimeString) return;
-
-    const [hour, minute] = startTimeString.split(':').map(Number);
-    const today = new Date();
-    const startTimestamp = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      hour,
-      minute,
-      0
-    ).getTime();
-
-    const updateTimer = () => {
-      const now = Date.now();
-      const diff = Math.floor((startTimestamp - now) / 1000);
-      setTimeLeft(diff);
-
-      if (diff <= 1800 && diff > 0) setIsActive(true);
-
-      if (diff <= 0) {
-        if (timerId.current) clearInterval(timerId.current);
-        navigate('/coding-test'); // ✅ 시험 시작 시 자동 이동
-      }
-    };
-
-    updateTimer();
-    timerId.current = setInterval(updateTimer, 1000);
-
-    return () => {
-      if (timerId.current) clearInterval(timerId.current);
-    };
-  }, [startTimeString, navigate]);
 
   // ✅ reduxMembers 없으면 리다이렉트
   useEffect(() => {
@@ -167,24 +128,12 @@ export default function WaitingRoom() {
     );
   }
 
-  const formatTime = (seconds: number) => {
-    const min = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const sec = (seconds % 60).toString().padStart(2, '0');
-    return `${min}:${sec}`;
-  };
-
   return (
     <div className={styles.waitingroom}>
       <h1 className={styles.header}>9BACKPRO</h1>
       <p>대기실</p>
       <main className={styles.container}>
-        <section className={styles.time_section}>
-          <h3>시작까지 남은 시간</h3>
-          <p className={styles.timer}>
-            {timeLeft > 0 ? formatTime(timeLeft) : '00:00'}
-          </p>
-          <hr />
-        </section>
+        <Timer startTime={startTimeString} />
 
         {/* 🔵 멤버 리스트 */}
         <section className={styles.member_container}>

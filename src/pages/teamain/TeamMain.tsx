@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch } from 'react-redux';
-import { setTeamId, setMembers, setStartTime } from '@/store/team/teamainSlice';
+import { setTeamId, setMembers, setStartTime, setProblemCount } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
 import StartButton from '@/pages/teamain/StartButton';
@@ -27,6 +27,7 @@ export default function TeamMain() {
                 dispatch(setTeamId(data.id));
                 dispatch(setMembers(data.members));
                 dispatch(setStartTime(data.startTime));
+                dispatch(setProblemCount(data.problemCount));
             })
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }
