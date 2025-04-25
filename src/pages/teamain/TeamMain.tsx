@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch } from 'react-redux';
@@ -18,12 +18,6 @@ export default function TeamMain() {
     // 팀 데이터 냅다 가져와서 상태관리해~ 레츠기릭
     const [teamData, setTeamData] = useState<TeamData | null>(null);
 
-    // 타이머 관련한 변수들
-    const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [isActive, setIsActive] = useState(false);
-    
-    // const timerRef = useRef<NodeJS.Timeout | null>(null);
-
     useEffect(() => {
         if (teamId) {
             console.log('[FETCH] fetchTeam 호출됨');
@@ -37,61 +31,12 @@ export default function TeamMain() {
         }
     },[])
 
-    // 테스트용 startTime 고정
-    // const startTimeString = "04:33"; 
-
-    const startTimeString = teamData?.startTime ?? "00:00";
-    useEffect(() => {
-        if (!teamData || !teamData.startTime) return;
-
-        console.log(startTimeString)
-        const [startHour, startMinute] = startTimeString.split(':').map(Number);
-
-        const today = new Date();
-        const startTime = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        startHour,
-        startMinute,
-        0
-        ).getTime();
-
-        const now = Date.now();
-        const diffSeconds = Math.floor((startTime - now) / 1000);
-
-        setTimeLeft(diffSeconds);
-
-        const timer = setInterval(() => {
-            const now = Date.now();
-            const diff = Math.floor((startTime - now) / 1000);
-      
-            setTimeLeft(diff);
-      
-            if (diff <= 1800 && diff > 0) { // 30분 이내
-              setIsActive(true);
-            } else if (diff <= 0) {
-              clearInterval(timer);
-            }
-        }, 1000);
-      
-        return () => clearInterval(timer);
-    }, [teamData]);
-
     const handleHistoryButtonClick = () => {
         navigate('/history');
     };
 
     const handleStartClick = () => {
-        if (isActive) {
-          navigate('/waitingroom');
-        }
-    };
-
-    const formatTime = (seconds: number) => {
-        const min = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const sec = (seconds % 60).toString().padStart(2, '0');
-        return `${min}:${sec}`;
+        navigate('/waitingroom');
     };
 
     if (!teamData) {
@@ -118,11 +63,10 @@ export default function TeamMain() {
                 </section>
 
                 <footer>
-                <StartButton
-                    isActive={isActive}
-                    timeLeft={timeLeft}
-                    onClick={handleStartClick}
-                />
+                    <StartButton
+                        startTime={teamData.startTime}
+                        onClick={handleStartClick}
+                    />
                 </footer>
 
             </section>
