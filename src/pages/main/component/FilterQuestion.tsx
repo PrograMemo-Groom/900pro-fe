@@ -13,7 +13,7 @@ const FilterQuestion = () => {
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(levels[0]);
 
-  const handleSelected = (option) => {
+  const handleSelected = (option : any) => {
     setSelected(option);
     setOpen(false);
   }

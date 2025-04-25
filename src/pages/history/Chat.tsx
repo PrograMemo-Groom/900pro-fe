@@ -19,7 +19,7 @@ function Chat() {
   // 코드 관리 - 내가 채팅 보내기
   // const [messages, setMessages] = useState<ChatType[]>(ChatDummy);
   const [messages, setMessages] = useState<ChatType[]>([]);
-  const [connected, setConnected] = useState(false);
+  const [_connected, setConnected] = useState(false);
 
   // 로컬스토리지의 회원 정보 받아오기
   const raw = localStorage.getItem('persist:auth');

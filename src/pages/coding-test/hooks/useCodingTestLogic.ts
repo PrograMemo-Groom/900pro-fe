@@ -6,7 +6,7 @@ export const useCodingTestLogic = () => {
   const [output, setOutput] = useState<string>('');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   // TODO: 실제 타이머 로직 구현 필요
-  const [remainingTime, setRemainingTime] = useState<string>('1:48:54');
+  const [remainingTime, _setRemainingTime] = useState<string>('1:48:54');
   const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>('python');
   const [codeContent, setCodeContent] = useState<Record<CodeLanguage, string>>({
     python: defaultCode.python,

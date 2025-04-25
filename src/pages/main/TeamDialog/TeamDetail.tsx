@@ -1,7 +1,6 @@
-import React from 'react';
 import styles from "@/css/main/Layout.module.scss";
 
-const TeamDetail = ({team, onClose}) => {
+const TeamDetail = ({team, onClose} : any) => {
   console.log("team",team);
   return (
     <div className={styles.backdrop} onClick={onClose}>

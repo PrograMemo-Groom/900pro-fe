@@ -7,11 +7,12 @@ import {
   Highlight,
   ActiveMemoState,
   UseHighlightsProps,
-  HighlightMenuState
+  // HighlightMenuState
 } from '@/pages/history/codeeditor/types/types.ts';
 
 // 유틸리티 임포트
-import { hexToRgba, rgbaToHex } from '@/pages/history/codeeditor/utils/colorUtils.ts';
+import { hexToRgba } from '@/pages/history/codeeditor/utils/colorUtils.ts';
+// import { hexToRgba, rgbaToHex } from '@/pages/history/codeeditor/utils/colorUtils.ts';
 import { calculateMemoPosition } from '@/pages/history/codeeditor/utils/domUtils.ts';
 
 // CodeMirror 확장 임포트
@@ -446,7 +447,12 @@ export function useHighlights({ documentId, editorRef, onHighlightClick }: UseHi
     });
 
     // 리스너 등록
-    const extension = view.dispatch({
+    // const extension = view.dispatch({
+    //   effects: StateEffect.appendConfig.of(docChangeListener)
+    // });
+
+    // 임의로 변수명 제거했습니다
+    view.dispatch({
       effects: StateEffect.appendConfig.of(docChangeListener)
     });
 
