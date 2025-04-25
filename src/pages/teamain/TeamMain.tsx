@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch } from 'react-redux';
-import { setTeamId } from '@/store/team/teamainSlice';
+import { setTeamId, setMembers } from '@/store/team/teamainSlice';
 
 import styles from '@/css/teamain/TeamMain.module.scss'
 
@@ -23,8 +23,9 @@ export default function TeamMain() {
         if (teamId) {
             fetchTeam(teamId)
             .then((data) => {
-                setTeamData(data);
+                setTeamData(data)
                 dispatch(setTeamId(data.id));
+                dispatch(setMembers(data.members));
             })
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }

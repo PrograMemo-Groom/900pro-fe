@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
-import { fetchTeam } from '@/api/teamApi';
+import { useAppSelector } from '@/store';
+import { useNavigate } from 'react-router-dom';
 import styles from '@/css/waiting/waitingroom.module.scss';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
@@ -8,6 +9,9 @@ const SUBSCRIBE_PATH = '/sub/waiting-room/1';
 const SEND_PATH = '/pub/waiting-room/ready';
 
 export default function WaitingRoom() {
+  const navigate = useNavigate();
+  const reduxMembers = useAppSelector((state) => state.teamain.members);
+
   const raw = localStorage.getItem('persist:auth');
   const parsed = raw ? JSON.parse(raw) : null;
   const token = parsed?.token ? JSON.parse(parsed.token) : null;
@@ -15,28 +19,28 @@ export default function WaitingRoom() {
   const myId = userObj?.id;
   const myName = userObj?.username;
 
-  const [members, setMembers] = useState<{ userId: number; userName: string; status: string }[]>([]);
-  const [teamId] = useState(1);
-
-  const me = members.find((m) => m.userId === myId);
-  const isReady = me?.status === '준비완료';
-
+  const [localMembers, setLocalMembers] = useState<{ userId: number; userName: string; status: string }[]>([]);
   const clientRef = useRef<Client | null>(null);
   const subscribedRef = useRef(false);
 
-  // ✅ 팀 멤버 정보 fetch
+  const me = localMembers.find((m) => m.userId === myId);
+  const isReady = me?.status === '준비완료';
+
+  // ✅ reduxMembers 없으면 리다이렉트
   useEffect(() => {
-    fetchTeam(teamId)
-      .then((data) => {
-        const initialMembers = data.members.map((member: any) => ({
-          userId: member.userId,
-          userName: member.userName,
-          status: '대기중',
-        }));
-        setMembers(initialMembers);
-      })
-      .catch((err) => console.error('❗ 팀 정보 fetch 실패:', err));
-  }, [teamId]);
+    if (reduxMembers.length === 0) {
+      console.warn('멤버 없음! 메인으로 리다이렉트!');
+      navigate('/myteam'); 
+    } else {
+      // 있으면 localMembers 초기화
+      const initialMembers = reduxMembers.map((member) => ({
+        userId: member.userId,
+        userName: member.userName,
+        status: '대기중',
+      }));
+      setLocalMembers(initialMembers);
+    }
+  }, [reduxMembers, navigate]);
 
   // ✅ WebSocket 연결
   useEffect(() => {
@@ -54,13 +58,10 @@ export default function WaitingRoom() {
               const payload = JSON.parse(msg.body);
               console.log('📩 수신 메시지:', payload);
 
-              setMembers((prev) =>
+              setLocalMembers((prev) =>
                 prev.map((m) =>
                   m.userId === payload.userId
-                    ? {
-                        ...m,
-                        status: payload.status === 'READY' ? '준비완료' : '대기중',
-                      }
+                    ? { ...m, status: payload.status === 'READY' ? '준비완료' : '대기중' }
                     : m
                 )
               );
@@ -95,7 +96,7 @@ export default function WaitingRoom() {
     const newStatus = isReady ? 'WAITING' : 'READY';
 
     const msg = {
-      teamId,
+      teamId: 1, // 하드코딩
       userId: myId,
       userName: myName,
       status: newStatus,
@@ -113,6 +114,18 @@ export default function WaitingRoom() {
     }
   };
 
+  if (localMembers.length === 0) {
+    return (
+      <div className={styles.waitingroom}>
+        <h1 className={styles.header}>9BACKPRO</h1>
+        <p>대기실</p>
+        <main className={styles.container}>
+          <p className={styles.notice}>멤버 정보를 불러오는 중...</p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.waitingroom}>
       <h1 className={styles.header}>9BACKPRO</h1>
@@ -127,7 +140,7 @@ export default function WaitingRoom() {
         {/* 🔵 멤버 리스트 */}
         <section className={styles.member_container}>
           <div className={styles.grid}>
-            {members.map((member) => (
+            {localMembers.map((member) => (
               <div key={member.userId} className={styles.member_item}>
                 <span className={styles.member_name}>
                   {member.userId === myId ? `${member.userName}(나)` : member.userName}

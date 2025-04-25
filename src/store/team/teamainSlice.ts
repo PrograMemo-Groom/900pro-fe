@@ -1,11 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+interface Member {
+    userId: number;
+    userName: string;
+    leader: boolean;
+}
+
 interface TeamState {
     teamId: number | null;
+    members: Member[]; // members 추가
 }
   
 const initialState: TeamState = {
     teamId: null,
+    members: [],
 };
   
 const teamSlice = createSlice({
@@ -15,11 +23,15 @@ const teamSlice = createSlice({
         setTeamId: (state, action: PayloadAction<number>) => {
             state.teamId = action.payload;
         },
-        clearTeamId: (state) => {
-        state.teamId = null;
+        setMembers: (state, action: PayloadAction<Member[]>) => {
+            state.members = action.payload;
+        },
+        clearTeam: (state) => {
+            state.teamId = null;
+            state.members = [];
         },
     },
 });
   
-export const { setTeamId, clearTeamId } = teamSlice.actions;
+export const { setTeamId, setMembers, clearTeam } = teamSlice.actions;
 export default teamSlice.reducer;
