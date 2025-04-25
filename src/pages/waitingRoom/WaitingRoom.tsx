@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
+import { fetchTeam } from '@/api/teamApi';
 import styles from '@/css/waiting/waitingroom.module.scss';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
@@ -7,32 +8,35 @@ const SUBSCRIBE_PATH = '/sub/waiting-room/1';
 const SEND_PATH = '/pub/waiting-room/ready';
 
 export default function WaitingRoom() {
-  // ✅ 로컬스토리지에서 내 정보 파싱
   const raw = localStorage.getItem('persist:auth');
   const parsed = raw ? JSON.parse(raw) : null;
-
   const token = parsed?.token ? JSON.parse(parsed.token) : null;
   const userObj = parsed?.user ? JSON.parse(parsed.user) : null;
   const myId = userObj?.id;
   const myName = userObj?.username;
 
-  // ✅ 초기 멤버 목록 (실제로는 서버에서 받아올 수 있음)
-  const [members, setMembers] = useState([
-    { userId: 1, name: '김재홍', status: '준비완료' },
-    { userId: 5, name: '세진', status: '대기중' }, // 내 ID에 맞춰서 표시
-    { userId: 2, name: '이보미', status: '준비완료' },
-    { userId: 3, name: '김유림', status: '대기중' },
-    { userId: 4, name: '코딩고수', status: '준비완료' },
-    { userId: 6, name: '심동훈', status: '준비완료' },
-    { userId: 7, name: '김건영', status: '준비완료' },
-  ]);
+  const [members, setMembers] = useState<{ userId: number; userName: string; status: string }[]>([]);
+  const [teamId] = useState(1);
 
-  // ✅ 내 상태 찾기
   const me = members.find((m) => m.userId === myId);
   const isReady = me?.status === '준비완료';
 
   const clientRef = useRef<Client | null>(null);
   const subscribedRef = useRef(false);
+
+  // ✅ 팀 멤버 정보 fetch
+  useEffect(() => {
+    fetchTeam(teamId)
+      .then((data) => {
+        const initialMembers = data.members.map((member: any) => ({
+          userId: member.userId,
+          userName: member.userName,
+          status: '대기중',
+        }));
+        setMembers(initialMembers);
+      })
+      .catch((err) => console.error('❗ 팀 정보 fetch 실패:', err));
+  }, [teamId]);
 
   // ✅ WebSocket 연결
   useEffect(() => {
@@ -86,12 +90,12 @@ export default function WaitingRoom() {
     };
   }, [token]);
 
-  // ✅ 버튼 클릭 → 상태 전송
+  // ✅ 상태 전송
   const toggleReady = () => {
     const newStatus = isReady ? 'WAITING' : 'READY';
 
     const msg = {
-      teamId: 1,
+      teamId,
       userId: myId,
       userName: myName,
       status: newStatus,
@@ -120,13 +124,13 @@ export default function WaitingRoom() {
           <hr />
         </section>
 
-        {/* ✅ 멤버 리스트 */}
+        {/* 🔵 멤버 리스트 */}
         <section className={styles.member_container}>
           <div className={styles.grid}>
             {members.map((member) => (
               <div key={member.userId} className={styles.member_item}>
                 <span className={styles.member_name}>
-                  {member.userId === myId ? `${member.name}(나)` : member.name}
+                  {member.userId === myId ? `${member.userName}(나)` : member.userName}
                 </span>
                 <span
                   className={
@@ -142,7 +146,7 @@ export default function WaitingRoom() {
           </div>
         </section>
 
-        {/* ✅ 준비 버튼 */}
+        {/* 🔵 준비 버튼 */}
         <footer className={styles.ready_container}>
           <p className={styles.notice}>
             *시험 시간이 되면 자동으로 화면이 이동되므로 5분 전까지 대기실에서 대기해주세요.
