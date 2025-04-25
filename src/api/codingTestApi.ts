@@ -68,3 +68,32 @@ export const executeCode = async (language: string, code: string): Promise<Execu
     throw error;
   }
 };
+
+export interface SubmitCodeResponse {
+  success: boolean;
+  data: string;
+  message: string;
+}
+
+export interface CodeSubmitRequest {
+  codeRequestDto: {
+    testId: number;
+    problemId: number;
+    userId: number;
+  };
+  submitCode: string;
+  submitAt: string;
+}
+
+export const submitCode = async (submitData: CodeSubmitRequest): Promise<SubmitCodeResponse> => {
+  try {
+    const response = await axios.patch<SubmitCodeResponse>(
+      'http://3.39.135.118:8080/api/code/update/submit',
+      submitData
+    );
+    return response.data;
+  } catch (error) {
+    console.error('코드 제출 중 오류가 발생했습니다:', error);
+    throw error;
+  }
+};

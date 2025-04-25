@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CodeLanguage } from '@/pages/coding-test/types/types';
 import { defaultCode } from '@/pages/coding-test/constants/constants';
-import { executeCode } from '@/api/codingTestApi';
+import { executeCode, submitCode } from '@/api/codingTestApi';
 
 export const useCodingTestLogic = () => {
   const [output, setOutput] = useState<string>('');
@@ -164,8 +164,33 @@ public class Main {
   };
 
   const handleSubmit = () => {
-    // TODO: 실제 제출 로직 구현 필요
-    alert('코드가 제출되었습니다!');
+    const submitData = {
+      codeRequestDto: {
+        testId: 1073741824, // 실제 구현 시 이 값들은 props 또는 context에서 가져와야 합니다
+        problemId: 1073741824,
+        userId: 1073741824
+      },
+      submitCode: currentCode,
+      submitAt: new Date().toISOString()
+    };
+
+    setIsRunning(true);
+
+    submitCode(submitData)
+      .then(response => {
+        if (response.success) {
+          alert('코드가 성공적으로 제출되었습니다!');
+        } else {
+          alert(`제출 실패: ${response.message}`);
+        }
+      })
+      .catch(error => {
+        console.error('제출 중 오류 발생:', error);
+        alert('코드 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+      })
+      .finally(() => {
+        setIsRunning(false);
+      });
   };
 
   const currentCode = codeContent[selectedLanguage] || defaultCode[selectedLanguage];
