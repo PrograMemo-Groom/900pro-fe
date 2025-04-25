@@ -1,6 +1,5 @@
 @use "@/css/common/_global" as *;
 
-
 header{
   display: flex;
   flex-direction: row;
@@ -45,7 +44,6 @@ header{
   & > section {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    //width: 100vw;
     max-width: 1280px;
     gap: 25px;
     margin-top: 50px;
@@ -62,23 +60,24 @@ header{
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  align-items: center;
   text-align: center;
 
   &:hover {
     background: #3674B5;
   }
 
-  & > header {
-    font-size: 36px;
-    font-weight: 700;
+  & > h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
   }
 
   & > p {
-    font-size: 24px;
+    font-size: 1.2rem;
   }
 
   & > p:last-child {
-    font-size: 20px;
+    font-size: 1.2rem;
   }
 }
 
@@ -142,9 +141,12 @@ header{
 
 .teamCreateButton {
   @include gradientMixin;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 50px;
   background: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
   border: none;
   cursor: pointer;
   border-radius: 50%;

@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
 import Header from '@/pages/common/Header.tsx';
-// import SearchBox from '@/pages/main/component/SearchBox.tsx';
 import styles from "@/css/main/Layout.module.scss";
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
-// import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
-// import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
 import TeamDetail from '@/pages/main/TeamDialog/TeamDetail.tsx';
 
@@ -24,7 +21,6 @@ const mainTeamData = [
 ]
 const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
-  // const [teamList, setTeamList] = React.useState([]);
   const [teamList, setTeamList] = React.useState(mainTeamData);
   const [selectedIndex, setSelectedIndex] = React.useState<number>(0);
 
@@ -50,12 +46,14 @@ const MainNoTeam = () => {
     fetchTeamData();
   }, []);
 
+  const handleCreateTeam = () => {
+    setIsOpenDialog(true);
+  }
+
   return (
     <main>
       <Header />
-
       <div className={styles.mainContainer}>
-        {/* <Header /> */}
         <TeamHeader />
         <section>
           {teamList.length === 0 ? (
@@ -63,7 +61,7 @@ const MainNoTeam = () => {
           ) : (
             teamList.map((item, index) => (
           <article className={styles.teamCard} key={`teams-${item.teamId}`} onClick={() => handleOpenDialog(index)}>
-                <header>{item.teamName}</header>
+                <h1>{item.teamName}</h1>
                 <p>{item.time}</p>
                 <p>난이도 {item.level} / {item.problemCount}문제</p>
                 <p>인원 {item.currentMembers} / 10</p>

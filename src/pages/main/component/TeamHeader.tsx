@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from '@/css/main/Layout.module.scss';
-import SearchBox from '@/pages/main/component/SearchBox.tsx';
-import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
-import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
+// import SearchBox from '@/pages/main/component/SearchBox.tsx';
+// import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
+// import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamCreate from '@/pages/main/TeamDialog/TeamCreate.tsx';
 
 const TeamHeader = () => {
@@ -13,11 +13,13 @@ const TeamHeader = () => {
   }
   return (
     <div className={styles.container}>
-      <SearchBox />
+      {/* <SearchBox /> */}
       <section>
-        <FilterOrder />
-        <FilterQuestion />
-        <button className={styles.teamCreateButton} onClick={() => handleCreateTeam()}>팀 생성</button>
+        {/* <FilterOrder /> */}
+        {/* <FilterQuestion /> */}
+        <button className={styles.teamCreateButton} 
+        onClick={() => handleCreateTeam()}>
+          팀 생성</button>
       </section>
 
       {isOpenDialog && (
