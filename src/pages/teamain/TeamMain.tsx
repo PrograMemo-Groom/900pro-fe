@@ -3,11 +3,9 @@ import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch } from 'react-redux';
 import { setTeamId, setMembers } from '@/store/team/teamainSlice';
-
-import styles from '@/css/teamain/TeamMain.module.scss'
-
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
+import styles from '@/css/teamain/TeamMain.module.scss'
 
 export default function TeamMain() {
     const navigate = useNavigate();
@@ -18,6 +16,13 @@ export default function TeamMain() {
 
     // 팀 데이터 냅다 가져와서 상태관리해~ 레츠기릭
     const [teamData, setTeamData] = useState<TeamData | null>(null);
+
+    // 타이머 관련한 변수들
+    const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [isActive, setIsActive] = useState(false);
+
+    // 테스트용 startTime 고정
+    const startTimeString = "04:30"; 
 
     useEffect(() => {
         if (teamId) {
@@ -31,13 +36,61 @@ export default function TeamMain() {
         }
     },[])
 
-    if (!teamData) {
-        return <div>재접속 plz 네트워크가 느려요잉~</div>;
-    }
+    useEffect(() => {
+        if (!startTimeString) return;
+
+        const [startHour, startMinute] = startTimeString.split(':').map(Number);
+
+        const today = new Date();
+        const startTime = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        startHour,
+        startMinute,
+        0
+        ).getTime();
+
+        const now = Date.now();
+        const diffSeconds = Math.floor((startTime - now) / 1000);
+
+        setTimeLeft(diffSeconds);
+
+        const timer = setInterval(() => {
+            const now = Date.now();
+            const diff = Math.floor((startTime - now) / 1000);
+      
+            setTimeLeft(diff);
+      
+            if (diff <= 1800 && diff > 0) { // 30분 이내
+              setIsActive(true);
+            } else if (diff <= 0) {
+              clearInterval(timer);
+            }
+        }, 1000);
+      
+        return () => clearInterval(timer);
+    }, []);
 
     const handleHistoryButtonClick = () => {
         navigate('/history');
     };
+
+    const handleStartClick = () => {
+        if (isActive) {
+          navigate('/waitingroom');
+        }
+    };
+
+    const formatTime = (seconds: number) => {
+        const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const sec = (seconds % 60).toString().padStart(2, '0');
+        return `${min}:${sec}`;
+    };
+
+    if (!teamData) {
+        return <div>재접속 plz 네트워크가 느려요잉~ 팀데이터 못불러와</div>;
+    }
 
     console.log(teamData)
 
@@ -59,9 +112,19 @@ export default function TeamMain() {
                         </p>
                     </div>
                 </section>
+
                 <footer>
-                    <button className={styles.start_button}>시험에 입장할 수 없습니다.</button>
+                    <button className={styles.start_button}
+                        disabled={!isActive}
+                        onClick={handleStartClick}
+                        >
+                        {isActive 
+                            ? `시험 시작까지 ${formatTime(timeLeft)} 남음`
+                            : '시험에 입장할 수 없습니다.'
+                        }
+                    </button>
                 </footer>
+
             </section>
             <aside className={styles.container}>
                 <div className={styles.right_container}>

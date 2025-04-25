@@ -30,8 +30,12 @@ export default function BubbleChatbot({ content, send_at, test_date }: Props) {
       return;
     }
 
+    const dateOnly = test_date.split('T')[0];
+    console.log('🔍 요청 경로', { teamId, dateOnly });
+    
     try {
-      const res = await fetchProblemList(teamId, test_date);
+      // const res = await fetchProblemList(teamId, test_date);
+      const res = await fetchProblemList(teamId, dateOnly);
       dispatch(setProblems(res.data)); // 문제 리스트 저장
       dispatch(showTeamViewer()); // 왼쪽 컴포넌트 여는 리덕스 상태관리
     } catch (err) {

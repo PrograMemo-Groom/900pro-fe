@@ -44,6 +44,7 @@ header{
     display: inline-block;
     z-index: 0;
     width: 100%;
+    min-width: 35vw;
 
     &::before {
         content: "";
@@ -137,11 +138,22 @@ aside{
     padding: 1rem 2rem;
     font-size: 1.1rem;
     color: #ffffff;
-    background: linear-gradient(to right, #666666, #555555);
     border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: 999px; // pill형태
+    border-radius: 50px;
     text-align: center;
-    cursor: not-allowed;
+
+    background-color: rgba(161, 227, 249, 0.55); // 활성화 색
+    color: #fff;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba(161, 227, 249, 0.7);
+    }
+
+    &:disabled {
+        background-color:#555555;
+        cursor: not-allowed;
+    }
 }
 
 .container{
