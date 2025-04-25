@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch } from 'react-redux';
@@ -20,9 +20,9 @@ export default function TeamMain() {
     // 타이머 관련한 변수들
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [isActive, setIsActive] = useState(false);
+    
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // 테스트용 startTime 고정
-    const startTimeString = "04:30"; 
 
     useEffect(() => {
         if (teamId) {
@@ -36,9 +36,15 @@ export default function TeamMain() {
         }
     },[])
 
+    // 테스트용 startTime 고정
+    // const startTimeString = "04:33"; 
+
+    const startTimeString = teamData?.startTime ?? "00:00";
     useEffect(() => {
         if (!startTimeString) return;
 
+        // const startTimeString = teamData?.startTime ?? "00:00";
+        console.log(startTimeString)
         const [startHour, startMinute] = startTimeString.split(':').map(Number);
 
         const today = new Date();
@@ -55,6 +61,7 @@ export default function TeamMain() {
         const diffSeconds = Math.floor((startTime - now) / 1000);
 
         setTimeLeft(diffSeconds);
+        // setTimerStarted(true);
 
         const timer = setInterval(() => {
             const now = Date.now();
@@ -70,7 +77,7 @@ export default function TeamMain() {
         }, 1000);
       
         return () => clearInterval(timer);
-    }, []);
+    }, [teamData]);
 
     const handleHistoryButtonClick = () => {
         navigate('/history');
@@ -91,8 +98,6 @@ export default function TeamMain() {
     if (!teamData) {
         return <div>재접속 plz 네트워크가 느려요잉~ 팀데이터 못불러와</div>;
     }
-
-    console.log(teamData)
 
     const leader = teamData.members.find((member) => member.userId === teamData.leaderId);
 
