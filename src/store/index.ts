@@ -16,7 +16,7 @@ const authPersistConfig = {
 const teamainPersistConfig = {
   key: 'teamain',
   storage,
-  whitelist: ['teamId', 'members'],
+  whitelist: ['teamId', 'members', 'startTime'],
 };
 
 const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);

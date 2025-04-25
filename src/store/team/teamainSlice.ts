@@ -9,11 +9,13 @@ interface Member {
 interface TeamState {
     teamId: number | null;
     members: Member[]; // members 추가
+    startTime: string;
 }
   
 const initialState: TeamState = {
     teamId: null,
     members: [],
+    startTime: '',
 };
   
 const teamSlice = createSlice({
@@ -23,15 +25,19 @@ const teamSlice = createSlice({
         setTeamId: (state, action: PayloadAction<number>) => {
             state.teamId = action.payload;
         },
-        setMembers: (state, action: PayloadAction<Member[]>) => {
+        setMembers: (state, action: PayloadAction<Member[]>) => { //멤버
             state.members = action.payload;
+        },
+        setStartTime: (state, action: PayloadAction<string>) => { //시간
+            state.startTime = action.payload;
         },
         clearTeam: (state) => {
             state.teamId = null;
             state.members = [];
+            state.startTime = '';
         },
     },
 });
   
-export const { setTeamId, setMembers, clearTeam } = teamSlice.actions;
+export const { setTeamId, setMembers, setStartTime, clearTeam } = teamSlice.actions;
 export default teamSlice.reducer;
