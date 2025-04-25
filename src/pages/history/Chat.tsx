@@ -28,7 +28,7 @@ function Chat() {
   // 아이디
   const myId = raw ? Number(JSON.parse(raw).userId) : null;
   // 채팅룸 id
-  const roomId = useSelector((state: RootState) => state.teamain.teamId);;
+  const roomId = useSelector((state: RootState) => state.teamain.teamId);
 
   useEffect(() => {
     if (!token || roomId === null) {
