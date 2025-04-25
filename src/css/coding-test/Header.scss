@@ -90,6 +90,13 @@
         background-color: #4a7089;
       }
     }
+
+    &.end-test-button {
+      background-color: #a55d5d;
+      &:hover {
+        background-color: #8d4a4a;
+      }
+    }
   }
 }
 
