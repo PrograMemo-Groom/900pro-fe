@@ -5,9 +5,9 @@ import { useDispatch } from 'react-redux';
 import { setTeamId } from '@/store/team/teamainSlice';
 
 import styles from '@/css/teamain/TeamMain.module.scss'
-import hamburgerIcon from '@/assets/hamb.svg';
 
 import { useNavigate } from 'react-router-dom';
+import Header from '@/pages/common/Header.tsx';
 
 export default function TeamMain() {
     const navigate = useNavigate();
@@ -44,11 +44,7 @@ export default function TeamMain() {
 
   return (
     <div className={styles.teamroom}>
-        <header>
-            <img src={hamburgerIcon} alt='햄버거바'/>
-            <h1 className={styles.header}>9BACKPRO</h1>
-        </header>
-
+        <Header />
         <main className={styles.teamroom_main}>
             <section className={styles.left_container}>
                 <section className={styles.container}>

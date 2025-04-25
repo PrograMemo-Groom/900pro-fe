@@ -1,5 +1,6 @@
 @use "@/css/common/_global" as *;
 
+
 header{
   display: flex;
   flex-direction: row;
@@ -32,7 +33,7 @@ header{
     justify-content: space-between;
     align-items: center;
     max-width: 850px;
-    // width: 100%;
+    width: 100%;
 
     & > section {
       display: flex;
