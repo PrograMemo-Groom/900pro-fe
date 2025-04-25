@@ -1,8 +1,8 @@
 import styles from '@/css/history/TeamView/TeamProb.module.scss'
-import { Question } from '@/pages/history/data/ProbDummy';
+import { ProblemType } from '@/store/history/problemSlice';
 
 type Props = {
-  question: Question;
+  question: ProblemType;
 };
 
 export default function TeamProb( { question }: Props ) {

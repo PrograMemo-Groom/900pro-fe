@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
-import { ChatDummy } from '@/pages/history/data/ChatDummy';
 import { ChatType } from '@/pages/history/types/Chat.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';

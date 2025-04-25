@@ -1,19 +1,28 @@
 // 팀뷰어 (왼쪽 패널)
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 import styles from '@/css/history/TeamView/TeamView.module.scss';
 import TeamCode from '@/pages/history/TeamCode';
 import TeamProb from '@/pages/history/TeamProb';
-import { questionDummy } from '@/pages/history/data/ProbDummy';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
 export default function TeamViewer() {
   // nav 선택
   const [whatActiveNav, setWhatActiveNav] = useState<'prob' | 'code'>('prob');
+  // 리덕스에서 문제 꺼내오기
+  const problemList = useSelector((state: RootState) => state.historyProblem.problems);
 
   // 문제 번호 선택
-  const [selectedQuestion, setSelectedQuestion] = useState<number>(questionDummy[0].baekNum);
-  const selected = questionDummy.find((q) => q.baekNum === selectedQuestion);
+  const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
+  const selected = problemList.find((q) => q.baekNum === selectedQuestion);
+
+  useEffect(() => {
+    if (problemList.length > 0 && selectedQuestion === null) {
+      setSelectedQuestion(problemList[0].baekNum);
+    }
+  }, [problemList]);
 
   // API 호출을 통해 이전/다음 사용자로 이동하는 함수
   const goToPreviousMember = () => {
@@ -29,7 +38,7 @@ export default function TeamViewer() {
   return (
     <main>
       <section className={styles.button_container}>
-        {questionDummy.map((q) => (
+        {problemList.map((q) => (
           <button
             key={q.baekNum}
             className={`${styles.q_button} ${selectedQuestion === q.baekNum ? styles.active : ''}`}
