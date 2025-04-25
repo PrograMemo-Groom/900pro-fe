@@ -99,8 +99,9 @@ const Login: React.FC<LoginProps> = ({initialValues}) => {
                 {isLoading ? '로그인 중...' : 'Sign in'}
             </button>
             <div className={styles.checkAuth}>
-                <p><strong>Don't have an account?</strong> <a href="/signup"><span>Sign up</span></a></p>
-                <a href="/find"><p>Forgot Password</p></a>
+                <p><strong>회원이 아니신가요?</strong> <a href="/signup"><span>Sign up</span></a></p>
+                <a href="/find"><p
+                className={styles.authLink}>Forgot Password</p></a>
             </div>
         </form>
     </div>

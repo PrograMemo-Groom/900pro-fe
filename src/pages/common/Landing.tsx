@@ -5,7 +5,7 @@ const Landing = () => {
     <section className={styles.description}>
       <h2>9OOROMBACKPROGRAMO</h2>
       <h1>9BACKPRO</h1>
-      <h2>실전처럼, 실력있게.</h2>
+      <h3>실전처럼, 실력있게.</h3>
       <p>혼자가 아닌 함께, <br />
         실시간 채팅으로 문제 풀이 방식을 <br />
         공유하며 함께 코딩 실력을 향상시켜<br />
