@@ -22,7 +22,7 @@ export default function TeamMain() {
             .then(setTeamData)
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }
-    })
+    },[])
 
     if (!teamData) {
         return <div>재접속 plz 네트워크가 느려요잉~</div>;
@@ -31,6 +31,8 @@ export default function TeamMain() {
     const handleHistoryButtonClick = () => {
         navigate('/history');
     };
+
+    console.log(teamData)
 
     const leader = teamData.members.find((member) => member.userId === teamData.leaderId);
 
