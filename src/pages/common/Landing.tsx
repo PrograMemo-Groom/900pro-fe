@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '@/css/login/Auth.module.scss';
 
 const Landing = () => {

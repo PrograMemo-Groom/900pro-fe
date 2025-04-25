@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import Header from '@/pages/common/Header.tsx';
-import SearchBox from '@/pages/main/component/SearchBox.tsx';
+// import SearchBox from '@/pages/main/component/SearchBox.tsx';
 import styles from "@/css/main/Layout.module.scss";
 import { AxiosResponse } from 'axios';
 import API from '@/store/api/ApiConfig.ts';
 import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
-import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
-import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
+// import FilterOrder from '@/pages/main/component/FilterOrder.tsx';
+// import FilterQuestion from '@/pages/main/component/FilterQuestion.tsx';
 import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
 import TeamDetail from '@/pages/main/TeamDialog/TeamDetail.tsx';
 
@@ -25,9 +25,9 @@ const MainNoTeam = () => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
   // const [teamList, setTeamList] = React.useState([]);
   const [teamList, setTeamList] = React.useState(mainTeamData);
-  const [selectedIndex, setSelectedIndex] = React.useState('');
+  const [selectedIndex, setSelectedIndex] = React.useState<number>(0);
 
-  const handleOpenDialog = (index: string) => {
+  const handleOpenDialog = (index: number) => {
     setIsOpenDialog(true);
     setSelectedIndex(index);
   }

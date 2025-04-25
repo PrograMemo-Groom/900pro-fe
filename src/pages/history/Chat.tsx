@@ -19,7 +19,7 @@ function Chat() {
   // 코드 관리 - 내가 채팅 보내기
   // const [messages, setMessages] = useState<ChatType[]>(ChatDummy);
   const [messages, setMessages] = useState<ChatType[]>([]);
-  const [connected, setConnected] = useState(false);
+  const [_connected, setConnected] = useState(false);
 
   // 로컬스토리지의 회원 정보 받아오기
   const raw = localStorage.getItem('persist:auth');
@@ -27,12 +27,12 @@ function Chat() {
   const token = raw ? JSON.parse(JSON.parse(raw).token) : null;
   // 아이디
   const myId = raw ? Number(JSON.parse(raw).userId) : null;
-  
-  const roomId = 1;
+  // 채팅룸 id
+  const roomId = useSelector((state: RootState) => state.teamain.teamId);
 
   useEffect(() => {
-    if (!token) {
-      console.warn('No token available');
+    if (!token || roomId === null) {
+      console.warn('No token available , roomId is null');
       return;
     }
 
