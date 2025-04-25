@@ -12,8 +12,6 @@ import { initStompClient, sendMessage, disconnectStomp } from '@/api/stompClient
 // 여기는 과거 채팅내역 불러오는곳
 import { fetchChatHistory } from '@/api/chatApi';
 
-const myId = 2;
-
 function Chat() {
   // 팀 뷰어 리덕스
   const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
@@ -23,20 +21,14 @@ function Chat() {
   const [messages, setMessages] = useState<ChatType[]>([]);
   const [connected, setConnected] = useState(false);
 
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxhbGFsYWxhQGV4YW1wbGUuY29tIiwidXNlcklkIjo1LCJleHAiOjE3NDU1OTI5MzN9.sQinBJfx_IdrccuWWwC6Kc_yYs9I0DMEWNNjeF_U1M8';
+  // 로컬스토리지의 회원 정보 받아오기
+  const raw = localStorage.getItem('persist:auth');
+  // 토큰
+  const token = raw ? JSON.parse(JSON.parse(raw).token) : null;
+  // 아이디
+  const myId = raw ? Number(JSON.parse(raw).userId) : null;
+  
   const roomId = 1;
-
-  // const handleSubmit = (msg: string) => {
-  //   const newMessage: ChatType = {
-  //     id: Date.now(),
-  //     chatRoomId: 1,
-  //     userId: myId,
-  //     userName: '나',
-  //     content: msg,
-  //     send_at: new Date().toISOString(),
-  //   };
-  //   setMessages((prev) => [...prev, newMessage]);
-  // };
 
   useEffect(() => {
     if (!token) {

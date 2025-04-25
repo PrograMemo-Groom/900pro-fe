@@ -1,8 +1,32 @@
+@use '@/css/common/_global.scss' as *;
+
+.teamroom{
+    width: 80vw;
+}
 .teamroom_main{
     display: flex;
     flex-direction: row;
+    justify-content: center;
     text-align: center;
     gap: 2vw;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative; 
+
+    img{
+        width: 35px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    h1{
+        @include projectTitle(3rem);
+        margin: 6px auto 0 auto;
+    }
 }
 
 .left_container{
@@ -56,6 +80,55 @@
 aside{
     width: 16vw;
     height: 70vh;
+    min-width: 140px;
+}
+
+.right_container{
+    padding: 20px;
+    height: 65vh;
+
+    h2{
+        font-size: 1.52rem;
+    }
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1vh;
+    }
+    p{
+        font-size: 1.2rem;
+
+        span{
+            font-weight: 700;
+            margin: 0 0.5vw;
+        }
+    }
+}
+
+.teamtext{
+    margin-top: 2vh;
+    font-weight: 700;
+}
+.member_list{
+    height: 20vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.history_button{
+    background-color: rgba(148, 193, 240, 0.8);
+    color: #1D3043;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2rem;
+    margin: 0.5rem 0 1rem 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #5b7bb0;
+    }
 }
 
 .start_button{
@@ -97,5 +170,19 @@ aside{
         -webkit-mask-composite: xor;
         mask-composite: exclude;
         z-index: -1;
+    }
+}
+
+.exitbtn{
+    background-color: transparent;
+    border: none;
+    color: #e06060;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+      color: #ff7b7b;
     }
 }

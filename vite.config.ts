@@ -27,6 +27,12 @@ const config = {
         // 필요하다면 경로 재작성 활성화
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/execute': {
+        target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path : string) => path.replace(/^\/execute/, ''), 
+      },
     },
   },
 };
