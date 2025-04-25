@@ -3,6 +3,8 @@ import hamburgerIcon from '@/assets/hamb.svg';
 import { teamDummy } from '@/pages/teamain/data/teamDummy';
 
 export default function TeamMain() {
+    const leader = teamDummy.members.find((member) => member.userId === teamDummy.leaderId);
+
   return (
     <div className={styles.teamroom}>
         <header>
@@ -42,7 +44,7 @@ export default function TeamMain() {
 
                     <p>
                         <span>팀장</span> 
-                        {teamDummy.leader.userName}
+                        {leader?.userName}
                         <span role="img" aria-label="왕관">👑</span>
                     </p>
 

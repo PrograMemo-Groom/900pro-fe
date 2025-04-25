@@ -1,26 +1,4 @@
-
-export interface Member {
-    userId: number;
-    userName: string;
-  }
-  
-  export interface Leader {
-    userId: number;
-    userName: string;
-  }
-  
-  export interface TeamData {
-    id: number;
-    teamName: string;
-    description: string;
-    level: string; 
-    problemCount: number;
-    startTime: string;
-    durationTime: number;
-    currentMembers: number;
-    leader: Leader;
-    members: Member[];
-  }
+import { TeamData } from '@/pages/teamain/types/TeamTypes'
 
 export const teamDummy: TeamData = {
     id: 1,
@@ -31,18 +9,16 @@ export const teamDummy: TeamData = {
     problemCount: 5,
     startTime: "2025-04-22T10:00",
     durationTime: 3,
-    currentMembers: 6,
-    leader: {
-      userId: 3,
-      userName: "거녕거녕"
-    },
+    currentMembers: 7,
+    leaderId: 3,
     members: [
-      { userId: 1, userName: "강세진" },
-      { userId: 2, userName: "김건영" },
-      { userId: 3, userName: "거녕거녕" },
-      { userId: 4, userName: "김유림" },
-      { userId: 5, userName: "이보미" },
-      { userId: 6, userName: "심동훈" }
+      { userId: 1, userName: "강세진", "leader": false },
+      { userId: 2, userName: "김건영", "leader": false },
+      { userId: 3, userName: "거녕거녕", "leader": true },
+      { userId: 4, userName: "김유림", "leader": false },
+      { userId: 5, userName: "이보미", "leader": false },
+      { userId: 6, userName: "심동훈", "leader": false },
+      { userId: 7, userName: "멧돌멧돌", "leader": false },
     ]
   };
   
