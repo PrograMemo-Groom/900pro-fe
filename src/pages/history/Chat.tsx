@@ -27,12 +27,12 @@ function Chat() {
   const token = raw ? JSON.parse(JSON.parse(raw).token) : null;
   // 아이디
   const myId = raw ? Number(JSON.parse(raw).userId) : null;
-  
-  const roomId = 1;
+  // 채팅룸 id
+  const roomId = useSelector((state: RootState) => state.teamain.teamId);;
 
   useEffect(() => {
-    if (!token) {
-      console.warn('No token available');
+    if (!token || roomId === null) {
+      console.warn('No token available , roomId is null');
       return;
     }
 

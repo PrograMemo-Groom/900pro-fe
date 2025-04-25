@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
+import { useDispatch } from 'react-redux';
+import { setTeamId } from '@/store/team/teamainSlice';
 
 import styles from '@/css/teamain/TeamMain.module.scss'
 import hamburgerIcon from '@/assets/hamb.svg';
@@ -9,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function TeamMain() {
     const navigate = useNavigate();
-    
+    const dispatch = useDispatch();
+
     // 일단 1로 하드코딩
     const teamId = 1;
 
@@ -19,7 +22,10 @@ export default function TeamMain() {
     useEffect(() => {
         if (teamId) {
             fetchTeam(teamId)
-            .then(setTeamData)
+            .then((data) => {
+                setTeamData(data);
+                dispatch(setTeamId(data.id));
+            })
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }
     },[])
