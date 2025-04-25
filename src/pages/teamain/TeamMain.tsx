@@ -1,9 +1,31 @@
+import { useEffect, useState } from 'react';
+import { fetchTeam } from '@/api/teamApi';
+import { TeamData } from '@/pages/teamain/types/TeamTypes';
+
 import styles from '@/css/teamain/TeamMain.module.scss'
 import hamburgerIcon from '@/assets/hamb.svg';
-import { teamDummy } from '@/pages/teamain/data/teamDummy';
 
 export default function TeamMain() {
-    const leader = teamDummy.members.find((member) => member.userId === teamDummy.leaderId);
+
+    // 일단 1로 하드코딩
+    const teamId = 1;
+
+    // 팀 데이터 냅다 가져와서 상태관리해~ 레츠기릭
+    const [teamData, setTeamData] = useState<TeamData | null>(null);
+
+    useEffect(() => {
+        if (teamId) {
+            fetchTeam(teamId)
+            .then(setTeamData)
+            .catch((error) => console.log("님 에러났어여 ㅋ:", error));
+        }
+    })
+
+    if (!teamData) {
+        return <div>재접속 plz 네트워크가 느려요잉~</div>;
+    }
+
+    const leader = teamData.members.find((member) => member.userId === teamData.leaderId);
 
   return (
     <div className={styles.teamroom}>
@@ -16,12 +38,12 @@ export default function TeamMain() {
             <section className={styles.left_container}>
                 <section className={styles.container}>
                     <div className={styles.team_info}>
-                        <h2>{teamDummy.teamName}</h2>
-                        <p>매일 오후 9시 | {teamDummy.level} | {teamDummy.problemCount}문제 | {teamDummy.durationTime}시간</p>
+                        <h2>{teamData.teamName}</h2>
+                        <p>매일 오후 9시 | {teamData.level} | {teamData.problemCount}문제 | {teamData.durationTime}시간</p>
                     </div>
                     <div className={styles.team_des}>
                         <p>
-                        {teamDummy.description}
+                        {teamData.description}
                         </p>
                     </div>
                 </section>
@@ -33,7 +55,7 @@ export default function TeamMain() {
                 <div className={styles.right_container}>
                     <h2>참여멤버</h2>
                     <h3> <span>
-                        {teamDummy.currentMembers}
+                        {teamData.currentMembers}
                         </span> 
                         / 10명
                     </h3>
@@ -50,7 +72,7 @@ export default function TeamMain() {
 
                     <p className={styles.teamtext}>팀원</p>
                     <div className={styles.member_list}>
-                        {teamDummy.members.map((member) => (
+                        {teamData.members.map((member) => (
                             <p key={member.userId}>{member.userName}</p>
                         ))}
                     </div>
