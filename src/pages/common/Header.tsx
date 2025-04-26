@@ -27,7 +27,7 @@ const Header = () => {
       {isOpen && (
           <div className={styles.menu}>
             <button>9BACKPRO 이용가이드</button>
-            <button>회원 정보 수정</button>
+            <button onClick={() => navigate('/editprofile')}>회원 정보 수정</button>
             <button>이용 약관</button>
             <button>개인정보 처리 방침</button>
 
