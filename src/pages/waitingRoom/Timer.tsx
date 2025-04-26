@@ -42,7 +42,6 @@ export default function Timer({ startTime }: TimerProps) {
       }
       if (diff <= 0) {
         if (timerId.current) clearInterval(timerId.current);
-        // navigate('/coding-test'); // ✅ 시험 시작하면 이동
 
         try {
           console.log('⌛ 시험 시작! 문제 세팅 중...');

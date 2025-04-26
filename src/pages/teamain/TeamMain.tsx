@@ -18,8 +18,6 @@ export default function TeamMain() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    // 일단 1로 하드코딩
-    // const teamId = 1;
     const teamId = useSelector((state: RootState) => state.auth.user.teamId);
     const userId = useSelector((state: RootState) => state.auth.userId);
 
@@ -28,7 +26,7 @@ export default function TeamMain() {
 
     useEffect(() => {
         if (teamId) {
-            console.log('[FETCH] fetchTeam 호출됨');
+            console.log('[FETCH] fetchTeam 호출됨 (호출 중복 확인용임)');
             fetchTeam(teamId)
             .then((data) => {
                 setTeamData(data)
@@ -41,6 +39,27 @@ export default function TeamMain() {
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }
     },[])
+
+    // 팀삭제갈겨 흥 너 필요업ㅂㅅ어!
+    const handleDeleteTeam = async () => {
+        if (!teamId) return;
+    
+        const confirmDelete = window.confirm("정말 팀을 삭제하시겠습니까? 팀원이 모두 나가게 됩니다.");
+        if (!confirmDelete) return;
+    
+        try {
+          const response = await API.delete(`/teams/${teamId}`);
+          console.log("팀 삭제 성공 응답:", response.data);
+    
+          dispatch(updatePartialUserInfo({ teamId: null }));
+          dispatch(clearTeam());
+    
+          navigate('/main');
+        } catch (error: any) {
+          console.error("팀 삭제 실패", error.response?.data || error.message);
+          alert("팀 삭제 중 문제가 발생했습니다.");
+        }
+      };
 
     const handleHistoryButtonClick = () => {
         navigate('/history');
@@ -80,6 +99,7 @@ export default function TeamMain() {
     }
 
     const leader = teamData.members.find((member) => member.userId === teamData.leaderId);
+    const isLeader = userId === teamData.leaderId;
 
   return (
     <div className={styles.teamroom}>
@@ -133,9 +153,15 @@ export default function TeamMain() {
                         ))}
                     </div>
                 </div>
-                <button className={styles.exitbtn}
-                onClick={handleLeaveTeam}
-                >팀 탈퇴하기</button>
+                {isLeader ? (
+                    <button className={styles.exitbtn} onClick={handleDeleteTeam}>
+                    팀 삭제하기
+                    </button>
+                ) : (
+                    <button className={styles.exitbtn} onClick={handleLeaveTeam}>
+                    팀 탈퇴하기
+                    </button>
+                )}
             </aside>
         </main>
     </div>
