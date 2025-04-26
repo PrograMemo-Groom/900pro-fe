@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '@/store';
-import { setTestId } from '@/store/team/teamainSlice';
-import axios from 'axios';
+import { useAppSelector } from '@/store';
+// import { setTestId } from '@/store/team/teamainSlice';
+// import axios from 'axios';
 import styles from '@/css/waiting/waitingroom.module.scss';
 
 interface TimerProps {
@@ -11,7 +11,7 @@ interface TimerProps {
 
 export default function Timer({ startTime }: TimerProps) {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const [timeLeft, setTimeLeft] = useState(0);
   const [_isActive, setIsActive] = useState(false);
   const timerId = useRef<NodeJS.Timeout | null>(null);
@@ -44,27 +44,14 @@ export default function Timer({ startTime }: TimerProps) {
         if (timerId.current) clearInterval(timerId.current);
 
         try {
-          console.log('⌛ 시험 시작! 문제 세팅 중...');
+          // console.log('⌛ 시험 시작!');
 
-          const response = await axios.post('/api/waiting-room/set-problem', {
-            teamId,
-            problemCount,
-          });
-
-          const testId = response.data.data.testId;
-          dispatch(setTestId(testId));
-
-          console.log('✅ 문제 세팅 완료! testId:', testId);
-
-          // ✅ 2. 챗봇 메시지 요청 보내기
-          // console.log('🤖 챗봇 시험 시작 메시지 보내는 중...');
-          // await axios.post(`/api/chat/${teamId}/chatbot/test-start`);
-          // console.log('✅ 챗봇 시험 시작 메시지 전송 완료');
+          // 시험 시작과 동시에 해야하는 일들 여기 적어주세요 - 건영님!
 
           navigate('/coding-test'); // ✅ 문제 세팅 후 시험 시작 화면 이동
         } catch (error) {
           console.error('❗ 문제 세팅 실패:', error);
-          // 실패시 처리 (ex: 알림 띄우고, 대기실 유지 등)
+          // 실패시 처리 필요하면 적으세요
         }
       }
     };

@@ -22,13 +22,13 @@ const Header = () => {
       <img src={hamburgerIcon}
           onClick={toggleMenu}
        alt='햄버거바'/>
-      <h1 className={styles.header}>9BACKPRO</h1>
+      <h1 className={styles.header} onClick={() => navigate('/')}>9BACKPRO</h1>
 
       {isOpen && (
           <div className={styles.menu}>
             <button>9BACKPRO 이용가이드</button>
             <button onClick={() => navigate('/editprofile')}>회원 정보 수정</button>
-            <button>이용 약관</button>
+            <button onClick={() => navigate('/termsofuse')}>이용 약관</button>
             <button>개인정보 처리 방침</button>
 
             <div className={styles.copy}>
