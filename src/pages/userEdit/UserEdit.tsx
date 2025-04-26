@@ -2,10 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
 import styles from "@/css/useredit/EditProfile.module.scss";
+import eyeIcon from '@/assets/eye.svg';
+import noeyeIcon from '@/assets/noeye.svg';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 export default function UserEdit() {
+    const myemail = useSelector((state: RootState) => state.auth.user.email);
+
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('hello@naver.com'); // 예시 이메일
+    const [email, _setEmail] = useState(myemail); //수정불가
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -18,11 +24,17 @@ export default function UserEdit() {
     };
   
     const handleSubmit = () => {
+    // 이름 입력 여부 먼저 체크
+        if (!name.trim()) {
+            setErrorMessage('이름을 입력해주세요');
+        return;
+        }
+
       if (password && !validatePassword(password)) {
         setErrorMessage('영어, 숫자, 특수문자 포함 8자의 비밀번호를 입력해주세요');
         return;
       }
-  
+
       // TODO: 수정 요청 API 호출
       alert('회원 정보 수정 완료!');
       navigate('/myteam');
@@ -41,10 +53,10 @@ export default function UserEdit() {
         <div className={styles.inputBox}>
             <label>Name</label>
             <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="새로운 이름을 입력해주세요"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="새로운 이름을 입력해주세요"
             />
         </div>
 
@@ -61,15 +73,18 @@ export default function UserEdit() {
             <label>New Password</label>
             <div className={styles.passwordInputWrapper}>
                 <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="새로운 비밀번호를 입력해주세요"
-                className={styles.passwordInput}
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="새로운 비밀번호를 입력해주세요"
+                    className={styles.passwordInput}
                 />
-                <span className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? '👁️' : '🙈'}
-                </span>
+                <img
+                    src={showPassword ? noeyeIcon : eyeIcon}
+                    alt="toggle password visibility"
+                    className={styles.eyeIcon}
+                    onClick={() => setShowPassword(!showPassword)}
+                />
             </div>
         </div>
 
