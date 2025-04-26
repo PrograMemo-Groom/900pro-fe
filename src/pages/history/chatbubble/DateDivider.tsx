@@ -17,7 +17,7 @@ function changeDateText(dateStr: string): string {
     const date = new Date(dateStr); // dataStr로 Date 생성
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const day = date.getDate()+1;
     const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
     return `${year}년 ${month}월 ${day}일 ${weekday}요일`;
 }

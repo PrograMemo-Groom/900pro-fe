@@ -36,7 +36,13 @@ export default function BubbleChatbot({ content, send_at, test_date }: Props) {
     try {
       // const res = await fetchProblemList(teamId, test_date);
       const res = await fetchProblemList(teamId, dateOnly);
-      dispatch(setProblems(res.data)); // 문제 리스트 저장
+
+      if (!res.data.problems || !Array.isArray(res.data.problems)) {
+        console.error('❌ 서버 응답에 문제가 있습니다 (problems가 없음)');
+        return;
+      }
+      
+      dispatch(setProblems(res.data.problems)); // 문제 리스트 저장
       dispatch(showTeamViewer()); // 왼쪽 컴포넌트 여는 리덕스 상태관리
     } catch (err) {
       console.error('❌ 문제를 불러올 수 없습니다:', err);
