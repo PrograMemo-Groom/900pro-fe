@@ -1,16 +1,9 @@
-import { useAppSelector } from '@/store';
 import { submitCode } from '@/api/codingTestApi';
-import { useTimer } from './useTimer';
 import { useCodeExecution } from './useCodeExecution';
 import { useCodePersistence } from './useCodePersistence';
 
 export const useCodingTestMainLogic = () => {
-  // Redux에서 시작 시간과 지속 시간 가져오기
-  const startTimeString = useAppSelector((state) => state.teamain.startTime);
-  const durationTime = useAppSelector((state) => state.teamain.durationTime);
-
-  // 분리된 커스텀 훅들 사용
-  const { remainingTime } = useTimer(startTimeString, durationTime);
+  const remainingTime = '';
   const { output, isRunning, processAndRunCode } = useCodeExecution();
   const {
     selectedLanguage,

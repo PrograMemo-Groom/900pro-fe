@@ -6,9 +6,13 @@ import Header from '@/pages/coding-test/components/Header';
 import { useCodingTestMainLogic } from '@/pages/coding-test/hooks/useCodingTestMainLogic';
 import { EditorTheme } from '@/pages/coding-test/types/types';
 import '@/css/coding-test/CodingTest.scss';
+import { useAppSelector } from '@/store';
 
 const CodingTest= () => {
   const [theme] = useState<EditorTheme>('dark');
+  const startTime = useAppSelector((state) => state.teamain.startTime);
+  const durationTime = useAppSelector((state) => state.teamain.durationTime);
+
   const {
     output,
     isRunning,
@@ -28,6 +32,8 @@ const CodingTest= () => {
         isRunning={isRunning}
         handleRunCode={handleRunCode}
         handleSubmit={handleSubmit}
+        startTime={startTime}
+        durationTime={durationTime}
       />
 
       <div className="main-content">

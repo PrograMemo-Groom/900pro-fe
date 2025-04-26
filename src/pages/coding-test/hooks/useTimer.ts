@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export const useTimer = (startTimeString: string | null, durationTime: number | null) => {
   const [remainingTime, setRemainingTime] = useState<string>('00:00:00');
   const timerId = useRef<NodeJS.Timeout | null>(null);
+  const timeRef = useRef<string>('00:00:00');
+  const endTimestampRef = useRef<number | null>(null);
 
   // 타이머 로직
   useEffect(() => {
@@ -23,13 +25,17 @@ export const useTimer = (startTimeString: string | null, durationTime: number | 
     ).getTime();
 
     // 종료 시간 계산 (시작 시간 + 지속 시간)
-    const endTimestamp = startTimestamp + (durationTime * 60 * 60 * 1000);
+    endTimestampRef.current = startTimestamp + (durationTime * 60 * 60 * 1000);
 
     const updateTimer = () => {
       const now = Date.now();
+      const endTimestamp = endTimestampRef.current;
+
+      if (!endTimestamp) return;
 
       // 시험이 이미 종료되었으면
       if (now >= endTimestamp) {
+        timeRef.current = '00:00:00';
         setRemainingTime('00:00:00');
         if (timerId.current) clearInterval(timerId.current);
         return;
@@ -46,7 +52,11 @@ export const useTimer = (startTimeString: string | null, durationTime: number | 
       // HH:MM:SS 형식으로 포맷팅
       const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-      setRemainingTime(formattedTime);
+      // 이전 값과 다를 때만 상태 업데이트
+      if (timeRef.current !== formattedTime) {
+        timeRef.current = formattedTime;
+        setRemainingTime(formattedTime);
+      }
     };
 
     // 초기 타이머 업데이트
@@ -61,5 +71,8 @@ export const useTimer = (startTimeString: string | null, durationTime: number | 
     };
   }, [startTimeString, durationTime]);
 
-  return { remainingTime };
-}; 
+  // 타이머 값을 직접 접근할 수 있는 getter 함수
+  const getTime = useCallback(() => timeRef.current, []);
+
+  return { remainingTime, getTime };
+};
