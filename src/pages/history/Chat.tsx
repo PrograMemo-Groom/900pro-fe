@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from '@/css/history/Chat.module.scss'
 import ChatLog from '@/pages/history/ChatLog.tsx';
 import ChatInput from '@/pages/history/ChatInput.tsx';
@@ -8,11 +8,10 @@ import { RootState } from '@/store';
 
 // 소켓 연결해보자구
 import { initStompClient, sendMessage, disconnectStomp } from '@/api/stompClient';
-
 // 여기는 과거 채팅내역 불러오는곳
 import { fetchChatHistory } from '@/api/chatApi';
 
-function Chat() {
+function Chat({ searchTerm }: { searchTerm: string }) {
   // 팀 뷰어 리덕스
   const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
   
@@ -32,6 +31,8 @@ function Chat() {
 
   // 팀 가입하면 아래로 수정하면 됨
   // const roomId = useSelector((state: RootState) => state.auth.user.teamId);
+
+  const messageRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>({});
 
   console.log(roomId)
 
@@ -63,6 +64,26 @@ function Chat() {
     };
   }, []);
 
+  useEffect(() => {
+    // messages 배열이 바뀔 때마다 refs도 갱신
+    const refs: { [key: number]: React.RefObject<HTMLDivElement> } = {};
+    messages.forEach((msg) => {
+      refs[msg.id] = refs[msg.id] || React.createRef<HTMLDivElement>();
+    });
+    messageRefs.current = refs;
+  }, [messages]);
+
+  useEffect(() => {
+    if (!searchTerm) return;
+    const target = messages.find((msg) => msg.content.includes(searchTerm));
+    if (target) {
+      const ref = messageRefs.current[target.id];
+      if (ref && ref.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [searchTerm, messages]);
+
 
   const handleSend = (content: string) => {
     const payload = {
@@ -77,7 +98,7 @@ function Chat() {
 
   return (
     <main className={`${styles.container} ${isTeamViewerOpen ? styles.container_with_code : styles.container_with_normal}`}>
-      <ChatLog messages={messages} />
+      <ChatLog messages={messages} messageRefs={messageRefs.current} />
       <ChatInput onSubmit={handleSend} />
     </main>
   )
