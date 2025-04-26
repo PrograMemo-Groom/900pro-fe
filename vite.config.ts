@@ -19,6 +19,7 @@ const config = {
     allowedHosts: ['all'],
     proxy: {
       '/api': {
+        // target: 'https://900pro.shop/',
         target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8080',
         // target: 'http://localhost:8080',
         changeOrigin: true,
@@ -28,6 +29,7 @@ const config = {
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
       '/execute': {
+        // target: 'https://900pro.shop/',
         target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090',
         changeOrigin: true,
         secure: false,

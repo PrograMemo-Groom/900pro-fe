@@ -6,18 +6,19 @@ import { ChatType } from '@/pages/history/types/Chat.ts';
 const raw = localStorage.getItem('persist:auth');
 const myId = raw ? Number(JSON.parse(raw).userId) : null;
 
-let prevDate = '';
-
 type Messagetype = {
   messages: ChatType[] 
+  messageRefs: { [key: number]: React.RefObject<HTMLDivElement> };
 }
 
-function ChatLog({ messages }: Messagetype ) {
+function ChatLog({ messages, messageRefs }: Messagetype ) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  let prevDate = '';
 
   return (
     <section className={styles.chat_container}>
@@ -28,7 +29,7 @@ function ChatLog({ messages }: Messagetype ) {
         prevDate = dateStr;
 
         return(
-            <div key={chat.id}>
+            <div key={chat.id} ref={messageRefs[chat.id]}>
                 {showLine && ( <DateDivider date={dateStr} />)}
                 {chat.chatbot === true ? (<BubbleChatbot content={chat.content} send_at={chat.sendAt} test_date={chat.testDateTime}/>)
                 // 나

@@ -1,7 +1,40 @@
+@use '@/css/common/_global.scss' as *;
+
+.header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1vh;
+    
+    img{
+        width: 35px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    h1{
+        @include projectTitle(3rem);
+        margin: 6px auto 0 auto;
+    }
+}
+.search_area{
+    text-align: right;
+    margin-top: -20px;
+    margin-bottom: 1vh;
+}
+.search_input {
+    width: 35%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    color: white;
+}
+  
+
 // 전체 배열 정리 
 .chat_container{
     display: flex;
     flex-direction: row;
 }
-
-  

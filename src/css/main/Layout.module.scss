@@ -1,6 +1,5 @@
 @use "@/css/common/_global" as *;
 
-
 header{
   display: flex;
   flex-direction: row;
@@ -27,10 +26,15 @@ header{
   flex: 1;
   width: 80vw;
 
+  .teamContainer{
+    height: 60vh; // ✅ 높이 고정
+    overflow-y: auto; // ✅ 스크롤 생기게
+    
+  }
   .container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: end;  // 여기가 헤더 버튼 정렬
     align-items: center;
     max-width: 850px;
     width: 100%;
@@ -45,7 +49,6 @@ header{
   & > section {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    //width: 100vw;
     max-width: 1280px;
     gap: 25px;
     margin-top: 50px;
@@ -62,28 +65,29 @@ header{
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  align-items: center;
   text-align: center;
 
   &:hover {
     background: #3674B5;
   }
 
-  & > header {
-    font-size: 36px;
-    font-weight: 700;
+  & > h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
   }
 
   & > p {
-    font-size: 24px;
+    font-size: 1.2rem;
   }
 
   & > p:last-child {
-    font-size: 20px;
+    font-size: 1.2rem;
   }
 }
 
 .common__select {
-  position: relative;
+  // position: relative;
   height: 80px;
   width: 80px;
 
@@ -142,18 +146,21 @@ header{
 
 .teamCreateButton {
   @include gradientMixin;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 50px;
   background: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
   border: none;
   cursor: pointer;
-  border-radius: 50%;
+  // border-radius: 40%;
   transition: background 0.3s;
   text-align: center;
 
   &:hover {
     background: rgba(161, 227, 249, 0.6);
-    border-radius: 50%;
+    border-radius: 30px;
   }
 }
 

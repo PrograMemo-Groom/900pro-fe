@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
-import { useDispatch } from 'react-redux';
-import { setTeamId, setMembers, setStartTime } from '@/store/team/teamainSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { setTeamId, setMembers, setStartTime, setProblemCount, clearTeam } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
+
+// 팀탈퇴
+import { updatePartialUserInfo } from '@/store/auth/slices'; // teamId 초기화용
+import API from '@/store/api/ApiConfig';
+
 import Header from '@/pages/common/Header.tsx';
 import StartButton from '@/pages/teamain/StartButton';
 import styles from '@/css/teamain/TeamMain.module.scss'
@@ -13,7 +19,9 @@ export default function TeamMain() {
     const dispatch = useDispatch();
 
     // 일단 1로 하드코딩
-    const teamId = 1;
+    // const teamId = 1;
+    const teamId = useSelector((state: RootState) => state.auth.user.teamId);
+    const userId = useSelector((state: RootState) => state.auth.userId);
 
     // 팀 데이터 냅다 가져와서 상태관리해~ 레츠기릭
     const [teamData, setTeamData] = useState<TeamData | null>(null);
@@ -27,6 +35,7 @@ export default function TeamMain() {
                 dispatch(setTeamId(data.id));
                 dispatch(setMembers(data.members));
                 dispatch(setStartTime(data.startTime));
+                dispatch(setProblemCount(data.problemCount));
             })
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));
         }
@@ -40,8 +49,33 @@ export default function TeamMain() {
         navigate('/waitingroom');
     };
 
+    const handleLeaveTeam = async () => {
+        if (!teamId || !userId) return;
+    
+        const confirmLeave = window.confirm("정말 팀에서 탈퇴하시겠습니까?");
+        if (!confirmLeave) return;
+    
+        try {
+          await API.delete(`/teams/${teamId}/members`, {
+            params: { userId }
+          });
+    
+          // Redux 상태에서 teamId 초기화
+          dispatch(updatePartialUserInfo({ teamId: null }));
+
+          // 팀 리듀서도 초기화
+          dispatch(clearTeam());
+    
+          // 메인페이지 (가입 전)로 이동
+          navigate('/main');
+        } catch (error: any) {
+          console.error("팀 탈퇴 실패", error.response?.data || error.message);
+          alert("팀 탈퇴 중 문제가 발생했습니다.");
+        }
+    };
+
     if (!teamData) {
-        return <div>재접속 plz 네트워크가 느려요잉~ 팀데이터 못불러와</div>;
+        return <div>잘못된 요청경로입니다.</div>;
     }
 
     const leader = teamData.members.find((member) => member.userId === teamData.leaderId);
@@ -54,7 +88,7 @@ export default function TeamMain() {
                 <section className={styles.container}>
                     <div className={styles.team_info}>
                         <h2>{teamData.teamName}</h2>
-                        <p>매일 오후 9시 | {teamData.level} | {teamData.problemCount}문제 | {teamData.durationTime}시간</p>
+                        <p>매일 {teamData.startTime} | {teamData.level} | {teamData.problemCount}문제 | {teamData.durationTime}시간</p>
                     </div>
                     <div className={styles.team_des}>
                         <p>
@@ -98,7 +132,9 @@ export default function TeamMain() {
                         ))}
                     </div>
                 </div>
-                <button className={styles.exitbtn}>팀 탈퇴하기</button>
+                <button className={styles.exitbtn}
+                onClick={handleLeaveTeam}
+                >팀 탈퇴하기</button>
             </aside>
         </main>
     </div>

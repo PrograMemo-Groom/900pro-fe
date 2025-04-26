@@ -1,7 +1,33 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/store';
+import { useNavigate } from 'react-router-dom';
+import API from '@/store/api/ApiConfig';
 import styles from "@/css/main/Layout.module.scss";
 
+import { updatePartialUserInfo } from '@/store/auth/slices';
+
 const TeamDetail = ({team, onClose} : any) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.auth.userId);
+
   console.log("team",team);
+
+  const handleJoinTeam = async () => {
+    try {
+      await API.post(`/teams/${team.teamId}/members`, null, {
+        params: { userId }
+      });
+
+      // 건영님꺼에 팀 아이디 저장좀 하겠습니다
+      dispatch(updatePartialUserInfo({ teamId: team.teamId }));
+      navigate('/myteam');
+    } catch (error: any) {
+      console.error("팀 가입 실패", error.response?.data || error.message);
+      alert("팀 가입이 불가합니다. 기존의 팀을 탈퇴하고 새로 가입해주세요.");
+    }
+  };
+
   return (
     <div className={styles.backdrop} onClick={onClose}>
       <div
@@ -9,13 +35,14 @@ const TeamDetail = ({team, onClose} : any) => {
         onClick={(e) => e.stopPropagation()} // 배경 누를 때만 닫히게
       >
         <h2>{team.teamName}</h2>
-        <p>{team.time}</p>
+        <p>⏰ 매일 {team.startTime}</p>
         <p>난이도 {team.level} / {team.problemCount}문제 / 3시간</p>
         <p>인원 {team.currentMembers} / 10</p>
         <hr />
-        <p>소요시간은 3시간이며 ... (설명 등)</p>
-        <p>난이도는 하~최상 / 토론 위주 진행 ...</p>
-        <button className={styles.joinButton}>팀 가입하기</button>
+        <p>{team.description}</p>
+        <button className={styles.joinButton}
+        onClick={handleJoinTeam}
+        >팀 가입하기</button>
       </div>
     </div>
   );
