@@ -76,7 +76,7 @@ export default function TeamMain() {
     };
 
     if (!teamData) {
-        return <div>잘못된 요청경로입니다.</div>;
+        return <div>팀 데이터가 존재하지 않습니다. 잘못된 요청경로입니다.</div>;
     }
 
     const leader = teamData.members.find((member) => member.userId === teamData.leaderId);

@@ -57,6 +57,11 @@ export default function Timer({ startTime }: TimerProps) {
 
           console.log('✅ 문제 세팅 완료! testId:', testId);
 
+          // ✅ 2. 챗봇 메시지 요청 보내기
+          // console.log('🤖 챗봇 시험 시작 메시지 보내는 중...');
+          // await axios.post(`/api/chat/${teamId}/chatbot/test-start`);
+          // console.log('✅ 챗봇 시험 시작 메시지 전송 완료');
+
           navigate('/coding-test'); // ✅ 문제 세팅 후 시험 시작 화면 이동
         } catch (error) {
           console.error('❗ 문제 세팅 실패:', error);
