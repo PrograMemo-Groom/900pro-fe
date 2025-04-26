@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
@@ -19,25 +20,50 @@ export default function UserEdit() {
     const navigate = useNavigate();
   
     const validatePassword = (pwd: string) => {
-      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$/;
-      return regex.test(pwd);
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*?])[A-Za-z\d~!@#$%^&*?]{8,20}$/;
+        return regex.test(pwd);
     };
   
-    const handleSubmit = () => {
-    // 이름 입력 여부 먼저 체크
+    const handleSubmit = async () => {
+        // 이름 입력 여부 먼저 체크
         if (!name.trim()) {
             setErrorMessage('이름을 입력해주세요');
         return;
         }
 
-      if (password && !validatePassword(password)) {
-        setErrorMessage('영어, 숫자, 특수문자 포함 8자의 비밀번호를 입력해주세요');
-        return;
-      }
+        if (!password.trim()) {
+            setErrorMessage('비밀번호를 입력해주세요');
+            return;
+        }
 
-      // TODO: 수정 요청 API 호출
-      alert('회원 정보 수정 완료!');
-      navigate('/myteam');
+        if (password && !validatePassword(password)) {
+            setErrorMessage('비밀번호는 8~20자이며, 영문자, 숫자, 특수문자(~!@#$%^&*?) 중 하나 이상을 포함해야 합니다.');
+            return;
+        }
+
+        try {
+            const userId = useSelector((state: RootState) => state.auth.userId);
+
+            if (!userId) {
+            alert('로그인 정보가 없습니다.');
+            navigate('/');
+            return;
+            }
+        
+            // 서버로 PATCH 요청 보내기
+            await axios.patch(`/api/mypage/update/${userId}`, {
+            username: name,
+            password: password ? password : undefined,
+            });
+    
+            alert('회원 정보 수정 완료!');
+            navigate('/myteam');
+            window.location.reload();  
+
+        } catch (error) {
+            console.error(error);
+            alert('회원 정보 수정 실패');
+        }
     };
   
     const handleWithdrawal = () => {
