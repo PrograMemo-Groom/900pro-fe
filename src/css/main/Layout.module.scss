@@ -26,6 +26,11 @@ header{
   flex: 1;
   width: 80vw;
 
+  .teamContainer{
+    height: 60vh; // ✅ 높이 고정
+    overflow-y: auto; // ✅ 스크롤 생기게
+    
+  }
   .container {
     display: flex;
     flex-direction: row;

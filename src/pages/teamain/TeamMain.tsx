@@ -3,7 +3,7 @@ import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { setTeamId, setMembers, setStartTime, setProblemCount } from '@/store/team/teamainSlice';
+import { setTeamId, setMembers, setStartTime, setProblemCount, clearTeam } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
 
 // 팀탈퇴
@@ -62,6 +62,9 @@ export default function TeamMain() {
     
           // Redux 상태에서 teamId 초기화
           dispatch(updatePartialUserInfo({ teamId: null }));
+
+          // 팀 리듀서도 초기화
+          dispatch(clearTeam());
     
           // 메인페이지 (가입 전)로 이동
           navigate('/main');

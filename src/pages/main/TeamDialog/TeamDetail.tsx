@@ -24,7 +24,7 @@ const TeamDetail = ({team, onClose} : any) => {
       navigate('/myteam');
     } catch (error: any) {
       console.error("팀 가입 실패", error.response?.data || error.message);
-      alert("팀 가입 실패");
+      alert("팀 가입이 불가합니다. 기존의 팀을 탈퇴하고 새로 가입해주세요.");
     }
   };
 
