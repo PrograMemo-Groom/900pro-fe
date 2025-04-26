@@ -9,6 +9,7 @@ import SignUp from '@/pages/signUp/SignUp.tsx';
 import WaitingRoom from "@/pages/waitingRoom/WaitingRoom";
 import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 import MainTeam from '@/pages/teamain/TeamMain.tsx';
+import UserEdit from '@/pages/userEdit/UserEdit';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: '/waitingroom',
         element: <WaitingRoom />,
+      },
+      {
+        path: 'editprofile',
+        element: <UserEdit />,
       },
       {
         path: 'coding-test',
