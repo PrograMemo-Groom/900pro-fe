@@ -20,11 +20,9 @@ export interface Problem {
   memoryLimit: number;
 }
 
-export const fetchProblemList = async (teamId: number, date: string): Promise<Problem[]> => {
+export const fetchProblemList = async (testId: number): Promise<Problem[]> => {
   try {
-    const response = await axios.get<ProblemResponse>('http://3.39.135.118:8080/api/history/gethistory', {
-      params: { teamId, date }
-    });
+    const response = await axios.get<ProblemResponse>(`http://3.39.135.118:8080/api/code/test/${testId}`);
 
     if (response.data.success) {
       return response.data.data;
