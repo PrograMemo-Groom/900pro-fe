@@ -13,7 +13,7 @@ const TeamDetail = ({team, onClose} : any) => {
         <p>난이도 {team.level} / {team.problemCount}문제 / 3시간</p>
         <p>인원 {team.currentMembers} / 10</p>
         <hr />
-        <p>설명이 들어가야하는데 없다</p>
+        <p>{team.description}</p>
         <button className={styles.joinButton}>팀 가입하기</button>
       </div>
     </div>
