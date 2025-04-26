@@ -3,7 +3,6 @@ import authReducer from "@/store/auth/slices";
 import uiReducer from '@/store/history/uiSlice';
 import problemReducer from '@/store/history/problemSlice';
 import teamainReducer from '@/store/team/teamainSlice';
-import codingProblemReducer from './coding-test/problemSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -28,7 +27,6 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     ui: uiReducer,
     historyProblem: problemReducer,
-    codingProblem: codingProblemReducer,
     teamain: persistedTeamainReducer,
   },
   middleware: (getDefaultMiddleware) =>
