@@ -1,5 +1,6 @@
 import '@/css/coding-test/Header.scss';
 import { useNavigate } from 'react-router-dom';
+import Timer from '@/pages/coding-test/components/Timer';
 
 interface HeaderProps {
   remainingTime: string;
@@ -7,6 +8,8 @@ interface HeaderProps {
   handleRunCode: () => void;
   handleSubmit: () => void;
   handleEndTest?: () => void;
+  startTime?: string | null;
+  durationTime?: number | null;
 }
 
 const Header = ({
@@ -15,6 +18,8 @@ const Header = ({
   handleRunCode,
   handleSubmit,
   // handleEndTest
+  startTime = null,
+  durationTime = null
 }: HeaderProps) => {
   const navigate = useNavigate();
 
@@ -33,7 +38,11 @@ const Header = ({
     <div className="header">
       <div className="header-timer">
         <span>남은 시간 </span>
-        <span>{remainingTime}</span>
+        {startTime && durationTime ? (
+          <Timer startTime={startTime} durationTime={durationTime} />
+        ) : (
+          <span>{remainingTime}</span>
+        )}
       </div>
       <div className="header-title">
         <h1>9BACKPRO</h1>
