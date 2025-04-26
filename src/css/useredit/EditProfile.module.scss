@@ -1,0 +1,126 @@
+@use "@/css/common/_global" as *;
+
+.editroom{
+    width: 80vw;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative; 
+  
+    img{
+        width: 35px;
+        height: 30px;
+        cursor: pointer;
+    }
+  
+    h1{
+        @include projectTitle(3rem);
+        margin: 6px auto 0 auto;
+    }
+  }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    color: white;
+  
+    h2 {
+      font-size: 1.5rem;
+      margin-top: -20px;
+      margin-bottom: 2.4rem;
+      opacity: 0.8;
+    }
+  }
+  
+  .inputBox {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    width: 300px;
+  
+    label {
+      margin-bottom: 0.5rem;
+    }
+  
+    input {
+      padding: 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 50px;
+      background: transparent;
+      color: white;
+  
+      &:disabled {
+        color: #aaa;
+      }
+    }
+  }
+  
+  .passwordInputWrapper {
+    position: relative;
+    width: 100%;
+    
+    .passwordInput {
+      width: 100%;
+      padding: 0.9rem 2.5rem 0.9rem 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 50px;
+      background: transparent;
+      color: white;
+    }
+  
+    .eyeIcon {
+      position: absolute;
+      top: 50%;
+      right: 0.8rem;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      width: 28px;
+      color: white;
+    }
+  }
+  
+  
+  .error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .success{
+    color: green;
+    font-size: 0.9rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .submitButton {
+    margin-top: 1rem;
+    width: 300px;
+    padding: 0.7rem;
+    border: none;
+    background: #9EC5F8;
+    color: black;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .withdrawButton {
+    margin-top: 1rem;
+    width: 300px;
+    padding: 0.7rem;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  

@@ -4,6 +4,8 @@ import { useAppSelector } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import Timer from '@/pages/waitingRoom/Timer';
 import styles from '@/css/waiting/waitingroom.module.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
 const SUBSCRIBE_PATH = '/sub/waiting-room/1';
@@ -13,6 +15,7 @@ export default function WaitingRoom() {
   const navigate = useNavigate();
   const reduxMembers = useAppSelector((state) => state.teamain.members);
   const startTimeString = useAppSelector((state) => state.teamain.startTime);
+  const teamId = useSelector((state: RootState) => state.auth.user.teamId);
 
   const raw = localStorage.getItem('persist:auth');
   const parsed = raw ? JSON.parse(raw) : null;
@@ -98,7 +101,7 @@ export default function WaitingRoom() {
     const newStatus = isReady ? 'WAITING' : 'READY';
 
     const msg = {
-      teamId: 1, // 하드코딩
+      teamId: teamId, // 하드코딩
       userId: myId,
       userName: myName,
       status: newStatus,

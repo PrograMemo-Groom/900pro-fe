@@ -5,6 +5,8 @@ header{
     flex-direction: row;
     align-items: center;
     position: relative; 
+    cursor: pointer;
+    user-select: none;
   
     img{
         width: 35px;
