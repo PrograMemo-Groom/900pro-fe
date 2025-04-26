@@ -57,7 +57,7 @@ export default function UserEdit() {
             });
     
             alert('회원 정보 수정 완료!');
-            navigate('/myteam');
+            navigate('/');
             window.location.reload();  
 
         } catch (error) {
