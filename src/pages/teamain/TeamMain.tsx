@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
 import { setTeamId, setMembers, setStartTime, setProblemCount } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/pages/common/Header.tsx';
@@ -13,7 +14,8 @@ export default function TeamMain() {
     const dispatch = useDispatch();
 
     // 일단 1로 하드코딩
-    const teamId = 1;
+    // const teamId = 1;
+    const teamId = useSelector((state: RootState) => state.auth.user.teamId);
 
     // 팀 데이터 냅다 가져와서 상태관리해~ 레츠기릭
     const [teamData, setTeamData] = useState<TeamData | null>(null);
