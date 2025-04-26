@@ -1,0 +1,87 @@
+@use "@/css/common/_global" as *;
+
+header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative; 
+  
+    img{
+        width: 35px;
+        height: 30px;
+        cursor: pointer;
+    }
+  
+    h1{
+        @include projectTitle(3rem);
+        margin: 6px auto 0 auto;
+    }
+  }
+
+  .menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 250px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    border-radius: 0px 30px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.7);  
+    animation: slideDown 0.3s ease forwards;    
+  
+    button {
+      padding: 12px;
+      background: rgba(17, 32, 48, 0.9);
+      border: 1px solid white;
+      color: white;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 700;
+  
+      &:hover {
+        background: rgba(17, 32, 48, 0.5);
+      }
+    }
+  }
+
+  .copy {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: white;
+    text-align: start;
+    line-height: 1.4;
+
+    .smallText {
+        margin-top: 1vh;
+        font-size: 0.7rem;
+    }
+    .ver{
+        margin-top: 1vh;
+    }
+  }
+  
+  .logout {
+    color: red;
+    border: none;
+    background: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+  }
+
+@keyframes slideDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px); // 위에서 살짝 내려오는 느낌
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
