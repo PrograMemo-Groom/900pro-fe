@@ -56,19 +56,39 @@ export default function UserEdit() {
                 password: password
             });
     
-            alert('회원 정보 수정 완료!');
+            alert('회원 정보가 수정되었습니다.');
             navigate('/');
             window.location.reload();  
 
         } catch (error) {
             console.error(error);
-            alert('회원 정보 수정 실패');
+            alert('회원 정보 수정이 실패하였습니다.');
         }
     };
   
-    const handleWithdrawal = () => {
-      // TODO: 회원 탈퇴 로직
-      alert('회원 탈퇴 기능은 준비 중입니다.');
+    const handleWithdrawal = async () => {
+        const confirmDelete = window.confirm('탈퇴하면 기존의 정보들은 되돌릴 수 없습니다. 정말로 탈퇴하시겠습니까?');
+
+        if (!confirmDelete) return;
+
+        try {
+            if (!userId) {
+                alert('로그인 정보가 없습니다.');
+                navigate('/');
+                return;
+            }
+
+            await API.patch(`/mypage/delete/${userId}`);
+
+            alert('회원 탈퇴가 완료되었습니다.');
+            localStorage.clear();
+            navigate('/');
+            window.location.reload(); 
+
+        } catch(error) {
+            console.error(error);
+            alert('회원 탈퇴에 실패했습니다.');
+        }
     };
 
   return (
