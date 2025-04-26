@@ -1,9 +1,15 @@
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/store';
+import { updatePartialUserInfo } from '@/store/auth/slices';
 import styles from '@/css/main/CreateModal.module.scss';
 
 const TeamCreate = ({ onClose }: any) => {
-  const userId = 5; // TODO: 실제 로그인된 사용자 ID로 변경
+  const userId = useSelector((state: RootState) => state.auth.userId);
+  const navigate = useNavigate(); 
+  const dispatch = useDispatch();
 
   const [teamName, setTeamName] = useState('');
   const [description, setDescription] = useState('');
@@ -33,7 +39,14 @@ const TeamCreate = ({ onClose }: any) => {
         }
       );
       console.log('팀 생성 성공', response.data);
+      const createdTeamId = response.data.data;
+
+      if (createdTeamId) {
+        dispatch(updatePartialUserInfo({ teamId: createdTeamId }));
+      }
+
       onClose();
+      navigate('/myteam');
     } catch (error: any) {
       console.error('팀 생성 실패', error.response?.data || error.message);
     }
