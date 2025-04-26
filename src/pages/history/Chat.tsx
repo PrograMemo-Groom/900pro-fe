@@ -27,10 +27,10 @@ function Chat({ searchTerm }: { searchTerm: string }) {
   // 아이디
   const myId = raw ? Number(JSON.parse(raw).userId) : null;
   // 채팅룸 id
-  const roomId = useSelector((state: RootState) => state.teamain.teamId);
+  // const roomId = useSelector((state: RootState) => state.teamain.teamId);
 
   // 팀 가입하면 아래로 수정하면 됨
-  // const roomId = useSelector((state: RootState) => state.auth.user.teamId);
+  const roomId = useSelector((state: RootState) => state.auth.user.teamId);
 
   const messageRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>({});
 
