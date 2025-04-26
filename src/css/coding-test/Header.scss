@@ -21,7 +21,7 @@
     align-items: center;
     justify-content: center;
     height: 55px;
-    min-width: 250px;
+    width: 250px;
     padding: 0.6rem 2.0rem;
     background-color: #657382;
     color: #fff;
@@ -42,7 +42,7 @@
 
     span:last-child {
       display: inline-block;
-      min-width: 100px;
+      width: 100px;
       text-align: center;
     }
   }
