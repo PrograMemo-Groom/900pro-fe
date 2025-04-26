@@ -19,7 +19,9 @@
   .header-timer {
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 55px;
+    min-width: 250px;
     padding: 0.6rem 2.0rem;
     background-color: #657382;
     color: #fff;
@@ -28,12 +30,20 @@
     font-weight: 500;
     font-size: 1.6rem;
     white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
 
     span:first-child {
       font-size: 1.4rem;
       font-weight: 700;
       letter-spacing: -0.03em;
       margin-right: 0.5rem;
+    }
+
+    span:last-child {
+      display: inline-block;
+      min-width: 100px;
+      text-align: center;
     }
   }
 
