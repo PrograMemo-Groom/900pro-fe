@@ -1,23 +1,5 @@
 @use "@/css/common/_global" as *;
 
-header{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  position: relative; 
-
-  img{
-      width: 35px;
-      height: 30px;
-      cursor: pointer;
-  }
-
-  h1{
-      @include projectTitle(3rem);
-      margin: 6px auto 0 auto;
-  }
-}
-
 .mainContainer {
   display: flex;
   flex-direction: column;

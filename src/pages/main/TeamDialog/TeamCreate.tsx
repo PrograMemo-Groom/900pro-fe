@@ -38,9 +38,19 @@ const TeamCreate = ({ onClose }: any) => {
           durationTime,
         }
       );
-      console.log('팀 생성 성공', response.data);
-      const createdTeamId = response.data.data;
+      const resData = response.data;
+      console.log('팀 생성 응답', resData);
 
+      if (!resData.success) {
+        if (resData.message.includes('Duplicate entry')) {
+          alert('이미 존재하는 팀 이름이에요😅 다른 이름을 입력해주세요.');
+        } else {
+          alert(`팀 생성 실패: ${resData.message}`);
+        }
+        return;
+      }
+
+      const createdTeamId = resData.data;
       if (createdTeamId) {
         dispatch(updatePartialUserInfo({ teamId: createdTeamId }));
       }
