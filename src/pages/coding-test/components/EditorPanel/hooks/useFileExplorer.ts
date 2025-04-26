@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FileItem, CodeLanguage } from '@/pages/coding-test/types/types';
 import { sampleFileStructure } from '@/pages/coding-test/data/fileStructure';
-import { getLanguageByExtension } from '../utils/languageUtils';
+import { getLanguageByExtension } from '@/pages/coding-test/components/EditorPanel/utils/languageUtils';
 
 interface UseFileExplorerProps {
   onFileSelect: (id: string, name: string, language: CodeLanguage) => void;
@@ -97,16 +97,18 @@ const sortFileStructure = (items: FileItem[]): FileItem[] => {
 // 동일한 이름의 파일/폴더가 존재하는지 확인하는 함수
 const isDuplicateName = (items: FileItem[], name: string, type: 'file' | 'folder'): boolean => {
   for (const item of items) {
-    // 파일 비교 시 확장자 제외한 이름 사용 (폴더는 그냥 이름 사용)
-    const itemName = type === 'file' && item.extension
-      ? item.name.substring(0, item.name.lastIndexOf('.'))
-      : item.name;
-    const targetName = type === 'file' && name.includes('.')
-      ? name.substring(0, name.lastIndexOf('.'))
-      : name;
-
-    if (item.type === type && itemName.toLowerCase() === targetName.toLowerCase()) {
-      return true;
+    if (item.type === type) {
+      if (type === 'folder') {
+        // 폴더는 이름만 비교
+        if (item.name.toLowerCase() === name.toLowerCase()) {
+          return true;
+        }
+      } else {
+        // 파일은 확장자를 포함한 전체 이름 비교
+        if (item.name.toLowerCase() === name.toLowerCase()) {
+          return true;
+        }
+      }
     }
   }
   return false;

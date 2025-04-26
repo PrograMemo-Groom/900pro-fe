@@ -1,39 +1,102 @@
 import '@/css/coding-test/ProblemPanel.scss';
+import { useEffect, useState } from 'react';
+import { fetchProblemList, Problem } from '@/api/codingTestApi';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const ProblemPanel = () => {
+  const [problems, setProblems] = useState<Problem[]>([]);
+  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 리덕스에서 testId 가져오기
+  const testId = useSelector((state: RootState) => state.teamain.testId);
+
+  useEffect(() => {
+    const loadProblems = async () => {
+      try {
+        // 리덕스에서 가져온 testId 사용
+        if (!testId) {
+          setError('테스트 ID가 없습니다.');
+          setLoading(false);
+          return;
+        }
+
+        const problemList = await fetchProblemList(testId);
+        setProblems(problemList);
+
+        // 첫 번째 문제를 기본으로 선택
+        if (problemList.length > 0) {
+          setSelectedProblem(problemList[0]);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error('문제 로딩 중 오류:', err);
+        setError('문제를 불러오는 중 오류가 발생했습니다.');
+        setLoading(false);
+      }
+    };
+
+    loadProblems();
+  }, [testId]);
+
+  if (loading) {
+    return <div className="problem-panel">문제를 불러오는 중...</div>;
+  }
+
+  if (error) {
+    return <div className="problem-panel error">{error}</div>;
+  }
+
+  if (!selectedProblem) {
+    return (
+      <div className="problem-panel">
+        <div style={{ padding: '10px 15px' }}>문제가 없습니다.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="problem-panel">
       <div className="problem-header">
         <div className="problem-tabs">
-          <button className="problem-tab active">#1012</button>
-          <button className="problem-tab">#1253</button>
-          <button className="problem-tab">#108</button>
+          {problems.map((problem) => (
+            <button
+              key={problem.id}
+              className={`problem-tab ${selectedProblem.id === problem.id ? 'active' : ''}`}
+              onClick={() => setSelectedProblem(problem)}
+            >
+              #{problem.baekNum}
+            </button>
+          ))}
         </div>
-        <h2 className="problem-title">#1012 유기농 배추</h2>
+        <h2 className="problem-title">#{selectedProblem.baekNum} {selectedProblem.title}</h2>
       </div>
 
       <div className="problem-details">
-        <h3>입력</h3>
-        <p>입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다. 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다. 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다. 두 배추의 위치가 같은 경우는 없다.</p>
+        <div dangerouslySetInnerHTML={{ __html: selectedProblem.description }} />
 
-        <h3>출력</h3>
-        <p>각 테스트 케이스에 대해 필요한 최소의 배추흰지렁이 마리 수를 출력한다.</p>
+        {selectedProblem.inputDes && (
+          <>
+            <h3>입력</h3>
+            <p>{selectedProblem.inputDes}</p>
+          </>
+        )}
+
+        {selectedProblem.outputDes && (
+          <>
+            <h3>출력</h3>
+            <p>{selectedProblem.outputDes}</p>
+          </>
+        )}
 
         <h3>예시 입력</h3>
-        <pre>
-{`1
-5 3 6
-0 2
-1 2
-2 2
-3 2
-4 2
-4 0
-`}
-        </pre>
+        <pre>{selectedProblem.exInput}</pre>
 
         <h3>예시 출력</h3>
-        <pre>2</pre>
+        <pre>{selectedProblem.exOutput}</pre>
       </div>
     </div>
   );

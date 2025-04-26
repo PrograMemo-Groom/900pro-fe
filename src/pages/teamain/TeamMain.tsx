@@ -3,7 +3,7 @@ import { fetchTeam } from '@/api/teamApi';
 import { TeamData } from '@/pages/teamain/types/TeamTypes';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { setTeamId, setMembers, setStartTime, setProblemCount, clearTeam } from '@/store/team/teamainSlice';
+import { setTeamId, setMembers, setStartTime, setDurationTime, setProblemCount, clearTeam } from '@/store/team/teamainSlice';
 import { useNavigate } from 'react-router-dom';
 
 // 팀탈퇴
@@ -35,6 +35,7 @@ export default function TeamMain() {
                 dispatch(setTeamId(data.id));
                 dispatch(setMembers(data.members));
                 dispatch(setStartTime(data.startTime));
+                dispatch(setDurationTime(data.durationTime));
                 dispatch(setProblemCount(data.problemCount));
             })
             .catch((error) => console.log("님 에러났어여 ㅋ:", error));

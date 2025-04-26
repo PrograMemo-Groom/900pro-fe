@@ -5,6 +5,8 @@ import useFileExplorer from '../hooks/useFileExplorer';
 import ContextMenu from './ContextMenu';
 import { FileItem } from '@/pages/coding-test/types/types';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface SidebarProps {
   activeFileId?: string;
@@ -35,6 +37,9 @@ const Sidebar = forwardRef<ImperativePanelHandle, SidebarProps>((
   },
   ref
 ) => {
+  // 리덕스에서 사용자 이름 가져오기
+  const username = useSelector((state: RootState) => state.auth.user.username) || '사용자';
+
   const {
     fileStructure,
     toggleFolder,
@@ -63,10 +68,10 @@ const Sidebar = forwardRef<ImperativePanelHandle, SidebarProps>((
     targetItem: null,
   });
 
-  // 루트 폴더용 가상 FileItem 객체 생성
+  // 루트 폴더용 가상 FileItem, 사용자 이름으로 name 지정
   const rootFolderItem: FileItem = {
     id: 'root',
-    name: '(유저 이름)',
+    name: username,
     type: 'folder',
     children: fileStructure,
     isOpen: isFileTreeVisible
@@ -161,7 +166,7 @@ const Sidebar = forwardRef<ImperativePanelHandle, SidebarProps>((
           {/* 프로젝트 루트 디렉토리 표시 */}
           <div className="root-directory">
             {isFileTreeVisible ? <FaChevronDown /> : <FaChevronRight />}
-            <span className="root-directory-name">(유저 이름)</span>
+            <span className="root-directory-name">{username}</span>
           </div>
         </div>
         {isFileTreeVisible && (
