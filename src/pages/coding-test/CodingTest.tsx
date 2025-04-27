@@ -12,6 +12,7 @@ const CodingTest= () => {
   const [theme] = useState<EditorTheme>('dark');
   const startTime = useAppSelector((state) => state.teamain.startTime);
   const durationTime = useAppSelector((state) => state.teamain.durationTime);
+  const isCodingAllowed = useAppSelector((state) => state.auth.user.coding);
 
   const {
     output,
@@ -24,6 +25,16 @@ const CodingTest= () => {
     handleSubmit,
     currentCode
   } = useCodingTestMainLogic();
+
+  if (isCodingAllowed === false) {
+    return (
+      <div className="coding-test-container dark-mode">
+        <div className="access-denied-message" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+          <h2>접근 권한이 없습니다</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="coding-test-container dark-mode">

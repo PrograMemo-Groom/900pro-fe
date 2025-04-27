@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store';
 import { useAppDispatch } from '@/store';
 import { setTestId } from '@/store/team/teamainSlice';
+import { updatePartialUserInfo } from '@/store/auth/slices';
 // import axios from 'axios';
 import styles from '@/css/waiting/waitingroom.module.scss';
 import { updateUserCodingStatus, attendCheck } from '@/api/waitingRoomApi';
@@ -51,14 +52,12 @@ export default function Timer({ startTime }: TimerProps) {
           // 시험 시작과 동시에 해야하는 일들 여기 적어주세요 - 건영님!
           if (userId) {
             await updateUserCodingStatus(userId);
+            dispatch(updatePartialUserInfo({ coding: true }));
             if (teamId) {
               const response = await attendCheck(userId, teamId);
-              if (response.success && response.data.testId) {
-                dispatch(setTestId(response.data.testId));
-              }
+              dispatch(setTestId(response.data.testId));
             }
           }
-
           navigate('/coding-test'); // ✅ 문제 세팅 후 시험 시작 화면 이동
         } catch (error) {
           console.error('❗ 문제 세팅 실패:', error);

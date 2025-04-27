@@ -16,6 +16,7 @@ export interface UserResponse {
   teamId: number | null;
   isTeamLeader: boolean;
   active: boolean;
+  coding?: boolean;
 }
 
 export const sample = async (): Promise<AxiosResponse<ApiResponse<SampleResponse>>> => {
