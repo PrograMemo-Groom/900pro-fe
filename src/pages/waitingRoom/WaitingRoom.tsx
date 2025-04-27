@@ -1,4 +1,4 @@
-import styles from '@/css/waiting/waitingroom.module.scss';
+import styles from '@/css/waiting/WaitingRoom.module.scss';
 import Timer from '@/pages/waitingRoom/Timer';
 import { RootState, useAppSelector } from '@/store';
 import { Client, IMessage } from '@stomp/stompjs';
