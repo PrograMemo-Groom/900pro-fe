@@ -4,7 +4,18 @@ import { fetchProblemList, Problem } from '@/api/codingTestApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
-const ProblemPanel = () => {
+// 문제 제출 상태를 관리하는 타입
+interface SubmissionStatus {
+  [problemId: number]: boolean; // true: 제출완료, false: 미제출
+}
+
+interface ProblemPanelProps {
+  onProblemSelect?: (problem: Problem) => void;
+  submissionStatus: SubmissionStatus;
+  onProblemsLoaded?: (problems: Problem[]) => void;
+}
+
+const ProblemPanel = ({ onProblemSelect, submissionStatus, onProblemsLoaded }: ProblemPanelProps) => {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,9 +37,14 @@ const ProblemPanel = () => {
         const problemList = await fetchProblemList(testId);
         setProblems(problemList);
 
+        // 문제 목록을 부모 컴포넌트로 전달하여 초기 제출 상태 설정
+        onProblemsLoaded?.(problemList);
+
         // 첫 번째 문제를 기본으로 선택
         if (problemList.length > 0) {
           setSelectedProblem(problemList[0]);
+          // 선택된 문제 부모 컴포넌트로 전달
+          onProblemSelect?.(problemList[0]);
         }
 
         setLoading(false);
@@ -40,7 +56,14 @@ const ProblemPanel = () => {
     };
 
     loadProblems();
-  }, [testId]);
+  }, [testId, onProblemSelect, onProblemsLoaded]);
+
+  // 문제 선택 핸들러
+  const handleProblemSelect = (problem: Problem) => {
+    setSelectedProblem(problem);
+    // 선택된 문제 부모 컴포넌트로 전달
+    onProblemSelect?.(problem);
+  };
 
   if (loading) {
     return <div className="problem-panel">문제를 불러오는 중...</div>;
@@ -66,9 +89,9 @@ const ProblemPanel = () => {
             <button
               key={problem.id}
               className={`problem-tab ${selectedProblem.id === problem.id ? 'active' : ''}`}
-              onClick={() => setSelectedProblem(problem)}
+              onClick={() => handleProblemSelect(problem)}
             >
-              #{problem.baekNum}
+              #{problem.baekNum} {submissionStatus[problem.id] ? '(제출)' : '(미제출)'}
             </button>
           ))}
         </div>

@@ -79,6 +79,7 @@ export interface CodeSubmitRequest {
     problemId: number;
     userId: number;
   };
+  language: string;
   submitCode: string;
   submitAt: string;
 }

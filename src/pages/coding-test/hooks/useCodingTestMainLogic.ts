@@ -1,8 +1,16 @@
 import { submitCode } from '@/api/codingTestApi';
 import { useCodeExecution } from './useCodeExecution';
 import { useCodePersistence } from './useCodePersistence';
+import { Problem } from '@/api/codingTestApi';
 
-export const useCodingTestMainLogic = () => {
+interface UseCodingTestMainProps {
+  testId: number;
+  userId: string;
+  selectedProblem: Problem | null;
+  updateSubmissionStatus?: (problemId: number, submitted: boolean) => void;
+}
+
+export const useCodingTestMainLogic = ({ testId, userId, selectedProblem, updateSubmissionStatus }: UseCodingTestMainProps) => {
   const remainingTime = '';
   const { output, isRunning, processAndRunCode } = useCodeExecution();
   const {
@@ -13,7 +21,6 @@ export const useCodingTestMainLogic = () => {
     getCurrentCode
   } = useCodePersistence();
 
-  // 현재 선택된 언어의 코드 가져오기
   const currentCode = getCurrentCode();
 
   // 코드 실행 핸들러
@@ -23,22 +30,37 @@ export const useCodingTestMainLogic = () => {
 
   // 코드 제출 핸들러
   const handleSubmit = () => {
+    if (!selectedProblem) {
+      alert('문제를 선택해주세요.');
+      return;
+    }
+
+    if (!userId) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     const submitData = {
       codeRequestDto: {
-        testId: 1073741824, // 실제 구현 시 이 값들은 props 또는 context에서 가져와야 합니다
-        problemId: 1073741824,
-        userId: 1073741824
+        testId: testId,
+        problemId: selectedProblem.id,
+        userId: Number(userId)
       },
+      language: selectedLanguage,
       submitCode: currentCode,
       submitAt: new Date().toISOString()
     };
-
-    processAndRunCode(selectedLanguage, currentCode);
+    console.log(submitData);
 
     submitCode(submitData)
       .then(response => {
         if (response.success) {
-          alert('코드가 성공적으로 제출되었습니다!');
+          alert(`#${selectedProblem.baekNum} 코드를 제출하였습니다.`);
+
+          // 제출 성공 시 문제 상태 업데이트
+          if (updateSubmissionStatus && selectedProblem) {
+            updateSubmissionStatus(selectedProblem.id, true);
+          }
         } else {
           alert(`제출 실패: ${response.message}`);
         }
