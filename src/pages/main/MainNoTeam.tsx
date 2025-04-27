@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import Header from '@/pages/common/Header.tsx';
 import styles from "@/css/main/Layout.module.scss";
-import { AxiosResponse } from 'axios';
-import API from '@/store/api/ApiConfig.ts';
-import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
+import Header from '@/pages/common/Header.tsx';
 import TeamHeader from '@/pages/main/component/TeamHeader.tsx';
+import { teamDataResponse } from '@/pages/main/MainNoTeam.interface.ts';
 import TeamDetail from '@/pages/main/TeamDialog/TeamDetail.tsx';
+import API from '@/store/api/ApiConfig.ts';
+import { AxiosResponse } from 'axios';
+import React, { useEffect } from 'react';
 
 
 const mainTeamData = [
@@ -47,9 +47,10 @@ const MainNoTeam = () => {
     fetchTeamData();
   }, []);
 
-  const handleCreateTeam = () => {
-    setIsOpenDialog(true);
-  }
+  // 4/27 github actions 빌드 때문에 주석 처리
+  // const handleCreateTeam = () => {
+  //   setIsOpenDialog(true);
+  // }
 
   return (
     <main>

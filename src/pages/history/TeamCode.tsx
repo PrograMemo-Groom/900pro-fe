@@ -1,4 +1,4 @@
-import styles from '@/css/history/TeamView/TeamCode.module.scss'
+import styles from '@/css/history/TeamView/TeamCode.module.scss';
 import CodeEditor from '@/pages/history/codeeditor';
 import { CodeLanguage } from '@/pages/history/codeeditor/types/types';
 
@@ -16,7 +16,9 @@ interface TeamCodeProps {
   baekNum?: number | null;  // baekNum 추가
 }
 
-export default function TeamCode({ memberCode, problemId, baekNum }: TeamCodeProps) {
+// github actions 빌드 때문에 주석 처리
+// export default function TeamCode({ memberCode, problemId, baekNum }: TeamCodeProps) {
+  export default function TeamCode({ memberCode, baekNum }: TeamCodeProps) {
   // 데이터가 없는 경우 기본값 사용
   const defaultCode = `// 코드가 없습니다.`;
   const defaultUser = '사용자 정보 없음';

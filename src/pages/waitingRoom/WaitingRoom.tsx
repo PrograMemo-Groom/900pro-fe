@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { Client, IMessage } from '@stomp/stompjs';
-import { useAppSelector } from '@/store';
-import { useNavigate } from 'react-router-dom';
-import Timer from '@/pages/waitingRoom/Timer';
 import styles from '@/css/waiting/waitingroom.module.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import Timer from '@/pages/waitingRoom/Timer';
+import { RootState, useAppSelector } from '@/store';
+import { Client, IMessage } from '@stomp/stompjs';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
 const SUBSCRIBE_PATH = '/sub/waiting-room/1';

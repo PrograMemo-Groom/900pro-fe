@@ -1,12 +1,12 @@
 // 팀뷰어 (왼쪽 패널)
-import { useState, useEffect } from 'react';
+import { fetchMemberCode, fetchTeamMembers } from '@/api/historyApi';
 import styles from '@/css/history/TeamView/TeamView.module.scss';
+import { CodeLanguage } from '@/pages/history/codeeditor/types/types';
 import TeamCode from '@/pages/history/TeamCode';
 import TeamProb from '@/pages/history/TeamProb';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { fetchMemberCode, fetchTeamMembers } from '@/api/historyApi';
-import { CodeLanguage } from '@/pages/history/codeeditor/types/types';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
@@ -247,9 +247,10 @@ export default function TeamViewer() {
   };
 
   // 현재 선택된 팀원 이름 표시
-  const currentMemberName = teamMembers.length > 0 && currentMemberIndex < teamMembers.length
-    ? teamMembers[currentMemberIndex].userName
-    : '';
+  // 4/27 github actions 빌드 때문에 주석 처리
+  // const currentMemberName = teamMembers.length > 0 && currentMemberIndex < teamMembers.length
+  //   ? teamMembers[currentMemberIndex].userName
+  //   : '';
 
   // 렌더링 시 디버깅 로그
   console.log('TeamViewer 렌더링:', {
