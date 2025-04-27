@@ -17,7 +17,7 @@ const Header = ({
   isRunning,
   handleRunCode,
   handleSubmit,
-  // handleEndTest
+  handleEndTest,
   startTime = null,
   durationTime = null
 }: HeaderProps) => {
@@ -25,11 +25,9 @@ const Header = ({
 
   const confirmEndTest = () => {
     if (window.confirm('시험을 종료하시겠습니까?')) {
-      // 외부에서 제공된 handleEndTest가 있으면 실행
-      // if (handleEndTest) {
-      //   handleEndTest();
-      // }
-      alert('수고하셨습니다.');
+      if (handleEndTest) {
+        handleEndTest();
+      }
       navigate('/history');
     }
   };

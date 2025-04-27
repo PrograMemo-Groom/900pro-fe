@@ -11,6 +11,7 @@ export interface AuthState {
     teamId?: number | null;
     isTeamLeader?: boolean;
     active?: boolean;
+    coding?: boolean;
   };
   userId: number | null;
   token: string | null;

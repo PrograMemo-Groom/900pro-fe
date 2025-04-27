@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store';
-// import { setTestId } from '@/store/team/teamainSlice';
+import { useAppDispatch } from '@/store';
+import { setTestId } from '@/store/team/teamainSlice';
+import { updatePartialUserInfo } from '@/store/auth/slices';
 // import axios from 'axios';
 import styles from '@/css/waiting/waitingroom.module.scss';
+import { updateUserCodingStatus, attendCheck } from '@/api/waitingRoomApi';
 
 interface TimerProps {
   startTime: string;
@@ -11,12 +14,13 @@ interface TimerProps {
 
 export default function Timer({ startTime }: TimerProps) {
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const [timeLeft, setTimeLeft] = useState(0);
   const [_isActive, setIsActive] = useState(false);
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const teamId = useAppSelector((state) => state.teamain.teamId);
   const problemCount = useAppSelector((state) => state.teamain.problemCount);
+  const userId = useAppSelector((state) => state.auth.user.id);
 
   useEffect(() => {
     if (!startTime || !teamId || !problemCount ) return;
@@ -45,9 +49,15 @@ export default function Timer({ startTime }: TimerProps) {
 
         try {
           // console.log('⌛ 시험 시작!');
-
           // 시험 시작과 동시에 해야하는 일들 여기 적어주세요 - 건영님!
-
+          if (userId) {
+            await updateUserCodingStatus(userId);
+            dispatch(updatePartialUserInfo({ coding: true }));
+            if (teamId) {
+              const response = await attendCheck(userId, teamId);
+              dispatch(setTestId(response.data.testId));
+            }
+          }
           navigate('/coding-test'); // ✅ 문제 세팅 후 시험 시작 화면 이동
         } catch (error) {
           console.error('❗ 문제 세팅 실패:', error);
@@ -62,7 +72,7 @@ export default function Timer({ startTime }: TimerProps) {
     return () => {
       if (timerId.current) clearInterval(timerId.current);
     };
-  }, [startTime, navigate]);
+  }, [startTime, navigate, userId]);
 
   const formatTime = (seconds: number) => {
     const min = Math.floor(seconds / 60).toString().padStart(2, '0');

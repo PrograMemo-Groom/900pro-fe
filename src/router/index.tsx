@@ -11,6 +11,7 @@ import MainNoTeam from '@/pages/main/MainNoTeam.tsx';
 import MainTeam from '@/pages/teamain/TeamMain.tsx';
 import UserEdit from '@/pages/userEdit/UserEdit';
 import TermsofUse from '@/pages/termsUse/TermsofUse';
+import ProtectedRoute from '@/router/ProtectedRoute';
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -31,32 +32,37 @@ const router = createBrowserRouter([
         element: <SignUp />,
       },
       {
-        path: '/main',
-        element: <MainNoTeam />,
-      },
-      {
-        path: '/myteam',
-        element: <MainTeam />,
-      },
-      {
-        path: '/waitingroom',
-        element: <WaitingRoom />,
-      },
-      {
-        path: 'editprofile',
-        element: <UserEdit />,
-      },
-      {
-        path: 'coding-test',
-        element: <CodingTest />,
-      },
-      {
-        path: 'history',
-        element: <ChatPage />
-      },
-      {
-        path: 'history/test',
-        element: <ChatTest />,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: '/main',
+            element: <MainNoTeam />,
+          },
+          {
+            path: '/myteam',
+            element: <MainTeam />,
+          },
+          {
+            path: '/waitingroom',
+            element: <WaitingRoom />,
+          },
+          {
+            path: 'editprofile',
+            element: <UserEdit />,
+          },
+          {
+            path: 'coding-test',
+            element: <CodingTest />,
+          },
+          {
+            path: 'history',
+            element: <ChatPage />
+          },
+          {
+            path: 'history/test',
+            element: <ChatTest />,
+          },
+        ],
       },
       {
         path: 'termsofuse',
