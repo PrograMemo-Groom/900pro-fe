@@ -3,9 +3,6 @@ import styles from '@/css/history/Chat.module.scss'
 import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/history/chatbubble';
 import { ChatType } from '@/pages/history/types/Chat.ts';
 
-const raw = localStorage.getItem('persist:auth');
-// const myId = raw ? Number(JSON.parse(raw).userId) : null;
-
 type Messagetype = {
   messages: ChatType[] 
   messageRefs: { [key: number]: React.RefObject<HTMLDivElement> };

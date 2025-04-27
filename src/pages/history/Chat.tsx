@@ -16,7 +16,6 @@ function Chat({ searchTerm }: { searchTerm: string }) {
   const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
   
   // 코드 관리 - 내가 채팅 보내기
-  // const [messages, setMessages] = useState<ChatType[]>(ChatDummy);
   const [messages, setMessages] = useState<ChatType[]>([]);
   const [_connected, setConnected] = useState(false);
 
@@ -26,10 +25,6 @@ function Chat({ searchTerm }: { searchTerm: string }) {
   const token = raw ? JSON.parse(JSON.parse(raw).token) : null;
   // 아이디
   const myId = useSelector((state: RootState) => state.auth.userId);
-  // 채팅룸 id
-  // const roomId = useSelector((state: RootState) => state.teamain.teamId);
-
-  // 팀 가입하면 아래로 수정하면 됨
   const roomId = useSelector((state: RootState) => state.auth.user.teamId);
 
   const messageRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>({});
