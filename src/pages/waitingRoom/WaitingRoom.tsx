@@ -4,7 +4,7 @@ import { useAppSelector } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import Timer from '@/pages/waitingRoom/Timer';
 import styles from '@/css/waiting/waitingroom.module.scss';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
@@ -27,8 +27,7 @@ export default function WaitingRoom() {
   const [localMembers, setLocalMembers] = useState<{ userId: number; userName: string; status: string }[]>([]);
   const clientRef = useRef<Client | null>(null);
   const subscribedRef = useRef(false);
-  const [isConnected, setIsConnected] = useState(false);
-
+ 
   const me = localMembers.find((m) => m.userId === myId);
   const isReady = me?.status === '준비완료';
 
@@ -36,7 +35,7 @@ export default function WaitingRoom() {
   useEffect(() => {
     if (reduxMembers.length === 0) {
       console.warn('멤버 없음! 메인으로 리다이렉트!');
-      navigate('/myteam');
+      navigate('/myteam'); 
     } else {
       // 있으면 localMembers 초기화
       const initialMembers = reduxMembers.map((member) => ({
@@ -58,8 +57,6 @@ export default function WaitingRoom() {
 
       onConnect: () => {
         console.log('✅ WebSocket 연결 성공');
-        setIsConnected(true);
-
         if (!subscribedRef.current) {
           client.subscribe(SUBSCRIBE_PATH, (msg: IMessage) => {
             try {
@@ -83,19 +80,11 @@ export default function WaitingRoom() {
 
       onStompError: (frame) => {
         console.error('❌ STOMP 에러:', frame);
-        setIsConnected(false);
       },
 
       onWebSocketError: (error) => {
         console.error('❌ WebSocket 연결 실패:', error);
-        setIsConnected(false);
       },
-
-      onWebSocketClose: () => {
-        console.log('WebSocket 연결 종료');
-        setIsConnected(false);
-        subscribedRef.current = false;
-      }
     });
 
     client.activate();
@@ -104,7 +93,6 @@ export default function WaitingRoom() {
     return () => {
       client.deactivate();
       subscribedRef.current = false;
-      setIsConnected(false);
     };
   }, [token]);
 
@@ -126,22 +114,8 @@ export default function WaitingRoom() {
         headers: { 'content-type': 'application/json' },
       });
       console.log('🚀 상태 전송:', msg);
-
-      // 상태 변경을 즉시 로컬에도 반영
-      setLocalMembers((prev) =>
-        prev.map((m) =>
-          m.userId === myId
-            ? { ...m, status: newStatus === 'READY' ? '준비완료' : '대기중' }
-            : m
-        )
-      );
     } else {
       console.warn('❗ WebSocket 연결 안됨');
-      // 연결 재시도
-      if (clientRef.current) {
-        clientRef.current.activate();
-        setTimeout(() => toggleReady(), 500); // 0.5초 후 재시도
-      }
     }
   };
 
@@ -197,7 +171,6 @@ export default function WaitingRoom() {
           >
             {isReady ? '준비완료' : '준비하기'}
           </button>
-          {!isConnected && <p className={styles.notice} style={{color: 'red'}}>연결 상태: 오프라인 (서버 연결 대기 중...)</p>}
         </footer>
       </main>
     </div>
