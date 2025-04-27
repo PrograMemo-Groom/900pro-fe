@@ -89,6 +89,8 @@ export const useCodingTestMainLogic = ({ testId, userId, selectedProblem, update
       if (response.success) {
         await updateUserCodingStatus(Number(userId));
         dispatch(updatePartialUserInfo({ coding: false }));
+        localStorage.removeItem('codingTestCode');
+        localStorage.removeItem('codingTestLanguage');
         alert('수고하셨습니다.');
       }
     } catch (error) {
