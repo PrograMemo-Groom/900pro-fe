@@ -66,7 +66,7 @@ export default function TeamMain() {
     };
 
     const handleStartClick = () => {
-        navigate('/waitingroom');
+        navigate('/waitingroom', { state: { fromButton: true } });
     };
 
     const handleLeaveTeam = async () => {

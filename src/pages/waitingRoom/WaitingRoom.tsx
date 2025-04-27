@@ -4,13 +4,15 @@ import { RootState, useAppSelector } from '@/store';
 import { Client, IMessage } from '@stomp/stompjs';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
 const SEND_PATH = '/pub/waiting-room/ready';
 
 export default function WaitingRoom() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const reduxMembers = useAppSelector((state) => state.teamain.members);
   const startTimeString = useAppSelector((state) => state.teamain.startTime);
   const teamId = useSelector((state: RootState) => state.auth.user.teamId);
@@ -33,9 +35,11 @@ export default function WaitingRoom() {
 
   // ✅ reduxMembers 없으면 리다이렉트
   useEffect(() => {
-    if (reduxMembers.length === 0) {
-      console.warn('멤버 없음! 메인으로 리다이렉트!');
-      navigate('/myteam');
+    const fromButton = location.state?.fromButton;
+    if ( !fromButton || reduxMembers.length === 0) {
+      console.warn('잘못된 접근입니다.');
+      // console.warn('멤버 없음! 메인으로 리다이렉트!');
+      navigate('/', { replace: true });
     } else {
       // 있으면 localMembers 초기화
       const initialMembers = reduxMembers.map((member) => ({
@@ -45,7 +49,7 @@ export default function WaitingRoom() {
       }));
       setLocalMembers(initialMembers);
     }
-  }, [reduxMembers, navigate]);
+  }, [reduxMembers, navigate, location]);
 
   // ✅ WebSocket 연결
   useEffect(() => {
