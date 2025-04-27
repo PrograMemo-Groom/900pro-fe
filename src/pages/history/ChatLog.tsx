@@ -4,14 +4,15 @@ import { DateDivider, BubbleLeft, BubbleChatbot, BubbleMe } from '@/pages/histor
 import { ChatType } from '@/pages/history/types/Chat.ts';
 
 const raw = localStorage.getItem('persist:auth');
-const myId = raw ? Number(JSON.parse(raw).userId) : null;
+// const myId = raw ? Number(JSON.parse(raw).userId) : null;
 
 type Messagetype = {
   messages: ChatType[] 
   messageRefs: { [key: number]: React.RefObject<HTMLDivElement> };
+  myId: number | null;
 }
 
-function ChatLog({ messages, messageRefs }: Messagetype ) {
+function ChatLog({ messages, messageRefs, myId }: Messagetype ) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
