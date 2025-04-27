@@ -61,6 +61,12 @@ export default function Timer({ startTime }: TimerProps) {
         } catch (error) {
           console.error('❗ 문제 세팅 실패:', error);
           // 실패시 처리 필요하면 적으세요
+          if (userId) {
+            await new Promise((res) => setTimeout(res, 2000)); // 2초 쉬었다가
+            const retryResponse = await attendCheck(userId, teamId); // 다시 시도
+            dispatch(setTestId(retryResponse.data.testId));
+            navigate('/coding-test')
+          }
         }
       }
     };
