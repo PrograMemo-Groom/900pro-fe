@@ -25,7 +25,7 @@ function Chat({ searchTerm }: { searchTerm: string }) {
   // 토큰
   const token = raw ? JSON.parse(JSON.parse(raw).token) : null;
   // 아이디
-  const myId = raw ? Number(JSON.parse(raw).userId) : null;
+  const myId = useSelector((state: RootState) => state.auth.userId);
   // 채팅룸 id
   // const roomId = useSelector((state: RootState) => state.teamain.teamId);
 
@@ -98,7 +98,7 @@ function Chat({ searchTerm }: { searchTerm: string }) {
 
   return (
     <main className={`${styles.container} ${isTeamViewerOpen ? styles.container_with_code : styles.container_with_normal}`}>
-      <ChatLog messages={messages} messageRefs={messageRefs.current} />
+      <ChatLog messages={messages} messageRefs={messageRefs.current} myId={myId}/>
       <ChatInput onSubmit={handleSend} />
     </main>
   )
