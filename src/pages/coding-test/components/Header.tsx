@@ -1,6 +1,6 @@
 import '@/css/coding-test/Header.scss';
-import { useNavigate } from 'react-router-dom';
 import Timer from '@/pages/coding-test/components/Timer';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   remainingTime: string;
@@ -37,7 +37,9 @@ const Header = ({
       <div className="header-timer">
         <span>남은 시간 </span>
         {startTime && durationTime ? (
-          <Timer startTime={startTime} durationTime={durationTime} />
+          // <Timer startTime={startTime} durationTime={durationTime} />
+          // build 오류 수정 4/27
+          <Timer startTime={startTime} durationTime={durationTime} testId={0} selectedProblem={null} />
         ) : (
           <span>{remainingTime}</span>
         )}
