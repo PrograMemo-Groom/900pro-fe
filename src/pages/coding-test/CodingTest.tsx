@@ -50,6 +50,7 @@ const CodingTest= () => {
     handleLanguageChange,
     handleRunCode,
     handleSubmit,
+    handleEndTest,
     currentCode
   } = useCodingTestMainLogic({
     testId,
@@ -75,6 +76,7 @@ const CodingTest= () => {
         isRunning={isRunning}
         handleRunCode={handleRunCode}
         handleSubmit={handleSubmit}
+        handleEndTest={handleEndTest}
         startTime={startTime}
         durationTime={durationTime}
       />

@@ -1,7 +1,10 @@
-import { submitCode } from '@/api/codingTestApi';
+import { submitCode, endCodingTest } from '@/api/codingTestApi';
 import { useCodeExecution } from './useCodeExecution';
 import { useCodePersistence } from './useCodePersistence';
 import { Problem } from '@/api/codingTestApi';
+import { updateUserCodingStatus } from '@/api/waitingRoomApi';
+import { updatePartialUserInfo } from '@/store/auth/slices';
+import { useAppDispatch } from '@/store';
 
 interface UseCodingTestMainProps {
   testId: number;
@@ -20,6 +23,7 @@ export const useCodingTestMainLogic = ({ testId, userId, selectedProblem, update
     handleLanguageChange,
     getCurrentCode
   } = useCodePersistence();
+  const dispatch = useAppDispatch();
 
   const currentCode = getCurrentCode();
 
@@ -71,6 +75,28 @@ export const useCodingTestMainLogic = ({ testId, userId, selectedProblem, update
       });
   };
 
+  // 테스트 종료 핸들러
+  const handleEndTest = async () => {
+    const endTestData = {
+      testId: testId,
+      problemId: selectedProblem?.id || 0,
+      userId: Number(userId)
+    };
+
+    try {
+      // console.log('⌛ 시험 종료!');
+      const response = await endCodingTest(endTestData);
+      if (response.success) {
+        await updateUserCodingStatus(Number(userId));
+        dispatch(updatePartialUserInfo({ coding: false }));
+        alert('수고하셨습니다.');
+      }
+    } catch (error) {
+      console.error('테스트 종료 중 오류 발생:', error);
+      alert('테스트 종료 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+  };
+
   return {
     output,
     isRunning,
@@ -81,6 +107,7 @@ export const useCodingTestMainLogic = ({ testId, userId, selectedProblem, update
     handleLanguageChange,
     handleRunCode,
     handleSubmit,
+    handleEndTest,
     currentCode
   };
 };

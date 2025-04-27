@@ -96,3 +96,28 @@ export const submitCode = async (submitData: CodeSubmitRequest): Promise<SubmitC
     throw error;
   }
 };
+
+export interface EndCodingTestRequest {
+  testId: number;
+  problemId: number;
+  userId: number;
+}
+
+export interface EndCodingTestResponse {
+  success: boolean;
+  data: string;
+  message: string;
+}
+
+export const endCodingTest = async (endTestData: EndCodingTestRequest): Promise<EndCodingTestResponse> => {
+  try {
+    const response = await axios.patch<EndCodingTestResponse>(
+      'http://3.39.135.118:8080/api/code/update/end-coding',
+      endTestData
+    );
+    return response.data;
+  } catch (error) {
+    console.error('테스트 종료 중 오류가 발생했습니다:', error);
+    throw error;
+  }
+};
