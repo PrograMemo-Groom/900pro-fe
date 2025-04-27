@@ -59,7 +59,7 @@ const CodingTest= () => {
     updateSubmissionStatus
   });
 
-  if (isCodingAllowed === false) {
+  if (!isCodingAllowed) {
     return (
       <div className="coding-test-container dark-mode">
         <div className="access-denied-message" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
