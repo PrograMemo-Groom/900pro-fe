@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TeamViewer from '@/pages/history/TeamViewer.tsx';
 import Chat from '@/pages/history/Chat.tsx';
 // 리덕스 코드
@@ -9,6 +10,7 @@ import searchIcon from '@/assets/Search.svg';
 
 function ChatPage() {
   // 왼쪽 컴포넌트 상태 관리
+  const navigate = useNavigate();
   const isTeamViewerOpen = useSelector((state: RootState) => state.ui.isTeamViewerOpen);
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -27,7 +29,7 @@ function ChatPage() {
   return (
     <main>
       <div className={styles.header}>
-        <h1>9BACKPRO</h1>
+        <h1 onClick={() => navigate('/')}>9BACKPRO</h1>
         <img src={searchIcon} 
         onClick={handleSearchClick}
         alt='검색'/>

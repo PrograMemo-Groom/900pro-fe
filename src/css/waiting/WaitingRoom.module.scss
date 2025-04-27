@@ -39,6 +39,7 @@
     }
 }
 .header{
+    user-select: none;
     @include projectTitle(3rem);
         margin: 6px auto 0 auto;
 }
