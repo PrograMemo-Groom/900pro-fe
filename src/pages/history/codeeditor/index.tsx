@@ -268,16 +268,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       console.log('[디버깅] 메모 팝업 정리');
       if (memoPopupRootRef.current) {
         try {
-          memoPopupRootRef.current.unmount();
-          memoPopupRootRef.current = null;
+          setTimeout(() => {
+            if (memoPopupRootRef.current) {
+              memoPopupRootRef.current.unmount();
+              memoPopupRootRef.current = null;
+            }
+          }, 0);
         } catch (e) {
           console.error('메모 팝업 루트 정리 중 오류:', e);
         }
       }
 
       if (memoPopupContainerRef.current && memoPopupContainerRef.current.parentNode) {
-        memoPopupContainerRef.current.parentNode.removeChild(memoPopupContainerRef.current);
-        memoPopupContainerRef.current = null;
+        setTimeout(() => {
+          if (memoPopupContainerRef.current && memoPopupContainerRef.current.parentNode) {
+            memoPopupContainerRef.current.parentNode.removeChild(memoPopupContainerRef.current);
+            memoPopupContainerRef.current = null;
+          }
+        }, 0);
       }
 
       isMemoPopupInitializedRef.current = false;
@@ -368,16 +376,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       console.log('[디버깅] 하이라이트 메뉴 정리');
       if (highlightMenuRootRef.current) {
         try {
-          highlightMenuRootRef.current.unmount();
-          highlightMenuRootRef.current = null;
+          setTimeout(() => {
+            if (highlightMenuRootRef.current) {
+              highlightMenuRootRef.current.unmount();
+              highlightMenuRootRef.current = null;
+            }
+          }, 0);
         } catch (e) {
           console.error('하이라이트 메뉴 루트 정리 중 오류:', e);
         }
       }
 
       if (highlightMenuContainerRef.current && highlightMenuContainerRef.current.parentNode) {
-        highlightMenuContainerRef.current.parentNode.removeChild(highlightMenuContainerRef.current);
-        highlightMenuContainerRef.current = null;
+        setTimeout(() => {
+          if (highlightMenuContainerRef.current && highlightMenuContainerRef.current.parentNode) {
+            highlightMenuContainerRef.current.parentNode.removeChild(highlightMenuContainerRef.current);
+            highlightMenuContainerRef.current = null;
+          }
+        }, 0);
       }
 
       isHighlightMenuInitializedRef.current = false;
