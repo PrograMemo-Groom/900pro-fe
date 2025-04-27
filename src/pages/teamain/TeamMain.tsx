@@ -112,9 +112,9 @@ export default function TeamMain() {
                         <p>매일 {teamData.startTime} | {teamData.level} | {teamData.problemCount}문제 | {teamData.durationTime}시간</p>
                     </div>
                     <div className={styles.team_des}>
-                        <p>
-                        {teamData.description}
-                        </p>
+                    {teamData.description.split('\n').map((line, idx) => (
+                        <p key={idx}>{line}</p>
+                    ))}
                     </div>
                 </section>
 
