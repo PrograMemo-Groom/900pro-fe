@@ -1,12 +1,11 @@
+import { useAppDispatch, useAppSelector } from '@/store';
+import { updatePartialUserInfo } from '@/store/auth/slices';
+import { setTestId } from '@/store/team/teamainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '@/store';
-import { useAppDispatch } from '@/store';
-import { setTestId } from '@/store/team/teamainSlice';
-import { updatePartialUserInfo } from '@/store/auth/slices';
 // import axios from 'axios';
-import styles from '@/css/waiting/waitingroom.module.scss';
-import { updateUserCodingStatus, attendCheck } from '@/api/waitingRoomApi';
+import { attendCheck, updateUserCodingStatus } from '@/api/waitingRoomApi';
+import styles from '@/css/waiting/WaitingRoom.module.scss';
 
 interface TimerProps {
   startTime: string;
