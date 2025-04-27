@@ -13,6 +13,7 @@ const config = {
   define: {
     global: {},
   },
+  base: '/', // ✅ 이 줄 추가
   server: {
     host: true,
     port: 5173,
