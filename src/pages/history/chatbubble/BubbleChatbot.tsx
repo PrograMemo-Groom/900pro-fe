@@ -5,6 +5,7 @@ import { formatTime } from '@/pages/history/chatbubble/formatTime';
 import { useDispatch, useSelector } from 'react-redux';
 import { showTeamViewer } from '@/store/history/uiSlice';
 import { RootState } from '@/store';
+import { setTestId } from '@/store/team/teamainSlice';
 
 import { fetchProblemList } from '@/api/historyApi';
 import { setProblems } from '@/store/history/problemSlice';
@@ -16,7 +17,7 @@ type Props = {
 };
 
 export default function BubbleChatbot({ content, send_at, test_date }: Props) {
-  
+
   const dispatch = useDispatch();
   const lines = content.split('\n');
   const teamId = useSelector((state: RootState) => state.teamain.teamId);
@@ -32,7 +33,7 @@ export default function BubbleChatbot({ content, send_at, test_date }: Props) {
 
     const dateOnly = test_date.split('T')[0];
     console.log('🔍 요청 경로', { teamId, dateOnly });
-    
+
     try {
       // const res = await fetchProblemList(teamId, test_date);
       const res = await fetchProblemList(teamId, dateOnly);
@@ -41,8 +42,9 @@ export default function BubbleChatbot({ content, send_at, test_date }: Props) {
         console.error('❌ 서버 응답에 문제가 있습니다 (problems가 없음)');
         return;
       }
-      
+
       dispatch(setProblems(res.data.problems)); // 문제 리스트 저장
+      dispatch(setTestId(res.data.testId));     // TestId 저장
       dispatch(showTeamViewer()); // 왼쪽 컴포넌트 여는 리덕스 상태관리
     } catch (err) {
       console.error('❌ 문제를 불러올 수 없습니다:', err);
