@@ -24,6 +24,7 @@
     .chat_container{
         overflow: hidden;
         overflow-y: auto;
+        height: 100%;
 
         .line {
             background: linear-gradient(90deg, #3674B5 43%, #D1F8EF 64%, #A1E3F9 100%);
