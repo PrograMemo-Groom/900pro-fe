@@ -55,7 +55,8 @@ export const executeCode = async (language: string, code: string): Promise<Execu
   try {
     // 백엔드 서버에 직접 요청 - language를 URL 경로에 포함
     const response = await axios.post<ExecuteCodeResponse>(
-      `http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090/execute/${language}`,
+      // `http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090/execute/${language}`,
+      `https://900pro.shop/execute/${language}`, // 4/27 요청 url 변경
       {
         code: code
       }

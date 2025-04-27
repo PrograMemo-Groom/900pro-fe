@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 const config = {
@@ -19,8 +19,8 @@ const config = {
     allowedHosts: ['all'],
     proxy: {
       '/api': {
-        // target: 'https://900pro.shop/',
-        target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8080',
+        target: 'https://900pro.shop/',
+        // target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8080',
         // target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
@@ -29,8 +29,8 @@ const config = {
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
       '/execute': {
-        // target: 'https://900pro.shop/',
-        target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090',
+        target: 'https://900pro.shop/',
+        // target: 'http://ec2-3-39-135-118.ap-northeast-2.compute.amazonaws.com:8090',
         changeOrigin: true,
         secure: false,
         rewrite: (path : string) => path.replace(/^\/execute/, ''), 
