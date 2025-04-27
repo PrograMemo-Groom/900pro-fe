@@ -1,10 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-export const useTimer = (startTimeString: string | null, durationTime: number | null) => {
+export const useTimer = (
+  startTimeString: string | null,
+  durationTime: number | null,
+  onExpire?: () => void
+) => {
   const [remainingTime, setRemainingTime] = useState<string>('00:00:00');
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const timeRef = useRef<string>('00:00:00');
   const endTimestampRef = useRef<number | null>(null);
+  const hasExpiredRef = useRef<boolean>(false);
 
   // 타이머 로직
   useEffect(() => {
@@ -26,6 +31,7 @@ export const useTimer = (startTimeString: string | null, durationTime: number | 
 
     // 종료 시간 계산 (시작 시간 + 지속 시간)
     endTimestampRef.current = startTimestamp + (durationTime * 60 * 60 * 1000);
+    hasExpiredRef.current = false;
 
     const updateTimer = () => {
       const now = Date.now();
@@ -37,7 +43,15 @@ export const useTimer = (startTimeString: string | null, durationTime: number | 
       if (now >= endTimestamp) {
         timeRef.current = '00:00:00';
         setRemainingTime('00:00:00');
+
         if (timerId.current) clearInterval(timerId.current);
+
+        // 타이머 만료 처리 (한 번만 실행)
+        if (!hasExpiredRef.current && onExpire) {
+          hasExpiredRef.current = true;
+          onExpire();
+        }
+
         return;
       }
 
@@ -69,7 +83,7 @@ export const useTimer = (startTimeString: string | null, durationTime: number | 
     return () => {
       if (timerId.current) clearInterval(timerId.current);
     };
-  }, [startTimeString, durationTime]);
+  }, [startTimeString, durationTime, onExpire]);
 
   // 타이머 값을 직접 접근할 수 있는 getter 함수
   const getTime = useCallback(() => timeRef.current, []);
