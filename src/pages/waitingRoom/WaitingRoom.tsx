@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const SOCKET_URL = 'ws://3.39.135.118:8080/ws-chat';
-const SUBSCRIBE_PATH = '/sub/waiting-room/1';
 const SEND_PATH = '/pub/waiting-room/ready';
 
 export default function WaitingRoom() {
@@ -15,6 +14,7 @@ export default function WaitingRoom() {
   const reduxMembers = useAppSelector((state) => state.teamain.members);
   const startTimeString = useAppSelector((state) => state.teamain.startTime);
   const teamId = useSelector((state: RootState) => state.auth.user.teamId);
+  // const SUBSCRIBE_PATH = `/sub/waiting-room/${teamId}`; // 4/27 github actions 빌드 오류
 
   const raw = localStorage.getItem('persist:auth');
   const parsed = raw ? JSON.parse(raw) : null;
@@ -26,7 +26,8 @@ export default function WaitingRoom() {
   const [localMembers, setLocalMembers] = useState<{ userId: number; userName: string; status: string }[]>([]);
   const clientRef = useRef<Client | null>(null);
   const subscribedRef = useRef(false);
- 
+  const [isConnected, setIsConnected] = useState(false);
+
   const me = localMembers.find((m) => m.userId === myId);
   const isReady = me?.status === '준비완료';
 
@@ -34,7 +35,7 @@ export default function WaitingRoom() {
   useEffect(() => {
     if (reduxMembers.length === 0) {
       console.warn('멤버 없음! 메인으로 리다이렉트!');
-      navigate('/myteam'); 
+      navigate('/myteam');
     } else {
       // 있으면 localMembers 초기화
       const initialMembers = reduxMembers.map((member) => ({
@@ -48,7 +49,7 @@ export default function WaitingRoom() {
 
   // ✅ WebSocket 연결
   useEffect(() => {
-    if (!token) return;
+    if (!token || !teamId) return;
 
     const client = new Client({
       brokerURL: `${SOCKET_URL}?token=${token}`,
@@ -56,8 +57,10 @@ export default function WaitingRoom() {
 
       onConnect: () => {
         console.log('✅ WebSocket 연결 성공');
+        setIsConnected(true);
+
         if (!subscribedRef.current) {
-          client.subscribe(SUBSCRIBE_PATH, (msg: IMessage) => {
+          client.subscribe(`/sub/waiting-room/${teamId}`, (msg: IMessage) => {
             try {
               const payload = JSON.parse(msg.body);
               console.log('📩 수신 메시지:', payload);
@@ -79,11 +82,19 @@ export default function WaitingRoom() {
 
       onStompError: (frame) => {
         console.error('❌ STOMP 에러:', frame);
+        setIsConnected(false);
       },
 
       onWebSocketError: (error) => {
         console.error('❌ WebSocket 연결 실패:', error);
+        setIsConnected(false);
       },
+
+      onWebSocketClose: () => {
+        console.log('WebSocket 연결 종료');
+        setIsConnected(false);
+        subscribedRef.current = false;
+      }
     });
 
     client.activate();
@@ -92,15 +103,16 @@ export default function WaitingRoom() {
     return () => {
       client.deactivate();
       subscribedRef.current = false;
+      setIsConnected(false);
     };
-  }, [token]);
+  }, [token, teamId]);
 
   // ✅ 상태 전송
   const toggleReady = () => {
     const newStatus = isReady ? 'WAITING' : 'READY';
 
     const msg = {
-      teamId: teamId, // 하드코딩
+      teamId: teamId,
       userId: myId,
       userName: myName,
       status: newStatus,
@@ -113,8 +125,23 @@ export default function WaitingRoom() {
         headers: { 'content-type': 'application/json' },
       });
       console.log('🚀 상태 전송:', msg);
+      console.log('현재 구독 경로:', `/sub/waiting-room/${teamId}`);
+
+      // 상태 변경을 즉시 로컬에도 반영
+      setLocalMembers((prev) =>
+        prev.map((m) =>
+          m.userId === myId
+            ? { ...m, status: newStatus === 'READY' ? '준비완료' : '대기중' }
+            : m
+        )
+      );
     } else {
       console.warn('❗ WebSocket 연결 안됨');
+      // 연결 재시도
+      if (clientRef.current) {
+        clientRef.current.activate();
+        setTimeout(() => toggleReady(), 500); // 0.5초 후 재시도
+      }
     }
   };
 
@@ -170,6 +197,8 @@ export default function WaitingRoom() {
           >
             {isReady ? '준비완료' : '준비하기'}
           </button>
+          {!isConnected && <p className={styles.notice} style={{color: 'red'}}>연결 상태: 오프라인 (서버 연결 대기 중...)</p>}
+          {isConnected && <p className={styles.notice} style={{color: 'green'}}>연결 상태: 온라인 (팀 ID: {teamId})</p>}
         </footer>
       </main>
     </div>
