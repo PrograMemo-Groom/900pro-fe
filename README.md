@@ -46,8 +46,13 @@
 
 | 대기실 | 코딩테스트화면 | 히스토리(채팅창)화면 |
 |:---:|:---:|:---:|
-|  | <img width="1564" alt="스크린샷 2025-04-28 오후 4 15 10" src="https://github.com/user-attachments/assets/ad9adb56-a170-4deb-b4e7-a3a852def6eb" /> |  <img width="1347" alt="스크린샷 2025-04-28 오후 4 08 12" src="https://github.com/user-attachments/assets/d28b9c5d-3ebd-467b-81fe-331059974162" /> |
-| 실시간 소켓 통신으로 멤버별 준비 상태 확인 가능 | 문제 보기, 남은 시간, 코드 편집, 코드 자동 완성, 파일및 폴더 생성, 제출, 실행 모두 가능 |  |
+| <img width="1367" alt="스크린샷 2025-04-28 오후 5 15 26" src="https://github.com/user-attachments/assets/03857f86-1ba0-4c88-afff-b451bfc933f3" /> | <img width="1564" alt="스크린샷 2025-04-28 오후 4 15 10" src="https://github.com/user-attachments/assets/ad9adb56-a170-4deb-b4e7-a3a852def6eb" /> |  <img width="1347" alt="스크린샷 2025-04-28 오후 4 08 12" src="https://github.com/user-attachments/assets/d28b9c5d-3ebd-467b-81fe-331059974162" /> |
+| 실시간 소켓 통신으로 멤버별 준비 상태 확인 가능 | 문제 선택하여 보기, 남은 시간, 코드 편집, 코드 자동 완성, 파일및 폴더 생성, 제출, 실행 모두 가능 | 시험 종료시 챗봇 메세지 수신 <br/> 실시간 채팅 가능 <br/> 채팅 내용 검색 및 자동 슬라이드 |
+
+| 히스토리(문제 다시보기)화면 | 히스토리(코드 다시보기)화면 | 회원정보 수정 |
+|:---:|:---:|:---:|
+| <img width="1347" alt="문제다시보기" src="https://github.com/user-attachments/assets/9055d6d7-dfd8-4264-92d9-19f0b40fb554" /> | <img width="1347" alt="코드다시보기" src="https://github.com/user-attachments/assets/a960b760-6e7b-4861-8295-36e295046cd9" /> | <img width="1347" alt="회원정보수정" src="https://github.com/user-attachments/assets/0a83cad4-297e-4618-b96b-c3638edf6a32" /> |
+| 문제 선택하여 다시 보기 가능 | 팀원들 코드 화살표로 넘기며 확인 가능 <br/> 코드 드래그로 하이라이팅 가능 <br/> 메모 남기기 가능 | 회원정보 수정 및 탈퇴 <br/> 비밀번호 설정 안내 표시 <br/> 눈 아이콘으로 비밀번호 * 표시 또는 문자 표시 |
 
 ## 🛠 기술 스택 (Tech Stack)
 
