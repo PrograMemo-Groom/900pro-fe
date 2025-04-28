@@ -11,9 +11,15 @@
 
 ---
 
-## 소개 (About)
+## 프로젝트 소개 (About)
 
 > 개발 기간 : 2025.04.02 ~ 2025.04.28
+```
+✏️ 기획 : 2025.04.02 ~ 2025.04.07
+🔥 1차 스프린트 : 2025.04.10 ~ 2025.04.16 (1주)
+🔥 2차 스프린트 : 2025.04.17 ~ 2025.04.24 (1주)
+🔥 프로젝트 마무리 : 2025.04.25 ~ 2025.04.27 (3일)
+```
 
 
 
@@ -59,3 +65,8 @@ npm install
 # 개발 서버 실행
 npm run dev
 ```
+
+## 팀원 (Developer Members)
+| Frontend/PM | Frontend | Fullstack | Backend | Backend | Backend |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| ![](./screenshots/main.png) | ![](./screenshots/editor.png) | ![](./screenshots/terminal.png) | ![](./screenshots/main.png) | ![](./screenshots/editor.png) | ![](./screenshots/terminal.png) |
