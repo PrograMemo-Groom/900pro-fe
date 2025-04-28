@@ -67,6 +67,85 @@ npm run dev
 ```
 
 ## 팀원 (Developer Members)
-| Frontend/PM | Frontend | Fullstack | Backend | Backend | Backend |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![](./screenshots/main.png) | ![](./screenshots/editor.png) | ![](./screenshots/terminal.png) | ![](./screenshots/main.png) | ![](./screenshots/editor.png) | ![](./screenshots/terminal.png) |
+
+<table align="center">
+  <thead>
+    <tr>
+      <th width="180px">Frontend/PM</th>
+      <th width="180px">Frontend</th>
+      <th width="180px">Fullstack</th>
+      <th width="180px">Backend</th>
+      <th width="180px">Backend</th>
+      <th width="180px">Backend</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">
+        <img src="https://github.com/user-attachments/assets/aa4d1cf9-3a80-4ad6-8a2c-f36c692e2199" width="130"/>
+      </td>
+      <td align="center">
+        <img src="https://github.com/user-attachments/assets/b8edc13c-a9ec-4645-a0cc-346633423cc8" width="130"/>
+      </td>
+      <td align="center">
+        <img src="https://github.com/user-attachments/assets/123f4d85-001a-40c5-9c4f-d77b5766f6a6" width="130"/>
+      </td>
+      <td align="center">
+        <img src="https://github.com/user-attachments/assets/39687355-2727-4659-aafb-3f7e63cf891c" width="130"/>
+      </td>
+      <td align="center">
+        <img src="https://github.com/user-attachments/assets/7d455701-1ec5-4724-a2a5-9e3c21ef3993" width="130"/>
+      </td>
+      <td align="center">
+        <img src="https://github.com/user-attachments/assets/06ac6a0c-3667-4b34-979c-dcc1d7214f8b" width="130"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">강세진</td>
+      <td align="center">김재홍</td>
+      <td align="center">김건영</td>
+      <td align="center">김유림</td>
+      <td align="center">심동훈</td>
+      <td align="center">이보미</td>
+    </tr>
+    <tr>
+      <td align="center">
+        프로젝트 디자인<br/>
+        채팅 및 대기실 소켓통신<br/>
+        팀 생성 및 팀 가입<br/>
+        팀 메인 화면 구성<br/>
+        히스토리 페이지 구성<br/>
+        회원정보 관리<br/>
+        UI 보수
+      </td>
+      <td align="center">
+        로그인 및 회원가입<br/>
+        팀 리스트 조회
+      </td>
+      <td align="center">
+        Redux 세팅<br/>
+        코딩테스트 페이지<br/>
+        히스토리 중 에디터<br/>
+        (하이라이트, 메모)<br/>
+        멀티언어 코드실행 엔진 구축 <br/>
+        Docker 기반 인프라 설계
+      </td>
+      <td align="center">
+        팀 리스트 팀 메인 기능<br/>
+        (유저권한에 따른 기능)<br/>
+        WebSocket + Stomp 개발 및 연결
+      </td>
+      <td align="center">
+        CI/CD 자동화 및 서버 배포<br/>
+        히스토리, 로그인/회원가입, 마이페이지 기능<br/>
+        DB 도메인 설계
+      </td>
+      <td align="center">
+        DB 및 ERD 설계<br/>
+        Swagger UI 연결<br/>
+        채팅 기능(챗봇 + 사용자 + 검색)<br/>
+        WebSocket + STOMP 설정
+      </td>
+    </tr>
+  </tbody>
+</table>
