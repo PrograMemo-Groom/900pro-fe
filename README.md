@@ -101,12 +101,24 @@ npm run dev
       </td>
     </tr>
     <tr>
-      <td align="center">강세진</td>
-      <td align="center">김재홍</td>
-      <td align="center">김건영</td>
-      <td align="center">김유림</td>
-      <td align="center">심동훈</td>
-      <td align="center">이보미</td>
+      <td align="center">
+        <a href="https://github.com/@S2ej1n" target="_blank">강세진</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/@newfly101" target="_blank">김재홍</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/@diamondgonny" target="_blank">김건영</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/@yoorym-kim" target="_blank">김유림</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/@Saaad9" target="_blank">심동훈</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/@happygirll" target="_blank">이보미</a>
+      </td>
     </tr>
     <tr>
       <td align="center">
