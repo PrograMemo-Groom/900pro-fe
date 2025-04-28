@@ -44,6 +44,11 @@
 | <img width="1347" alt="팀생성" src="https://github.com/user-attachments/assets/3236b5e6-8d9d-4cee-af29-0e3487ac747f" /> | <img width="1347" alt="팀화면" src="https://github.com/user-attachments/assets/6ab5b20f-2a89-4925-ac0f-04c146122d69" /> |  <img width="1347" alt="스크린샷 2025-04-28 오후 4 12 46" src="https://github.com/user-attachments/assets/b0c74d9c-3907-4a74-ae53-693c0c42b1ee" /> |
 | 팀 이름, 설명, 시험 시작 시간 <br/> (시험보기 버튼 활성화) <br/> 문제 난이도 및 개수, 시험시간 선택하여 생성 가능 | 가입한 팀이 있을 경우 보이는 팀 화면 | 회원정보 수정, 로그아웃 가능 <br/> 이용약관및 이용가이드 열람 가능 |
 
+| 대기실 | 코딩테스트화면 | 히스토리(채팅창)화면 |
+|:---:|:---:|:---:|
+|  | <img width="1564" alt="스크린샷 2025-04-28 오후 4 15 10" src="https://github.com/user-attachments/assets/ad9adb56-a170-4deb-b4e7-a3a852def6eb" /> |  <img width="1347" alt="스크린샷 2025-04-28 오후 4 08 12" src="https://github.com/user-attachments/assets/d28b9c5d-3ebd-467b-81fe-331059974162" /> |
+| 실시간 소켓 통신으로 멤버별 준비 상태 확인 가능 | 문제 보기, 남은 시간, 코드 편집, 코드 자동 완성, 파일및 폴더 생성, 제출, 실행 모두 가능 |  |
+
 ## 🛠 기술 스택 (Tech Stack)
 
 - **Frontend**: React, TypeScript, Vite
