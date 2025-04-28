@@ -102,22 +102,22 @@ npm run dev
     </tr>
     <tr>
       <td align="center">
-        <a href="https://github.com/@S2ej1n" target="_blank">강세진</a>
+        <a href="https://github.com/S2ej1n" target="_blank">강세진</a>
       </td>
       <td align="center">
-        <a href="https://github.com/@newfly101" target="_blank">김재홍</a>
+        <a href="https://github.com/newfly101" target="_blank">김재홍</a>
       </td>
       <td align="center">
-        <a href="https://github.com/@diamondgonny" target="_blank">김건영</a>
+        <a href="https://github.com/diamondgonny" target="_blank">김건영</a>
       </td>
       <td align="center">
-        <a href="https://github.com/@yoorym-kim" target="_blank">김유림</a>
+        <a href="https://github.com/yoorym-kim" target="_blank">김유림</a>
       </td>
       <td align="center">
-        <a href="https://github.com/@Saaad9" target="_blank">심동훈</a>
+        <a href="https://github.com/Saaad9" target="_blank">심동훈</a>
       </td>
       <td align="center">
-        <a href="https://github.com/@happygirll" target="_blank">이보미</a>
+        <a href="https://github.com/happygirll" target="_blank">이보미</a>
       </td>
     </tr>
     <tr>
