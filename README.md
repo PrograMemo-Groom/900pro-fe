@@ -32,11 +32,16 @@
 - 🛠 다양한 언어 지원
 - 💬 실시간 채팅
 
-## 스크린샷 (Screenshots)
+## 화면 소개 (Screen Overview)
 
-| 메인 화면 | 코드 에디터 | 터미널 창 |
+| 메인 화면 (로그인) | 회원가입 | 팀 리스트 |
 |:---:|:---:|:---:|
-| ![](./screenshots/main.png) | ![](./screenshots/editor.png) | ![](./screenshots/terminal.png) |
+|<img width="1347" alt="스크린샷 2025-04-28 오후 4 06 31" src="https://github.com/user-attachments/assets/d1f8ed47-2ce9-49f9-abe9-1b1bad4a7b3d" /> |  <img width="1347" alt="스크린샷 2025-04-28 오후 4 06 38" src="https://github.com/user-attachments/assets/6cdca9e7-231a-442b-a53e-5da7629cdc61" /> |  <img width="1210" alt="스크린샷 2025-04-28 오후 4 18 22" src="https://github.com/user-attachments/assets/e530b456-021b-4b42-b633-5df7eefe070d" />|
+| 로그인이 안되었을시 기본으로 보이는 화면 | Sing In으로 들어온 회원가입 | 가입한 팀이 없을 경우 보이는 팀 리스트 |
+
+| 팀 화면 | 회원가입 | 팀 리스트 |
+|:---:|:---:|:---:|
+| 메인 화면 (로그인) | 회원가입 | 팀 리스트 |
 
 ## 🛠 기술 스택 (Tech Stack)
 
