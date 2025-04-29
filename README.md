@@ -26,11 +26,6 @@
 시험이 시작되면 코딩테스트 페이지가 나타나고, 코드 편집기를 통해 코드를 작성할 수 있습니다.<br/>
 시험이 종료된 후에는 팀원들의 코드를 보면서 오늘의 문제에 대해 이야기를 나눌 수 있습니다.<br/>
 
-<h3>아키텍쳐 구조</h3>
-<p align="center">
-  <img width="650" alt="아키텍쳐 구조도" src="https://github.com/user-attachments/assets/9526e8a5-8b7d-4c79-96db-62f153680927" />
-</p>
-
 <h3>사용자 흐름도</h3>
 <p align="center">
   <img width="650" alt="스크린샷 2025-04-28 오후 5 47 16" src="https://github.com/user-attachments/assets/fecee4b7-ac5e-48c8-adeb-fbc4d31c3399" />
